@@ -1,9 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Bienvenido</title>
+    <meta charset="UTF-8">
+    <title>Bienvenido - Educa Prenatal</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
+        .card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        button { background: #673ab7; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    </style>
 </head>
 <body>
-  <h1>Bienvenido al sistema</h1>
+    <div class="card">
+        <h1>¡Hola! Bienvenido a Educa-prenatal</h1>
+        <p>Has iniciado sesión correctamente.</p>
+        <button onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <script>
+        function logout() {
+            // Aquí luego pondremos la lógica para salir de Firebase
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
