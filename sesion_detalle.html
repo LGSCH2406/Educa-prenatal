@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión Detalle | Educa-prenatal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --fucsia: #d81b60; 
+            --fucsia-dark: #ad1457;
+            --fucsia-light: #f06292;
+            --white: #ffffff;
+            --bg-soft: #fff5f8;
+        }
+
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--bg-soft); 
+            margin: 0; 
+            padding: 0; 
+            color: #444; 
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(216, 27, 96, 0.08) 0%, transparent 35%),
+                radial-gradient(circle at 100% 100%, rgba(216, 27, 96, 0.05) 0%, transparent 35%);
+        }
+
+        .header-bar {
+            background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%);
+            padding: 60px 20px 100px;
+            color: white;
+            border-radius: 0 0 60px 60px;
+            box-shadow: 0 15px 40px rgba(173, 20, 87, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        .nav-top { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start;
+            margin-bottom: 10px; 
+        }
+
+        .logo-img { 
+            height: 180px; 
+            width: auto;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3)); 
+            transition: transform 0.3s ease;
+            margin-top: -20px;
+        }
+        
+        .back-link { 
+            color: white; 
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 15px;
+            background: rgba(255,255,255,0.2); 
+            padding: 12px 24px; 
+            border-radius: 15px;
+            backdrop-filter: blur(8px); 
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .session-info { margin-top: -30px; }
+        .session-info h1 { 
+            font-size: 48px; 
+            margin: 0; 
+            font-weight: 600; 
+            letter-spacing: -1.5px;
+        }
+
+        .main-content { transform: translateY(-60px); z-index: 10; position: relative; }
+
+        .video-wrapper { 
+            background: var(--white); 
+            border-radius: 40px; 
+            overflow: hidden; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12); 
+            border: 2px solid var(--white);
+            margin-bottom: 30px;
+        }
+
+        /* Contenedor responsivo para el Iframe */
+        .video-player-box { 
+            position: relative; 
+            padding-bottom: 56.25%; /* Relación 16:9 */
+            height: 0; 
+            overflow: hidden; 
+            background: #000; 
+            border-bottom: 8px solid var(--fucsia-light); 
+        }
+
+        .video-player-box iframe { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            border: none;
+        }
+
+        .video-body { padding: 45px; text-align: center; }
+        .video-body h3 { font-size: 32px; color: var(--fucsia-dark); margin-bottom: 15px; }
+        
+        .btn-finish { 
+            width: 100%; padding: 25px; border-radius: 25px; border: none;
+            background: #e0e0e0; color: #888; font-size: 20px; font-weight: 600;
+            cursor: pointer; transition: 0.4s ease; margin-top: 30px;
+        }
+
+        .btn-active { 
+            background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%); 
+            color: white; 
+            box-shadow: 0 15px 35px rgba(216, 27, 96, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-bar">
+    <div class="container">
+        <div class="nav-top">
+            <a href="bienvenido.html" class="back-link">← Ver todas las sesiones</a>
+            <img src="logo.png" alt="Logo" class="logo-img">
+        </div>
+        <div class="session-info">
+            <h1 id="txtSesion">Cargando sesión...</h1>
+            <p style="opacity: 0.95; font-size: 19px;">Tu camino hacia una maternidad informada ✨</p>
+        </div>
+    </div>
+</div>
+
+<div class="container main-content">
+    <div id="videoContainer">
+        </div>
+
+    <div class="footer-cta">
+        <button id="btnFinish" class="btn-finish btn-active">
+            ✨ ¡Completar Sesión!
+        </button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
+        authDomain: "educa-prenatal.firebaseapp.com",
+        projectId: "educa-prenatal",
+        storageBucket: "educa-prenatal.firebasestorage.app",
+        messagingSenderId: "474992751698",
+        appId: "1:474992751698:web:f313f8def5ff266a45b8b8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const sesionId = parseInt(params.get('id')) || 1;
+
+    document.getElementById("txtSesion").innerText = `Sesión ${sesionId}`;
+    const videoContainer = document.getElementById("videoContainer");
+    const btnFinish = document.getElementById("btnFinish");
+
+    async function loadData() {
+        // Buscamos videos que correspondan a esta sesión
+        const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+            videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
+                <h3 style="color:var(--fucsia)">Próximamente</h3>
+                <p>Aún no hay videos disponibles para la sesión ${sesionId}.</p>
+            </div>`;
+            return;
+        }
+
+        videoContainer.innerHTML = "";
+        snap.forEach(doc => {
+            const data = doc.data();
+            // Usamos el videoDriveId para construir el Iframe oficial de Drive
+            videoContainer.innerHTML += `
+                <div class="video-wrapper">
+                    <div class="video-player-box">
+                        <iframe 
+                            src="https://drive.google.com/file/d/${data.videoDriveId}/preview" 
+                            allow="autoplay; encrypted-media" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="video-body">
+                        <h3>${data.titulo}</h3>
+                        <p>Disfruta de este video educativo para el Módulo ${sesionId}.</p>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    btnFinish.onclick = () => {
+        let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
+        if (sesionId > progress) {
+            localStorage.setItem('prenatal_progress', sesionId);
+        }
+        window.location.href = "bienvenido.html";
+    };
+
+    loadData();
+</script>
+</body>
+</html>
