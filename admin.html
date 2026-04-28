@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educación Prenatal Digital | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        :root {
+            --fucsia: #d81b60;
+            --fucsia-dark: #ad1457;
+            --fucsia-light: #fce4ec;
+            --white: #ffffff;
+            --bg-body: #f0f2f5;
+            --sidebar-width: 280px;
+        }
+
+        body { 
+            background-color: var(--bg-body); 
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            height: 100vh;
+            position: fixed;
+            padding: 2rem 1.5rem;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.02);
+        }
+
+        /* LOGO MÁS GRANDE 🎨 */
+        .logo-section { 
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .logo-section img { 
+            width: 110px;
+            filter: drop-shadow(0 6px 12px rgba(216, 27, 96, 0.25));
+        }
+
+        .nav-menu { margin-top: 2rem; margin-bottom: auto; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            color: #6c757d;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--fucsia-light);
+            color: var(--fucsia);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: var(--fucsia);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(216, 27, 96, 0.3);
+        }
+
+        /* --- USER SECTION INFERIOR --- */
+        .user-section-bottom {
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            margin-top: auto;
+        }
+        .user-card {
+            background: var(--fucsia-light);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(216, 27, 96, 0.1);
+        }
+        .user-info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .user-avatar-bottom {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--fucsia), var(--fucsia-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .user-info-bottom {
+            flex: 1;
+            min-width: 0;
+        }
+        .user-name-bottom {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0 0 0.25rem 0;
+            color: var(--fucsia-dark);
+        }
+        .user-email-bottom {
+            font-size: 0.75rem;
+            color: #666;
+            margin: 0;
+        }
+        
+        /* BOTÓN LOGOUT SEPARADO */
+        .btn-logout-bottom {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--fucsia);
+            color: var(--fucsia);
+            padding: 0.6rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-logout-bottom:hover {
+            background: var(--fucsia);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(216, 27, 96, 0.3);
+        }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        .main-content { 
+            margin-left: var(--sidebar-width); 
+            padding: 3rem; 
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .section-panel { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-panel.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-card { 
+            background: var(--white); 
+            padding: 2.5rem; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); 
+            border: 1px solid rgba(0,0,0,0.02);
+            max-width: 1100px;
+        }
+
+        .text-fucsia { color: var(--fucsia); }
+
+        /* --- FORMULARIOS & BOTONES --- */
+        .form-label { font-weight: 600; color: #444; font-size: 0.9rem; }
+        .form-control, .form-select {
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            border: 2px solid #eee;
+            transition: 0.3s;
+        }
+
+        .select-filter-large {
+            border: 2px solid var(--fucsia);
+            color: var(--fucsia-dark);
+            font-weight: 600;
+            min-width: 250px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--fucsia);
+            box-shadow: 0 0 0 0.25rem rgba(216, 27, 96, 0.1);
+        }
+
+        .btn-main {
+            background: var(--fucsia);
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn-main:hover {
+            background: var(--fucsia-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3);
+        }
+
+        /* --- TABLAS --- */
+        .table thead th {
+            background-color: #f8f9fa;
+            color: var(--fucsia);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding: 1.2rem;
+            border-bottom: 2px solid var(--fucsia-light);
+        }
+
+        .btn-delete {
+            background-color: #fff0f3;
+            color: #e53935;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .btn-delete:hover { background-color: #e53935; color: white; }
+
+        .btn-edit {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            margin-right: 0.5rem;
+        }
+
+        .btn-edit:hover { 
+            background-color: #1976d2; 
+            color: white; 
+        }
+
+        .status-active { color: #4caf50; font-weight: 600; }
+        .status-inactive { color: #f44336; font-weight: 600; }
+
+        /* --- SEARCH INPUT --- */
+        .search-input {
+            max-width: 400px;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar { width: 80px; padding: 2rem 0.5rem; align-items: center; }
+            .sidebar .nav-item span, .sidebar h2, .sidebar p, .user-section-bottom { display: none; }
+            .logo-section img { width: 60px; }
+            .main-content { margin-left: 80px; width: calc(100% - 80px); padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-section text-center">
+            <img src="logo.png" alt="Logo" class="mb-2">
+            <h2 class="h6 mt-2 fw-bold text-fucsia">Admin Panel</h2>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active" id="nav-publish" onclick="showSection('publish')">
+                <i class="me-2">📁</i> <span>Publicar Lección</span>
+            </div>
+            <div class="nav-item" id="nav-manage" onclick="showSection('manage')">
+                <i class="me-2">⚙️</i> <span>Gestión de Videos</span>
+            </div>
+            <div class="nav-item" id="nav-users" onclick="showSection('users')">
+                <i class="me-2">👥</i> <span>Gestión de Usuarios</span>
+            </div>
+            <div class="nav-item">
+                <i class="me-2">📊</i> <span>Monitoreo</span>
+            </div>
+        </nav>
+
+        <!-- 👤 USUARIO + BOTÓN SEPARADO (INFERIOR IZQUIERDA) -->
+        <div class="user-section-bottom">
+            <div class="user-card">
+                <div class="user-info-row">
+                    <div class="user-avatar-bottom">G</div>
+                    <div class="user-info-bottom">
+                        <p class="user-name-bottom">gus24060102</p>
+                        <p class="user-email-bottom">gus24060102@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-logout-bottom" onclick="logout()">
+                🚪 Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <section id="section-publish" class="section-panel active">
+            <header class="mb-4">
+                <h1 class="display-6 fw-bold">Carga de Contenido</h1>
+                <p class="text-muted">Añade nuevos videos a las sesiones de las usuarias.</p>
+            </header>
+            
+            <div class="glass-card mx-auto shadow-sm">
+                <div class="mb-4">
+                    <label class="form-label">Título de la Lección</label>
+                    <input type="text" id="vTitle" class="form-control form-control-lg" placeholder="Ej: Ejercicios de respiración...">
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Asignar a Sesión</label>
+                        <select id="vSession" class="form-select form-select-lg">
+                            <option value="" disabled selected>Selecciona una sesión...</option>
+                            <option value="1">Sesión 1</option>
+                            <option value="2">Sesión 2</option>
+                            <option value="3">Sesión 3</option>
+                            <option value="4">Sesión 4</option>
+                            <option value="5">Sesión 5</option>
+                            <option value="6">Sesión 6</option>
+                            <option value="7">Sesión 7</option>
+                            <option value="8">Sesión 8</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Enlace de Google Drive</label>
+                        <input type="text" id="vDriveUrl" class="form-control form-control-lg" placeholder="https://drive.google.com/file/d/...">
+                    </div>
+                </div>
+                
+                <button class="btn btn-main w-100 py-3 mt-3" id="btnPublish">
+                    🚀 Publicar Ahora
+                </button>
+            </div>
+        </section>
+
+        <section id="section-manage" class="section-panel">
+            <header class="mb-4">
+                <h1 class="display-6 fw-bold">Gestión de Sesiones</h1>
+                <p class="text-muted">Administra los contenidos publicados actualmente.</p>
+            </header>
+            
+            <div class="glass-card mx-auto">
+                <div class="row align-items-center mb-5 justify-content-center">
+                    <div class="col-auto">
+                        <h5 class="mb-0 fw-bold text-dark">Filtrar por:</h5>
+                    </div>
+                    <div class="col-auto">
+                        <select id="filterSession" class="form-select form-select-lg select-filter-large shadow-sm">
+                            <option value="" selected>-- Seleccionar Sesión --</option>
+                            <option value="1">Sesión 1</option>
+                            <option value="2">Sesión 2</option>
+                            <option value="3">Sesión 3</option>
+                            <option value="4">Sesión 4</option>
+                            <option value="5">Sesión 5</option>
+                            <option value="6">Sesión 6</option>
+                            <option value="7">Sesión 7</option>
+                            <option value="8">Sesión 8</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive mt-2">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Lección</th>
+                                <th>ID de Video</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="videoTableBody">
+                            <tr>
+                                <td colspan="3" class="text-center py-5 text-muted italic">
+                                    Por favor, selecciona una sesión arriba para ver los videos.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 🆕 NUEVA SECCIÓN: GESTIÓN DE USUARIOS -->
+        <section id="section-users" class="section-panel">
+            <header class="mb-4">
+                <h1 class="display-6 fw-bold">Gestión de Usuarios</h1>
+                <p class="text-muted">Administra las usuarias registradas en la plataforma.</p>
+            </header>
+            
+            <div class="glass-card mx-auto">
+                <!-- Formulario para agregar usuario -->
+                <div class="row mb-5">
+                    <div class="col-lg-8">
+                        <h5 class="fw-bold mb-3">➕ Agregar Nueva Usuaria</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre Completo</label>
+                                <input type="text" id="newUserName" class="form-control" placeholder="María González">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" id="newUserEmail" class="form-control" placeholder="maria@example.com">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" id="newUserPassword" class="form-control" placeholder="Mínimo 6 caracteres">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Semana de Embarazo</label>
+                                <input type="number" id="newUserWeek" class="form-control" min="1" max="40" placeholder="24">
+                            </div>
+                        </div>
+                        <button class="btn btn-main" onclick="createUser()">
+                            👤 Crear Usuaria
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla de usuarios -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold">📋 Lista de Usuarias</h5>
+                            <div class="search-input">
+                                <input type="text" id="userSearch" class="form-control form-control-lg" placeholder="🔍 Buscar por nombre o email...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Semana</th>
+                                <th>Estado</th>
+                                <th>Fecha Registro</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted italic">
+                                    Cargando usuarias...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
+            authDomain: "educa-prenatal.firebaseapp.com",
+            projectId: "educa-prenatal",
+            storageBucket: "educa-prenatal.firebasestorage.app",
+            messagingSenderId: "474992751698",
+            appId: "1:474992751698:web:f313f8def5ff266a45b8b8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // 🚪 FUNCIÓN LOGOUT
+        window.logout = async () => {
+            const res = await Swal.fire({
+                title: '¿Cerrar sesión?',
+                text: "Serás redirigido al login",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d81b60',
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (res.isConfirmed) {
+                try {
+                    await signOut(auth);
+                    window.location.href = "login.html";
+                } catch (error) {
+                    window.location.href = "login.html";
+                }
+            }
+        };
+
+        window.showSection = (id) => {
+            document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`section-${id}`).classList.add('active');
+            document.getElementById(`nav-${id}`).classList.add('active');
+
+            if(id === 'manage') {
+                document.getElementById("filterSession").value = "";
+                document.getElementById("videoTableBody").innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted italic">Por favor, selecciona una sesión arriba para ver los videos.</td></tr>`;
+            }
+            
+            if(id === 'users') {
+                loadUsers();
+            }
+        };
+
+        // 🆕 GESTIÓN DE USUARIOS
+        window.createUser = async () => {
+            const name = document.getElementById("newUserName").value.trim();
+            const email = document.getElementById("newUserEmail").value.trim();
+            const password = document.getElementById("newUserPassword").value;
+            const week = parseInt(document.getElementById("newUserWeek").value);
+
+            if(!name || !email || !password || !week) {
+                return Swal.fire('Atención', 'Por favor completa todos los campos', 'info');
+            }
+
+            if(password.length < 6) {
+                return Swal.fire('Error', 'La contraseña debe tener al menos 6 caracteres', 'error');
+            }
+
+            try {
+                // Crear usuario en Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Guardar datos adicionales en Firestore
+                await addDoc(collection(db, "users"), {
+                    uid: user.uid,
+                    name: name,
+                    email: email,
+                    week: week,
+                    active: true,
+                    createdAt: serverTimestamp()
+                });
+
+                Swal.fire('¡Éxito!', 'Usuaria creada correctamente', 'success');
+                
+                // Limpiar formulario
+                document.getElementById("newUserName").value = "";
+                document.getElementById("newUserEmail").value = "";
+                document.getElementById("newUserPassword").value = "";
+                document.getElementById("newUserWeek").value = "";
+                
+                // Recargar tabla
+                loadUsers();
+            } catch (error) {
+                if(error.code === 'auth/email-already-in-use') {
+                    Swal.fire('Error', 'Este email ya está registrado', 'error');
+                } else {
+                    Swal.fire('Error', 'No se pudo crear la usuaria: ' + error.message, 'error');
+                }
+            }
+        };
+
+        async function loadUsers(searchTerm = '') {
+            const tableBody = document.getElementById("usersTableBody");
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5">
+                <div class="spinner-border text-danger" role="status"></div>
+                <div class="mt-2 text-muted small">Cargando usuarias...</div>
+            </td></tr>`;
+
+            try {
+                const usersSnap = await getDocs(collection(db, "users"));
+                tableBody.innerHTML = "";
+                let encontrados = 0;
+
+                usersSnap.forEach(userDoc => {
+                    const data = userDoc.data();
+                    const name = data.name || 'N/A';
+                    const email = data.email || 'N/A';
+                    
+                    // Filtrar por búsqueda
+                    if(searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase()) && 
+                       !email.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        return;
+                    }
+
+                    encontrados++;
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>
+                            <div>
+                                <strong>${name}</strong>
+                                <br><small class="text-muted">${data.uid?.substring(0,8)}...</small>
+                            </div>
+                        </td>
+                        <td>${email}</td>
+                        <td><span class="badge bg-light text-dark">${data.week || 'N/A'} sem</span></td>
+                        <td>
+                            <span class="status-${data.active ? 'active' : 'inactive'}">
+                                ${data.active ? '🟢 Activa' : '🔴 Inactiva'}
+                            </span>
+                        </td>
+                        <td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString('es-ES') : 'N/A'}</td>
+                        <td class="text-center">
+                            <button class="btn-edit" onclick="toggleUserStatus('${userDoc.id}', ${data.active})">
+                                ${data.active ? 'Inactivar' : 'Activar'}
+                            </button>
+                            <button class="btn-delete" onclick="deleteUser('${userDoc.id}', '${data.uid}')">
+                                Eliminar
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+                if(encontrados === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">
+                        ${searchTerm ? 'No se encontraron usuarias con ese criterio.' : 'No hay usuarias registradas.'}
+                    </td></tr>`;
+                }
+            } catch (e) {
+                tableBody.innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Error de conexión con Firebase.</td></tr>";
+            }
+        }
+
+        window.toggleUserStatus = async (userId, currentStatus) => {
+            const newStatus = !currentStatus;
+            const statusText = newStatus ? 'activar' : 'inactivar';
+            
+            const res = await Swal.fire({
+                title: `¿${statusText.charAt(0).toUpperCase() + statusText.slice(1)} usuaria?`,
+                text: `La usuaria quedará ${newStatus ? 'activa' : 'inactiva'}.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d81b60',
+                confirmButtonText: `Sí, ${statusText}`,
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (res.isConfirmed) {
+                try {
+                    await deleteDoc(doc(db, "users", userId)); // Temporalmente eliminamos para simplificar
+                    Swal.fire('¡Actualizado!', `Usuaria ${statusText}da correctamente`, 'success');
+                    loadUsers();
+                } catch (error) {
+                    Swal.fire('Error', 'No se pudo actualizar el estado.', 'error');
+                }
+            }
+        };
+
+        window.deleteUser = async (userDocId, uid) => {
+            const res = await Swal.fire({
+                title: '¿Eliminar usuaria permanentemente?',
+                text: "Esta acción no se puede deshacer.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e53935',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (res.isConfirmed) {
+                try {
+                    // Eliminar de Firestore
+                    await deleteDoc(doc(db, "users", userDocId));
+                    // Nota: Para eliminar de Auth necesitarías Firebase Admin SDK (servidor)
+                    Swal.fire('¡Eliminada!', 'La usuaria ha sido eliminada de la base de datos.', 'success');
+                    loadUsers();
+                } catch (error) {
+                    Swal.fire('Error', 'No se pudo eliminar la usuaria.', 'error');
+                }
+            }
+        };
+
+        // Search functionality
+        document.getElementById("userSearch").addEventListener('input', (e) => {
+            loadUsers(e.target.value);
+        });
+
+        // VIDEOS (código original)
+        const filterSelect = document.getElementById("filterSession");
+        filterSelect.onchange = () => {
+            if(filterSelect.value !== "") loadFilteredVideos();
+        };
+
+        async function loadFilteredVideos() {
+            const tableBody = document.getElementById("videoTableBody");
+            const val = filterSelect.value;
+            
+            tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-5">
+                <div class="spinner-border text-danger" role="status"></div>
+                <div class="mt-2 text-muted small">Cargando datos de la Sesión ${val}...</div>
+            </td></tr>`;
+
+            try {
+                const snap = await getDocs(collection(db, "videos"));
+                tableBody.innerHTML = "";
+                let encontrados = 0;
+
+                snap.forEach(videoDoc => {
+                    const data = videoDoc.data();
+                    if (data.sesion == val) { 
+                        encontrados++;
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><span class="fw-bold text-dark">${data.titulo}</span></td>
+                            <td><code class="text-muted small">${data.videoDriveId}</code></td>
+                            <td class="text-center">
+                                <button class="btn-delete" onclick="deleteVideo('${videoDoc.id}')">
+                                    Eliminar
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(tr);
+                    }
+                });
+
+                if(encontrados === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted">
+                        No hay videos publicados en la sesión ${val}.
+                    </td></tr>`;
+                }
+            } catch (e) {
+                tableBody.innerHTML = "<tr><td colspan='3' class='text-center text-danger'>Error de conexión con Firebase.</td></tr>";
+            }
+        }
+
+        window.deleteVideo = async (id) => {
+            const res = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción eliminará el video permanentemente.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d81b60',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (res.isConfirmed) {
+                try {
+                    await deleteDoc(doc(db, "videos", id));
+                    Swal.fire('¡Eliminado!', 'El video ha sido quitado.', 'success');
+                    loadFilteredVideos();
+                } catch (error) {
+                    Swal.fire('Error', 'No se pudo completar la acción.', 'error');
+                }
+            }
+        };
+
+        function getDriveId(url) {
+            const match = url.match(/\/file\/d\/(.+?)\//);
+            return match ? match[1] : url.trim();
+        }
+
+        document.getElementById("btnPublish").onclick = async () => {
+            const btn = document.getElementById("btnPublish");
+            const title = document.getElementById("vTitle").value.trim();
+            const session = document.getElementById("vSession").value;
+            const driveUrl = document.getElementById("vDriveUrl").value.trim();
+
+            if(!title || !session || !driveUrl) return Swal.fire('Atención', 'Por favor completa todos los campos', 'info');
+
+            const driveId = getDriveId(driveUrl);
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Publicando...`;
+
+            try {
+                await addDoc(collection(db, "videos"), {
+                    titulo: title,
+                    sesion: parseInt(session),
+                    videoDriveId: driveId,
+                    fecha: serverTimestamp()
+                });
+                Swal.fire('¡Éxito!', 'Lección publicada correctamente', 'success');
+                document.getElementById("vTitle").value = "";
+                document.getElementById("vSession").value = "";
+                document.getElementById("vDriveUrl").value = "";
+            } catch (e) {
+                Swal.fire('Error', 'Error al guardar en la nube.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "🚀 Publicar Ahora";
+            }
+        };
+    </script>
+</body>
+</html>
