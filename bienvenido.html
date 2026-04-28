@@ -2,25 +2,197 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Bienvenido - Educa Prenatal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educa-prenatal | Mis Sesiones</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; }
-        .card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-        button { background: #673ab7; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        :root {
+            --primary: #6d0f1f;
+            --primary-light: #a82036;
+            --accent: #f1a7b0;
+            --white-glow: rgba(255, 255, 255, 0.2);
+            --text-dark: #333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        
+        body { 
+            background: var(--primary); 
+            min-height: 100vh; 
+            padding: 40px 20px; 
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fondo Animado */
+        .circle { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.05); z-index: 1; pointer-events: none; }
+        .c1 { width: 500px; height: 500px; top: -150px; left: -100px; animation: move 20s infinite alternate; }
+        .c2 { width: 300px; height: 300px; bottom: -50px; right: -50px; animation: move 15s infinite alternate-reverse; }
+        @keyframes move { to { transform: translate(60px, 100px); } }
+
+        .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
+
+        /* Barra superior */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
+        .header h1 { font-size: 36px; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .header p { opacity: 0.8; font-weight: 300; }
+
+        .logout-btn { 
+            background: var(--white-glow); color: white; padding: 12px 25px; 
+            border-radius: 15px; text-decoration: none; font-weight: 600; 
+            backdrop-filter: blur(10px); transition: 0.3s; border: 1px solid rgba(255,255,255,0.3);
+        }
+        .logout-btn:hover { background: white; color: var(--primary); }
+
+        /* Panel de Sesiones */
+        .sessions-panel {
+            background: white;
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 0 0 10px var(--white-glow), 0 25px 60px rgba(0,0,0,0.5);
+            animation: slideUp 0.8s ease-out;
+            position: relative;
+            z-index: 20;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .panel-title {
+            color: var(--primary);
+            font-size: 28px;
+            margin-bottom: 35px;
+            text-align: center;
+            position: relative;
+        }
+
+        .panel-title::after {
+            content: ''; display: block; width: 60px; height: 4px; background: var(--accent); margin: 10px auto 0; border-radius: 2px;
+        }
+
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .session-card {
+            background: #fafafa;
+            border-radius: 20px;
+            padding: 35px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--primary);
+            border: 2px solid #eee;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .session-card:not(.locked):hover {
+            transform: translateY(-10px) scale(1.02);
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(109, 15, 31, 0.3);
+        }
+
+        /* Estado Bloqueado */
+        .session-card.locked {
+            background: #f0f0f0;
+            color: #aaa;
+            cursor: not-allowed;
+            border: 2px dashed #ddd;
+        }
+
+        .lock-icon { font-size: 35px; margin-bottom: 10px; display: none; color: #bbb;}
+        .session-card.locked .lock-icon { display: block; }
+        .session-card.locked .session-status { font-size: 12px; text-transform: uppercase; margin-top: 10px; color: #999;}
+
+        .session-number { font-size: 14px; font-weight: 600; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px;}
+        .session-title { font-size: 28px; font-weight: 600; margin: 5px 0; }
+
+        @media (max-width: 850px) {
+            .sessions-panel { padding: 30px 20px; border-radius: 20px; }
+            .sessions-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>¡Hola! Bienvenido a Educa-prenatal</h1>
-        <p>Has iniciado sesión correctamente.</p>
-        <button onclick="logout()">Cerrar Sesión</button>
+
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Bienvenida ✨</h1>
+                <p id="userMsg">Cargando tu progreso...</p>
+            </div>
+            <a href="index.html" class="logout-btn">Cerrar Sesión</a>
+        </div>
+
+        <div class="sessions-panel">
+            <h2 class="panel-title">Tu Programa Prenatal Digital</h2>
+            <div class="sessions-grid" id="sessionsGrid">
+                </div>
+        </div>
     </div>
 
-    <script>
-        function logout() {
-            // Aquí luego pondremos la lógica para salir de Firebase
-            window.location.href = 'index.html';
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
+            authDomain: "educa-prenatal.firebaseapp.com",
+            projectId: "educa-prenatal",
+            storageBucket: "educa-prenatal.firebasestorage.app",
+            messagingSenderId: "474992751698",
+            appId: "1:474992751698:web:f313f8fdef5ff266a45b8b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Progreso local: cuántas sesiones ha completado el usuario
+        let completedSessions = parseInt(localStorage.getItem('prenatal_progress')) || 0;
+        const sessionsGrid = document.getElementById("sessionsGrid");
+
+        // Función única para navegar al detalle de la sesión
+        function loadVideos(sessionNum) {
+            window.location.href = `sesion_detalle.html?id=${sessionNum}`;
         }
+
+        function renderDashboard() {
+            sessionsGrid.innerHTML = "";
+            document.getElementById("userMsg").innerText = `Has completado ${completedSessions} de 8 sesiones.`;
+
+            for (let i = 1; i <= 8; i++) {
+                // Se desbloquea la siguiente sesión a la completada (i <= completedSessions + 1)
+                const isLocked = i > (completedSessions + 1);
+                const card = document.createElement("div");
+                card.className = `session-card ${isLocked ? 'locked' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="lock-icon">🔒</div>
+                    <div class="session-number">Módulo</div>
+                    <div class="session-title">Sesión ${i}</div>
+                    <div class="session-status">${isLocked ? 'Bloqueado' : '¡Listo para ver!'}</div>
+                `;
+
+                if (!isLocked) {
+                    card.onclick = () => loadVideos(i);
+                }
+                sessionsGrid.appendChild(card);
+            }
+        }
+
+        // Ejecutar al cargar la página
+        renderDashboard();
     </script>
 </body>
 </html>
