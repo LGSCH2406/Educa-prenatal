@@ -1,86 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Educa-prenatal | Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background: #6d0f1f;
-            overflow: hidden;
-            position: relative;
-        }
-        .circle { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.1); }
-        .c1 { width: 500px; height: 500px; top: -150px; left: -120px; animation: move1 12s infinite alternate ease-in-out; }
-        .c2 { width: 300px; height: 300px; bottom: -100px; right: -100px; animation: move2 14s infinite alternate ease-in-out; }
-        @keyframes move1 { to { transform: translate(60px, -60px); } }
-        @keyframes move2 { to { transform: translate(-50px, -80px); } }
-        
-        .login-container {
-            background: #fff;
-            border-radius: 20px;
-            padding: 40px 25px;
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            z-index: 2;
-        }
-        .logo { width: 70%; max-width: 250px; margin-bottom: 20px; }
-        .title { font-size: 26px; color: #6d0f1f; margin-bottom: 8px; }
-        .subtitle { font-size: 15px; color: #777; margin-bottom: 25px; }
-        .input-group { position: relative; margin-bottom: 20px; }
-        input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #ddd; font-size: 15px; outline: none; }
-        label { position: absolute; top: 14px; left: 14px; color: #888; transition: .3s; pointer-events: none; }
-        input:focus + label, input:valid + label { top: -8px; font-size: 11px; background: white; padding: 0 5px; color: #6d0f1f; }
-        
-        button {
-            width: 100%; padding: 14px; border: none; border-radius: 10px;
-            background: #6d0f1f; color: white; font-size: 16px; cursor: pointer;
-            transition: .2s; font-weight: 600;
-        }
-        button:hover { transform: scale(1.02); background: #8a1428; }
-        .error { margin-top: 12px; color: red; font-size: 14px; min-height: 20px; }
-    </style>
-</head>
-<body>
-    <div class="circle c1"></div>
-    <div class="circle c2"></div>
-    <div class="login-container">
-        <img src="logo.png" class="logo" alt="Logo">
-        <div class="title">Bienvenida</div>
-        <div class="subtitle">Accede a tu plataforma de educación prenatal</div>
-        <div class="input-group">
-            <input type="email" id="usuario" required>
-            <label>Correo electrónico</label>
-        </div>
-        <div class="input-group">
-            <input type="password" id="password" required>
-            <label>Contraseña</label>
-        </div>
-        <button id="btn">Ingresar</button>
-        <div class="error" id="error"></div>
-    </div>
+<script type="module">
+    // Usamos las versiones que tú definiste (11.4.0)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    // Configuración corregida y verificada
+    // CONFIGURACIÓN EXACTA QUE SÍ TE FUNCIONABA
     const firebaseConfig = {
-        apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM", 
+        apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
         authDomain: "educa-prenatal.firebaseapp.com",
         projectId: "educa-prenatal",
         storageBucket: "educa-prenatal.firebasestorage.app",
         messagingSenderId: "474992751698",
-        appId: "1:474992751698:web:f313f8def5ff266a45b8b8"
+        appId: "1:474992751698:web:f313f8fdef5ff266a45b8b",
+        measurementId: "G-CLSR2LDM41"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -92,38 +23,26 @@
         const errorDiv = document.getElementById("error");
         const btn = document.getElementById("btn");
 
-        if(!email || !pass) {
-            errorDiv.innerText = "Por favor, completa todos los campos.";
-            return;
-        }
-
-        // Feedback visual de carga
+        // Bloqueo preventivo del botón para evitar múltiples clics
         btn.disabled = true;
         btn.innerText = "Ingresando...";
-        errorDiv.innerText = "";
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-            const emailLogueado = userCredential.user.email.toLowerCase();
+            const user = userCredential.user;
+            const emailLogueado = user.email.toLowerCase();
 
-            // Redirección según el usuario
+            // Lógica de Redirección idéntica a tu código funcional
             if (emailLogueado === "gus24060102@gmail.com") {
                 window.location.href = "admin.html";
             } else {
                 window.location.href = "bienvenido.html";
             }
         } catch (error) {
-            console.error("Error code:", error.code);
+            console.error("Error en login:", error.code);
             btn.disabled = false;
             btn.innerText = "Ingresar";
-            
-            if (error.code === 'auth/invalid-api-key') {
-                errorDiv.innerText = "Error crítico: API Key no válida.";
-            } else {
-                errorDiv.innerText = "Correo o contraseña incorrectos.";
-            }
+            errorDiv.innerText = "Correo o contraseña incorrectos.";
         }
     });
 </script>
-</body>
-</html>
