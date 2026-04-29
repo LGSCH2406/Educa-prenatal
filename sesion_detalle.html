@@ -154,6 +154,15 @@
 
         .custom-progress-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.3); z-index: 10; pointer-events: none; }
         .custom-progress-fill { height: 100%; background: var(--fucsia); width: 0%; transition: width 0.1s linear; }
+
+        /* 🌟 NUEVO: CAPA DE BLOQUEO PARA VIDEOS SECUENCIALES */
+        .video-locked-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); color: white; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 20; text-align: center;
+            backdrop-filter: blur(6px);
+        }
+        .video-locked-overlay p { font-size: 18px; font-weight: 600; margin: 0; padding: 0 20px; color: var(--fucsia-light); }
     </style>
 </head>
 <body>
@@ -206,7 +215,6 @@
     const videoContainer = document.getElementById("videoContainer");
     const btnFinish = document.getElementById("btnFinish");
 
-    // Identificar a la usuaria conectada
     let currentUserDocId = null;
     let currentUserData = null;
 
@@ -217,6 +225,13 @@
             if (!snap.empty) {
                 currentUserDocId = snap.docs[0].id;
                 currentUserData = snap.docs[0].data();
+                
+                // Si cambiaron de PC, sincronizamos el progreso local con la nube
+                let vidsVistosBaseDeDatos = currentUserData.progress ? (currentUserData.progress[sesionId] || 0) : 0;
+                let vidsVistosLocal = parseInt(localStorage.getItem('vids_vistos_s' + sesionId)) || 0;
+                if(vidsVistosBaseDeDatos > vidsVistosLocal) {
+                    localStorage.setItem('vids_vistos_s' + sesionId, vidsVistosBaseDeDatos);
+                }
             }
         }
     });
@@ -271,6 +286,12 @@
                         <div class="custom-progress-bar">
                             <div id="progress-fill-${index}" class="custom-progress-fill"></div>
                         </div>
+
+                        <div class="video-locked-overlay" id="locked-overlay-${index}" style="display: none;">
+                            <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
+                            <p>Termina de ver el video anterior para desbloquear</p>
+                        </div>
+
                     </div>
                     <div class="video-body">
                         <h3>${data.titulo}</h3>
@@ -293,9 +314,19 @@
 
     function activarReproductorInvisible() {
         const videos = document.querySelectorAll('video');
-        const totalVideosEnSesion = videos.length; // 🌟 NUEVO: Sabemos cuántos videos hay en total
+        const totalVideosEnSesion = videos.length; 
         
-        const videosVistos = new Set(); 
+        // 🌟 LÓGICA SECUENCIAL: Leemos cuántos videos individuales ha visto en ESTA sesión
+        let videosCompletadosLocal = parseInt(localStorage.getItem('vids_vistos_s' + sesionId)) || 0;
+
+        // Si recarga la página y resulta que ya había visto todo, activamos el botón final
+        if (videosCompletadosLocal >= totalVideosEnSesion && sesionId >= progress) {
+            btnFinish.disabled = false;
+            btnFinish.classList.add("btn-active");
+            btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+        } else if (videosCompletadosLocal > 0 && sesionId >= progress) {
+            btnFinish.innerHTML = `🔒 Visto ${videosCompletadosLocal} de ${totalVideosEnSesion} videos...`;
+        }
 
         videos.forEach((video, index) => {
             const playerBox = document.getElementById(`player-box-${index}`);
@@ -306,6 +337,15 @@
             const fullBtn = document.getElementById(`btn-full-${index}`);
             const progressFill = document.getElementById(`progress-fill-${index}`);
             const timeDisplay = document.getElementById(`time-display-${index}`);
+            const lockOverlay = document.getElementById(`locked-overlay-${index}`);
+
+            // 🌟 APLICAR BLOQUEO VISUAL: Si el número del video (ej. Video 2 que es index 1) 
+            // es mayor que los videos completados (ej. completados 0), se bloquea.
+            if (index > videosCompletadosLocal) {
+                lockOverlay.style.display = "flex";
+            } else {
+                lockOverlay.style.display = "none";
+            }
 
             const togglePlay = () => {
                 if (video.paused) {
@@ -367,31 +407,35 @@
                 controlsGroup.classList.remove('playing');
                 if (document.fullscreenElement) document.exitFullscreen();
 
-                // 🌟 LÓGICA MODIFICADA: Verificamos si este video es nuevo para el contador
-                const esVideoNuevoParaContador = !videosVistos.has(index);
-                
-                // Registramos que ya vio ESTE video específico
-                videosVistos.add(index);
+                // 🌟 LÓGICA SECUENCIAL: Destrabar el siguiente video y avanzar contador
+                if (index === videosCompletadosLocal) {
+                    videosCompletadosLocal++;
+                    localStorage.setItem('vids_vistos_s' + sesionId, videosCompletadosLocal);
 
-                // 🌟 SOLO SI YA VIO TODOS LOS VIDEOS DE LA PÁGINA, SE ACTIVA EL BOTÓN
-                if (videosVistos.size === totalVideosEnSesion) {
+                    // Quitamos la pantalla de candado del siguiente video, si es que hay uno
+                    const nextOverlay = document.getElementById(`locked-overlay-${videosCompletadosLocal}`);
+                    if (nextOverlay) {
+                        nextOverlay.style.display = "none";
+                    }
+                }
+
+                // Si ya vio todos los videos de la página, activamos el botón final
+                if (videosCompletadosLocal >= totalVideosEnSesion) {
                     btnFinish.disabled = false;
                     btnFinish.classList.add("btn-active");
                     btnFinish.innerHTML = "✨ ¡Completar Sesión!";
                 } else {
-                    // Si le faltan videos, le avisamos sutilmente en el botón
-                    btnFinish.innerHTML = `🔒 Visto ${videosVistos.size} de ${totalVideosEnSesion} videos...`;
+                    // Si faltan videos
+                    btnFinish.innerHTML = `🔒 Visto ${videosCompletadosLocal} de ${totalVideosEnSesion} videos...`;
                 }
 
-                // Enviamos el progreso a Firestore para que el Admin vea las "bolitas" actualizarse una a una
-                if (esVideoNuevoParaContador && currentUserDocId) {
+                // Enviamos el progreso a Firestore para que el Admin vea las bolitas actualizarse
+                if (currentUserDocId) {
                     let userProgress = currentUserData.progress || {};
                     let vidsVistosBaseDeDatos = userProgress[sesionId] || 0;
                     
-                    let nuevoRecord = Math.max(vidsVistosBaseDeDatos, videosVistos.size);
-                    
-                    if (nuevoRecord > vidsVistosBaseDeDatos) {
-                        userProgress[sesionId] = nuevoRecord;
+                    if (videosCompletadosLocal > vidsVistosBaseDeDatos) {
+                        userProgress[sesionId] = videosCompletadosLocal;
                         currentUserData.progress = userProgress; 
                         
                         try {
