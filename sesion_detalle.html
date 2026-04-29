@@ -155,7 +155,7 @@
         .custom-progress-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.3); z-index: 10; pointer-events: none; }
         .custom-progress-fill { height: 100%; background: var(--fucsia); width: 0%; transition: width 0.1s linear; }
 
-        /* 🌟 NUEVO: CAPA DE BLOQUEO PARA VIDEOS SECUENCIALES */
+        /* CAPA DE BLOQUEO PARA VIDEOS SECUENCIALES */
         .video-locked-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); color: white; display: flex; flex-direction: column;
@@ -217,6 +217,8 @@
 
     let currentUserDocId = null;
     let currentUserData = null;
+    let nivelDesbloqueado = 1;
+    let videosCompletadosNube = 0; // Guardará cuántos videos individuales ha visto de esta sesión
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -226,23 +228,25 @@
                 currentUserDocId = snap.docs[0].id;
                 currentUserData = snap.docs[0].data();
                 
-                // Si cambiaron de PC, sincronizamos el progreso local con la nube
-                let vidsVistosBaseDeDatos = currentUserData.progress ? (currentUserData.progress[sesionId] || 0) : 0;
-                let vidsVistosLocal = parseInt(localStorage.getItem('vids_vistos_s' + sesionId)) || 0;
-                if(vidsVistosBaseDeDatos > vidsVistosLocal) {
-                    localStorage.setItem('vids_vistos_s' + sesionId, vidsVistosBaseDeDatos);
+                // Leemos el progreso de la usuaria directamente de Firebase
+                nivelDesbloqueado = currentUserData.nivelDesbloqueado || 1;
+                
+                if (currentUserData.progress && currentUserData.progress[sesionId]) {
+                    videosCompletadosNube = currentUserData.progress[sesionId];
                 }
+
+                // Seguridad: Si intentan entrar a una sesión bloqueada por URL, los regresamos
+                if (sesionId > nivelDesbloqueado) {
+                    window.location.href = "bienvenido.html";
+                    return;
+                }
+
+                loadData(); // Solo cargamos los videos si la validación es correcta
             }
+        } else {
+            window.location.href = "login.html";
         }
     });
-
-    let progress = parseInt(localStorage.getItem('prenatal_progress')) || 1; 
-    
-    if (sesionId < progress) {
-        btnFinish.disabled = false;
-        btnFinish.classList.add("btn-active");
-        btnFinish.innerHTML = "✨ ¡Completar Sesión!";
-    }
 
     async function loadData() {
         const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
@@ -315,17 +319,16 @@
     function activarReproductorInvisible() {
         const videos = document.querySelectorAll('video');
         const totalVideosEnSesion = videos.length; 
-        
-        // 🌟 LÓGICA SECUENCIAL: Leemos cuántos videos individuales ha visto en ESTA sesión
-        let videosCompletadosLocal = parseInt(localStorage.getItem('vids_vistos_s' + sesionId)) || 0;
 
-        // Si recarga la página y resulta que ya había visto todo, activamos el botón final
-        if (videosCompletadosLocal >= totalVideosEnSesion && sesionId >= progress) {
+        // Si ya había visto todos los videos (según Firebase) o si ya superó esta sesión
+        if (videosCompletadosNube >= totalVideosEnSesion || sesionId < nivelDesbloqueado) {
             btnFinish.disabled = false;
             btnFinish.classList.add("btn-active");
             btnFinish.innerHTML = "✨ ¡Completar Sesión!";
-        } else if (videosCompletadosLocal > 0 && sesionId >= progress) {
-            btnFinish.innerHTML = `🔒 Visto ${videosCompletadosLocal} de ${totalVideosEnSesion} videos...`;
+            // Forzamos que videosCompletadosNube sea igual al total para destrabar todos los videos
+            videosCompletadosNube = totalVideosEnSesion; 
+        } else if (videosCompletadosNube > 0) {
+            btnFinish.innerHTML = `🔒 Visto ${videosCompletadosNube} de ${totalVideosEnSesion} videos...`;
         }
 
         videos.forEach((video, index) => {
@@ -339,9 +342,8 @@
             const timeDisplay = document.getElementById(`time-display-${index}`);
             const lockOverlay = document.getElementById(`locked-overlay-${index}`);
 
-            // 🌟 APLICAR BLOQUEO VISUAL: Si el número del video (ej. Video 2 que es index 1) 
-            // es mayor que los videos completados (ej. completados 0), se bloquea.
-            if (index > videosCompletadosLocal) {
+            // Mostrar el candado en los videos si aún no le toca verlos
+            if (index > videosCompletadosNube) {
                 lockOverlay.style.display = "flex";
             } else {
                 lockOverlay.style.display = "none";
@@ -407,65 +409,63 @@
                 controlsGroup.classList.remove('playing');
                 if (document.fullscreenElement) document.exitFullscreen();
 
-                // 🌟 LÓGICA SECUENCIAL: Destrabar el siguiente video y avanzar contador
-                if (index === videosCompletadosLocal) {
-                    videosCompletadosLocal++;
-                    localStorage.setItem('vids_vistos_s' + sesionId, videosCompletadosLocal);
+                // LÓGICA SECUENCIAL: Destrabar el siguiente video y avanzar contador
+                if (index === videosCompletadosNube) {
+                    videosCompletadosNube++;
 
-                    // Quitamos la pantalla de candado del siguiente video, si es que hay uno
-                    const nextOverlay = document.getElementById(`locked-overlay-${videosCompletadosLocal}`);
+                    // Quitamos la pantalla de candado del siguiente video
+                    const nextOverlay = document.getElementById(`locked-overlay-${videosCompletadosNube}`);
                     if (nextOverlay) {
                         nextOverlay.style.display = "none";
+                    }
+
+                    // Guardamos en Firebase para pintar las "bolitas" del administrador
+                    let userProgress = currentUserData.progress || {};
+                    userProgress[sesionId] = videosCompletadosNube;
+                    currentUserData.progress = userProgress; 
+                    
+                    try {
+                        await updateDoc(doc(db, "users", currentUserDocId), {
+                            progress: userProgress
+                        });
+                    } catch (err) {
+                        console.error("Error guardando historial de videos:", err);
                     }
                 }
 
                 // Si ya vio todos los videos de la página, activamos el botón final
-                if (videosCompletadosLocal >= totalVideosEnSesion) {
+                if (videosCompletadosNube >= totalVideosEnSesion) {
                     btnFinish.disabled = false;
                     btnFinish.classList.add("btn-active");
                     btnFinish.innerHTML = "✨ ¡Completar Sesión!";
                 } else {
-                    // Si faltan videos
-                    btnFinish.innerHTML = `🔒 Visto ${videosCompletadosLocal} de ${totalVideosEnSesion} videos...`;
-                }
-
-                // Enviamos el progreso a Firestore para que el Admin vea las bolitas actualizarse
-                if (currentUserDocId) {
-                    let userProgress = currentUserData.progress || {};
-                    let vidsVistosBaseDeDatos = userProgress[sesionId] || 0;
-                    
-                    if (videosCompletadosLocal > vidsVistosBaseDeDatos) {
-                        userProgress[sesionId] = videosCompletadosLocal;
-                        currentUserData.progress = userProgress; 
-                        
-                        try {
-                            await updateDoc(doc(db, "users", currentUserDocId), {
-                                progress: userProgress
-                            });
-                        } catch (err) {
-                            console.error("Error guardando historial de videos:", err);
-                        }
-                    }
+                    btnFinish.innerHTML = `🔒 Visto ${videosCompletadosNube} de ${totalVideosEnSesion} videos...`;
                 }
             });
         });
     }
 
-    btnFinish.addEventListener('click', (e) => {
+    // 🌟 LÓGICA PARA SUBIR DE NIVEL 🌟
+    btnFinish.addEventListener('click', async (e) => {
         e.preventDefault();
 
-        let progresoActual = parseInt(localStorage.getItem('prenatal_progress')) || 1;
+        let siguienteSesion = sesionId + 1;
         
-        if (sesionId >= progresoActual) {
-            localStorage.setItem('prenatal_progress', sesionId + 1);
+        // Si al terminar esta sesión, resulta que era su "sesión máxima alcanzada", 
+        // guardamos en Firebase que ya tiene derecho de entrar a la siguiente.
+        if (siguienteSesion > nivelDesbloqueado) {
+            btnFinish.innerHTML = "Guardando..."; // Feedback visual rápido
+            try {
+                await updateDoc(doc(db, "users", currentUserDocId), {
+                    nivelDesbloqueado: siguienteSesion
+                });
+            } catch (error) {
+                console.error("No se pudo actualizar nivel:", error);
+            }
         }
         
-        setTimeout(() => {
-            window.location.href = "bienvenido.html";
-        }, 100);
+        window.location.href = "bienvenido.html";
     });
-
-    loadData();
 </script>
 </body>
 </html>
