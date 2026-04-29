@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sesión Detalle | Educa-prenatal</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
+<style>
         :root { 
             --fucsia: #d81b60; 
             --fucsia-dark: #ad1457;
@@ -84,23 +84,23 @@
             margin-bottom: 30px;
         }
 
-        /* Contenedor responsivo para el Iframe */
+        /* --- REPRODUCTOR 100% INVISIBLE --- */
         .video-player-box { 
             position: relative; 
-            padding-bottom: 56.25%; /* Relación 16:9 */
+            padding-bottom: 56.25%; /* Mantiene la proporción 16:9 */
             height: 0; 
             overflow: hidden; 
             background: #000; 
             border-bottom: 8px solid var(--fucsia-light); 
         }
 
-        .video-player-box iframe { 
+        .video-player-box video { 
             position: absolute; 
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%; 
-            border: none;
+            cursor: pointer; 
         }
 
         .video-body { padding: 45px; text-align: center; }
@@ -123,6 +123,67 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.02); }
             100% { transform: scale(1); }
+        }
+
+        /* --- ESTILOS DE CONTROLES PERSONALIZADOS GRUPALES --- */
+        .video-player-controls {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            gap: 25px; /* Espacio elegante entre botones */
+            z-index: 10;
+            transition: opacity 0.3s ease;
+            opacity: 1; 
+        }
+
+        .video-player-controls.playing {
+            opacity: 0;
+            pointer-events: none; 
+        }
+
+        .video-player-box:hover .video-player-controls.playing {
+            opacity: 1;
+            pointer-events: auto; 
+        }
+
+        .btn-custom-ctrl {
+            background: rgba(216, 27, 96, 0.95); 
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            padding: 0;
+        }
+
+        .btn-custom-ctrl:hover {
+            transform: scale(1.1);
+            background: var(--fucsia-dark);
+        }
+
+        .btn-play-pause {
+            width: 80px;
+            height: 80px;
+            font-size: 35px;
+            padding-left: 8px; /* Ajuste visual para el triángulo ▶️ */
+        }
+
+        .btn-play-pause.is-pausing {
+            padding-left: 0 !important; /* Centra el ícono de Pausa ⏸️ */
+        }
+
+        .btn-rewind {
+            width: 65px;
+            height: 65px;
+            font-size: 16px; /* Letra un poco más pequeña para que quepa bien el texto */
+            font-weight: 600;
         }
     </style>
 </head>
@@ -156,6 +217,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // 1. Tu configuración de Firebase se mantiene intacta
     const firebaseConfig = {
         apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
         authDomain: "educa-prenatal.firebaseapp.com",
@@ -171,12 +233,12 @@
     const params = new URLSearchParams(window.location.search);
     const sesionId = parseInt(params.get('id')) || 1;
 
-    document.getElementById("txtSesion").innerText = `Sesión ${sesionId}`;
+    document.getElementById("txtSesion").innerText = Sesión ${sesionId};
     const videoContainer = document.getElementById("videoContainer");
     const btnFinish = document.getElementById("btnFinish");
 
     async function loadData() {
-        // Buscamos videos que correspondan a esta sesión
+        // Buscamos los videos en Firestore
         const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
         const snap = await getDocs(q);
 
@@ -189,17 +251,24 @@
         }
 
         videoContainer.innerHTML = "";
+        let index = 0; // Usamos un contador para darle un ID único a cada video
+
         snap.forEach(doc => {
             const data = doc.data();
-            // Usamos el videoDriveId para construir el Iframe oficial de Drive
+            
+            // Leemos el campo "data.videoUrl" en lugar de "data.videoDriveId"
             videoContainer.innerHTML += `
                 <div class="video-wrapper">
                     <div class="video-player-box">
-                        <iframe 
-                            src="https://drive.google.com/file/d/${data.videoDriveId}/preview" 
-                            allow="autoplay; encrypted-media" 
-                            allowfullscreen>
-                        </iframe>
+                        <video id="video-${index}" src="${data.videoUrl}" style="width: 100%; height: 100%; cursor: pointer; object-fit: cover;"></video>
+                        
+                        <div id="controls-group-${index}" class="video-player-controls">
+                            
+                            <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind" title="Retroceder 10 segundos">↺ 10s</button>
+                            
+                            <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶️</button>
+                        
+                        </div>
                     </div>
                     <div class="video-body">
                         <h3>${data.titulo}</h3>
@@ -207,9 +276,72 @@
                     </div>
                 </div>
             `;
+            index++;
+        });
+
+        // 3. Una vez que los videos están en la página, activamos los clics
+        activarReproductorInvisible();
+    }
+
+    // 4. NUEVA FUNCIÓN: Lógica para Reproducir/Pausar al hacer clic
+    function activarReproductorInvisible() {
+        const videos = document.querySelectorAll('video');
+
+        videos.forEach((video, index) => {
+            const playBtn = document.getElementById(btn-play-${index});
+            const backBtn = document.getElementById(btn-back-${index});
+            const controlsGroup = document.getElementById(controls-group-${index});
+
+            // Función para alternar Play/Pausa y cambiar íconos/estilos
+            const togglePlay = () => {
+                if (video.paused) {
+                    video.play().then(() => {
+                        playBtn.innerHTML = "⏸️"; // Ícono de pausa
+                        playBtn.classList.add('is-pausing'); // Quitar padding extra
+                        controlsGroup.classList.add('playing'); // Ocultar grupo entero
+                    }).catch(e => console.error("Error al reproducir:", e));
+                } else {
+                    video.pause();
+                    playBtn.innerHTML = "▶️"; // Ícono de play
+                    playBtn.classList.remove('is-pausing'); // Volver a poner padding extra
+                    controlsGroup.classList.remove('playing'); // Mostrar grupo entero
+                }
+            };
+
+            // Lógica del botón de retroceso (↺)
+            const rewind10Seconds = (e) => {
+                // Detenemos la propagación para que el clic NO active togglePlay del video contenedor
+                e.stopPropagation(); 
+                
+                // Restamos 10 segundos al tiempo actual.
+                // Math.max(0, ...) asegura que nunca bajemos de 0 (el inicio).
+                video.currentTime = Math.max(0, video.currentTime - 10);
+            };
+
+            // --- ASIGNAR EVENTOS DE CLIC ---
+            
+            // Clic en el video físico: Reproduce/Pausa
+            video.addEventListener('click', togglePlay);
+            
+            // Clic en el botón Play/Pausa
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Evitar clic doble con el video debajo
+                togglePlay();
+            });
+
+            // Clic en el nuevo botón de Retroceder (↺)
+            backBtn.addEventListener('click', rewind10Seconds);
+
+            // Sincronizar UI si el video termina (vuelve a aparecer el grupo con ícono Play)
+            video.addEventListener('ended', () => {
+                playBtn.innerHTML = "▶️";
+                playBtn.classList.remove('is-pausing');
+                controlsGroup.classList.remove('playing');
+            });
         });
     }
 
+    // 5. El botón de finalizar sesión se mantiene igual
     btnFinish.onclick = () => {
         let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
         if (sesionId > progress) {
