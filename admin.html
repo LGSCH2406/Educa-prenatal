@@ -335,12 +335,12 @@
             document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             
-            document.getElementById(section-${id}).classList.add('active');
-            document.getElementById(nav-${id}).classList.add('active');
+            document.getElementById(`section-${id}`).classList.add('active');
+            document.getElementById(`nav-${id}`).classList.add('active');
 
             if(id === 'manage') {
                 document.getElementById("filterSession").value = "";
-                document.getElementById("videoTableBody").innerHTML = <tr><td colspan="3" class="text-center py-5 text-muted italic">Por favor, selecciona una sesión arriba para ver los videos.</td></tr>;
+                document.getElementById("videoTableBody").innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted italic">Por favor, selecciona una sesión arriba para ver los videos.</td></tr>`;
             }
             if(id === 'users') { loadUsers(); }
         };
@@ -374,7 +374,7 @@
 
         async function loadUsers(searchTerm = '') {
             const tableBody = document.getElementById("usersTableBody");
-            tableBody.innerHTML = <tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-danger" role="status"></div><div class="mt-2 text-muted small">Cargando usuarias...</div></td></tr>;
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-danger" role="status"></div><div class="mt-2 text-muted small">Cargando usuarias...</div></td></tr>`;
             try {
                 const usersSnap = await getDocs(collection(db, "users"));
                 tableBody.innerHTML = ""; let encontrados = 0;
@@ -383,18 +383,18 @@
                     if(searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase()) && !email.toLowerCase().includes(searchTerm.toLowerCase())) return;
                     encontrados++;
                     const tr = document.createElement("tr");
-                    tr.innerHTML = <td><div><strong>${name}</strong><br><small class="text-muted">${data.uid?.substring(0,8)}...</small></div></td><td>${email}</td><td><span class="badge bg-light text-dark">${data.week || 'N/A'} sem</span></td><td><span class="status-${data.active ? 'active' : 'inactive'}">${data.active ? '🟢 Activa' : '🔴 Inactiva'}</span></td><td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString('es-ES') : 'N/A'}</td><td class="text-center"><button class="btn-edit" onclick="toggleUserStatus('${userDoc.id}', ${data.active})">${data.active ? 'Inactivar' : 'Activar'}</button><button class="btn-delete" onclick="deleteUser('${userDoc.id}', '${data.uid}')">Eliminar</button></td>;
+                    tr.innerHTML = `<td><div><strong>${name}</strong><br><small class="text-muted">${data.uid?.substring(0,8)}...</small></div></td><td>${email}</td><td><span class="badge bg-light text-dark">${data.week || 'N/A'} sem</span></td><td><span class="status-${data.active ? 'active' : 'inactive'}">${data.active ? '🟢 Activa' : '🔴 Inactiva'}</span></td><td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString('es-ES') : 'N/A'}</td><td class="text-center"><button class="btn-edit" onclick="toggleUserStatus('${userDoc.id}', ${data.active})">${data.active ? 'Inactivar' : 'Activar'}</button><button class="btn-delete" onclick="deleteUser('${userDoc.id}', '${data.uid}')">Eliminar</button></td>`;
                     tableBody.appendChild(tr);
                 });
-                if(encontrados === 0) tableBody.innerHTML = <tr><td colspan="6" class="text-center py-5 text-muted">${searchTerm ? 'No se encontraron usuarias con ese criterio.' : 'No hay usuarias registradas.'}</td></tr>;
+                if(encontrados === 0) tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">${searchTerm ? 'No se encontraron usuarias con ese criterio.' : 'No hay usuarias registradas.'}</td></tr>`;
             } catch (e) { tableBody.innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Error de conexión con Firebase.</td></tr>"; }
         }
 
         window.toggleUserStatus = async (userId, currentStatus) => {
             const newStatus = !currentStatus; const statusText = newStatus ? 'activar' : 'inactivar';
-            const res = await Swal.fire({ title: ¿${statusText.charAt(0).toUpperCase() + statusText.slice(1)} usuaria?, text: La usuaria quedará ${newStatus ? 'activa' : 'inactiva'}., icon: 'warning', showCancelButton: true, confirmButtonColor: '#d81b60', confirmButtonText: Sí, ${statusText}, cancelButtonText: 'Cancelar' });
+            const res = await Swal.fire({ title: `¿${statusText.charAt(0).toUpperCase() + statusText.slice(1)} usuaria?`, text: `La usuaria quedará ${newStatus ? 'activa' : 'inactiva'}.`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d81b60', confirmButtonText: `Sí, ${statusText}`, cancelButtonText: 'Cancelar' });
             if (res.isConfirmed) {
-                try { await deleteDoc(doc(db, "users", userId)); Swal.fire('¡Actualizado!', Usuaria ${statusText}da correctamente, 'success'); loadUsers(); } 
+                try { await deleteDoc(doc(db, "users", userId)); Swal.fire('¡Actualizado!', `Usuaria ${statusText}da correctamente`, 'success'); loadUsers(); } 
                 catch (error) { Swal.fire('Error', 'No se pudo actualizar el estado.', 'error'); }
             }
         };
@@ -415,7 +415,7 @@
         async function loadFilteredVideos() {
             const tableBody = document.getElementById("videoTableBody");
             const val = filterSelect.value;
-            tableBody.innerHTML = <tr><td colspan="3" class="text-center py-5"><div class="spinner-border text-danger" role="status"></div><div class="mt-2 text-muted small">Cargando datos de la Sesión ${val}...</div></td></tr>;
+            tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-5"><div class="spinner-border text-danger" role="status"></div><div class="mt-2 text-muted small">Cargando datos de la Sesión ${val}...</div></td></tr>`;
             try {
                 const snap = await getDocs(collection(db, "videos"));
                 tableBody.innerHTML = ""; let encontrados = 0;
@@ -426,7 +426,7 @@
                         const tr = document.createElement("tr");
                         tr.innerHTML = `
                             <td><span class="fw-bold text-dark">${data.titulo}</span></td>
-                            <td><a href="${data.videoUrl}" target="_blank" style="color: var(--fucsia); text-decoration: none;">Ver Video Subido ↗️</a></td>
+                            <td><a href="${data.videoUrl}" target="_blank" style="color: var(--fucsia); text-decoration: none;">Ver Video Subido ↗</a></td>
                             <td class="text-center">
                                 <button class="btn-delete" onclick="deleteVideo('${videoDoc.id}')">Eliminar</button>
                             </td>
@@ -434,7 +434,7 @@
                         tableBody.appendChild(tr);
                     }
                 });
-                if(encontrados === 0) tableBody.innerHTML = <tr><td colspan="3" class="text-center py-5 text-muted">No hay videos en la sesión ${val}.</td></tr>;
+                if(encontrados === 0) tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted">No hay videos en la sesión ${val}.</td></tr>`;
             } catch (e) { tableBody.innerHTML = "<tr><td colspan='3' class='text-center text-danger'>Error de conexión con Firebase.</td></tr>"; }
         }
 
@@ -459,7 +459,7 @@
             }
 
             btn.disabled = true;
-            btn.innerHTML = <span class="spinner-border spinner-border-sm me-2"></span> Subiendo video... (No cierres la página);
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Subiendo video... (No cierres la página)`;
 
             try {
                 // 1. Enviar el archivo a Cloudinary
@@ -467,7 +467,7 @@
                 formData.append('file', archivo);
                 formData.append('upload_preset', UPLOAD_PRESET); 
 
-                const resCloudinary = await fetch(https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload, {
+                const resCloudinary = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
                     method: 'POST',
                     body: formData
                 });
