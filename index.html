@@ -6,6 +6,7 @@
     <title>Educa-prenatal | Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         body {
@@ -88,7 +89,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
@@ -96,19 +98,19 @@
             projectId: "educa-prenatal",
             storageBucket: "educa-prenatal.firebasestorage.app",
             messagingSenderId: "474992751698",
-            appId: "1:474992751698:web:f313f8fdef5ff266a45b8b",
+            appId: "1:474992751698:web:f313f8fdef5ff266a45b8b8", 
             measurementId: "G-CLSR2LDM41"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         const passwordInput = document.getElementById('password');
         const usuarioInput = document.getElementById('usuario');
         const togglePassword = document.getElementById('togglePassword');
         const btn = document.getElementById("btn");
 
-        // Función de Login centralizada
         const iniciarSesion = async () => {
             const email = usuarioInput.value.trim();
             const pass = passwordInput.value;
@@ -117,29 +119,67 @@
             if(!email || !pass) return;
 
             btn.disabled = true;
-            btn.innerText = "Cargando...";
+            btn.innerText = "Validando...";
+            errorDiv.innerText = "";
 
             try {
+                // 1. Intentar entrar a Auth
                 const userCredential = await signInWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
                 const emailLogueado = user.email.toLowerCase();
 
+                // 2. Si es Admin, entra directo
                 if (emailLogueado === "gus24060102@gmail.com") {
                     window.location.href = "admin.html";
-                } else {
-                    window.location.href = "bienvenido.html";
+                    return;
                 }
+
+                // 3. Verificamos ESTADO en Firestore usando el UID
+                const q = query(collection(db, "users"), where("uid", "==", user.uid));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const userData = querySnapshot.docs[0].data();
+                    
+                    // Si active es explícitamente false
+                    if (userData.active === false) {
+                        await signOut(auth); // Cerramos la sesión que Auth acaba de abrir
+                        
+                        btn.disabled = false;
+                        btn.innerText = "Ingresar";
+                        
+                        return Swal.fire({
+                            icon: 'error',
+                            title: 'Cuenta Inhabilitada',
+                            text: 'Tu acceso ha sido restringido por el administrador.',
+                            confirmButtonColor: '#6d0f1f'
+                        });
+                    }
+                } else {
+                    // Si no encontramos el documento por UID, probamos por EMAIL (doble verificación)
+                    const q2 = query(collection(db, "users"), where("email", "==", emailLogueado));
+                    const snap2 = await getDocs(q2);
+                    if (!snap2.empty && snap2.docs[0].data().active === false) {
+                        await signOut(auth);
+                        btn.disabled = false;
+                        btn.innerText = "Ingresar";
+                        return Swal.fire({ icon: 'error', title: 'Cuenta Inhabilitada', confirmButtonColor: '#6d0f1f' });
+                    }
+                }
+
+                // 4. Si todo está bien, entra
+                window.location.href = "bienvenido.html";
+
             } catch (error) {
+                console.error("Error:", error);
                 errorDiv.innerText = "Correo o contraseña incorrectos.";
                 btn.disabled = false;
                 btn.innerText = "Ingresar";
             }
         };
 
-        // Escuchar click en el botón
         btn.addEventListener("click", iniciarSesion);
 
-        // ESCUCHAR TECLA ENTER EN LOS INPUTS
         const manejarEnter = (event) => {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -150,7 +190,6 @@
         usuarioInput.addEventListener("keypress", manejarEnter);
         passwordInput.addEventListener("keypress", manejarEnter);
 
-        // Lógica del ojito
         togglePassword.addEventListener('click', function () {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
