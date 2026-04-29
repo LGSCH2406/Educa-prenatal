@@ -313,6 +313,49 @@
                 padding: 1.5rem;
             }
         }
+
+        /* --- ESTILOS PARA MONITOREO (AGREGADO AQUI SIN BORRAR NADA) --- */
+        .stat-card {
+            background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%); color: white; border-radius: 15px; padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(216, 27, 96, 0.2); transition: transform 0.3s ease; position: relative; overflow: hidden;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card h3 { font-size: 3rem; font-weight: 700; margin-bottom: 0; }
+        .stat-card p { opacity: 0.9; margin-bottom: 0; font-size: 1.1rem; font-weight: 600; }
+        .stat-icon { font-size: 4rem; position: absolute; right: 10px; bottom: -10px; opacity: 0.2; }
+        .stat-card-green { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); box-shadow: 0 10px 20px rgba(76, 175, 80, 0.2); }
+        .stat-card-blue { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); box-shadow: 0 10px 20px rgba(33, 150, 243, 0.2); }
+
+        .monitor-user-card {
+            background: white; border: 1px solid rgba(216, 27, 96, 0.1); border-radius: 12px; margin-bottom: 12px; overflow: hidden; transition: all 0.3s ease;
+        }
+        .monitor-user-header {
+            padding: 16px 20px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; color: var(--fucsia-dark);
+        }
+        .monitor-user-header:hover { background: var(--fucsia-light); }
+        .monitor-user-body {
+            display: none; padding: 20px 25px; background: white; border-top: 1px solid rgba(216, 27, 96, 0.1);
+        }
+        .monitor-user-body.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        .session-row {
+            display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #eee;
+        }
+        .session-row:last-child { border-bottom: none; }
+        .session-name { width: 100px; font-weight: 600; color: #555; }
+        
+        .session-dots {
+            flex: 1; display: flex; gap: 8px; padding: 0 15px; flex-wrap: wrap;
+        }
+        .dot {
+            width: 14px; height: 14px; border-radius: 50%; background-color: #e0e0e0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .dot.watched {
+            background-color: var(--fucsia); box-shadow: 0 0 8px rgba(216, 27, 96, 0.4);
+        }
+        .session-progress-text {
+            width: 60px; text-align: right; font-size: 0.9rem; font-weight: 600; color: var(--fucsia);
+        }
     </style>
 </head>
 
@@ -333,7 +376,7 @@
             <div class="nav-item" id="nav-users" onclick="showSection('users')">
                 <i class="me-2">👥</i> <span>Gestión de Usuarios</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" id="nav-monitor" onclick="showSection('monitor')">
                 <i class="me-2">📊</i> <span>Monitoreo</span>
             </div>
         </nav>
@@ -517,6 +560,45 @@
             </div>
         </section>
 
+        <section id="section-monitor" class="section-panel">
+            <header class="mb-4">
+                <h1 class="display-6 fw-bold">Monitoreo de Plataforma</h1>
+                <p class="text-muted">Visualiza el progreso detallado de cada usuaria en las 8 sesiones.</p>
+            </header>
+
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card">
+                        <i class="stat-icon">👩‍👧</i>
+                        <p>Total Usuarias Registradas</p>
+                        <h3 id="stat-total-users">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card stat-card-green">
+                        <i class="stat-icon">✨</i>
+                        <p>Usuarias Activas Hoy</p>
+                        <h3 id="stat-active-users">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card stat-card-blue">
+                        <i class="stat-icon">🎬</i>
+                        <p>Total Videos Publicados</p>
+                        <h3 id="stat-total-videos">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card mx-auto">
+                <h5 class="fw-bold mb-4">📊 Progreso por Usuaria</h5>
+                <p class="text-muted small mb-4">Haz clic en una usuaria para desplegar sus 8 sesiones. Cada bolita representa un video subido.</p>
+                
+                <div id="monitor-users-container">
+                    </div>
+            </div>
+        </section>
+
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -587,6 +669,9 @@
                 document.getElementById("videoTableBody").innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted italic">Selecciona una sesión para ver los videos.</td></tr>`;
             }
             if (id === 'users') { loadUsers(); }
+            
+            // 🌟 AGREGADO AQUI: Al hacer click en Monitoreo, carga los datos.
+            if (id === 'monitor') { loadStats(); }
         };
 
         // --- GESTIÓN DE USUARIAS ---
@@ -876,6 +961,93 @@
                 btn.textContent = "🚀 Subir Video y Publicar Ahora";
             }
         };
+
+        // 🌟 LÓGICA DE MONITOREO (AGREGADA AQUI SIN BORRAR NADA) 🌟
+        async function loadStats() {
+            try {
+                const videoCounts = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0};
+                const videosSnap = await getDocs(collection(db, "videos"));
+                
+                videosSnap.forEach(doc => {
+                    let s = parseInt(doc.data().sesion);
+                    if(s >= 1 && s <= 8) videoCounts[s]++;
+                });
+
+                document.getElementById('stat-total-videos').innerText = videosSnap.size;
+
+                const usersSnap = await getDocs(collection(db, "users"));
+                let totalUsers = 0;
+                let activeUsers = 0;
+                let htmlContent = "";
+
+                usersSnap.forEach(userDoc => {
+                    const u = userDoc.data();
+                    totalUsers++;
+                    
+                    // Aseguramos que si no existe u.active se cuenta como true
+                    if (u.active !== false) activeUsers++; 
+                    
+                    let userProgress = u.progress || {}; 
+                    let rowsHtml = "";
+                    
+                    for(let i=1; i<=8; i++) {
+                        let totalVids = videoCounts[i];
+                        let watchedVids = userProgress[i] || 0; 
+                        
+                        let dotsHtml = "";
+                        if (totalVids === 0) {
+                            dotsHtml = `<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">Sin videos aún</span>`;
+                        } else {
+                            for(let v=1; v<=totalVids; v++) {
+                                if(v <= watchedVids) {
+                                    dotsHtml += `<div class="dot watched" title="Video Visto"></div>`;
+                                } else {
+                                    dotsHtml += `<div class="dot" title="Video Pendiente"></div>`;
+                                }
+                            }
+                        }
+                        
+                        let pct = totalVids > 0 ? Math.round((watchedVids / totalVids) * 100) : 0;
+                        
+                        rowsHtml += `
+                            <div class="session-row">
+                                <div class="session-name">Sesión ${i}</div>
+                                <div class="session-dots">${dotsHtml}</div>
+                                <div class="session-progress-text">${pct}%</div>
+                            </div>
+                        `;
+                    }
+
+                    htmlContent += `
+                        <div class="monitor-user-card">
+                            <div class="monitor-user-header" onclick="document.getElementById('user-body-${userDoc.id}').classList.toggle('active')">
+                                <span>👩‍🦰 <strong>${u.name || 'Sin nombre'}</strong> <span class="text-muted fw-normal ms-2">(${u.email})</span></span>
+                                <span style="color: #ccc; font-size: 0.8rem;">▼ VER DETALLE</span>
+                            </div>
+                            <div class="monitor-user-body" id="user-body-${userDoc.id}">
+                                <p class="mb-3" style="font-size: 0.85rem; color: #888;">
+                                    Semana de gestación registrada: <strong class="text-dark">${u.week || '?'} semanas</strong>
+                                </p>
+                                ${rowsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('stat-total-users').innerText = totalUsers;
+                document.getElementById('stat-active-users').innerText = activeUsers;
+                
+                if (totalUsers === 0) {
+                    htmlContent = `<div class="text-center py-4 text-muted">No hay usuarias registradas en la base de datos.</div>`;
+                }
+                
+                document.getElementById('monitor-users-container').innerHTML = htmlContent;
+
+            } catch (error) {
+                console.error("Error cargando monitoreo:", error);
+                Swal.fire('Error', 'No se pudieron cargar las estadísticas.', 'error');
+            }
+        }
     </script>
 </body>
 
