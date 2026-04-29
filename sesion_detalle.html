@@ -183,7 +183,6 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    // 🌟 SE AÑADIÓ: getAuth y updateDoc para guardar el progreso en Firebase
     import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -222,8 +221,12 @@
         }
     });
 
-    let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
-    if (sesionId <= progress) {
+    // 🌟 CORRECCIÓN 1 AQUÍ: Cambio de "<=" a "<"
+    // El nivel por defecto es 1 (porque la sesión 1 siempre está libre).
+    let progress = parseInt(localStorage.getItem('prenatal_progress')) || 1; 
+    
+    // Solo si el progreso guardado es MAYOR a la sesión actual (ej: progreso 2, sesión 1), auto-desbloqueamos.
+    if (sesionId < progress) {
         btnFinish.disabled = false;
         btnFinish.classList.add("btn-active");
         btnFinish.innerHTML = "✨ ¡Completar Sesión!";
@@ -233,7 +236,7 @@
         const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
         const snap = await getDocs(q);
 
-        // 🌟 CORRECCIÓN 1: Si no hay videos, se desbloquea el botón automáticamente para no trabar a la usuaria
+        // Si no hay videos, se desbloquea el botón automáticamente
         if (snap.empty) {
             videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
                 <h3 style="color:var(--fucsia)">Próximamente</h3>
@@ -398,22 +401,20 @@
         });
     }
 
-    // 🌟 CORRECCIÓN 2: Lógica de desbloqueo asegurada para no quedarse atascado en el mismo número
+    // 🌟 CORRECCIÓN 2 AQUÍ: Lógica sólida para subir de nivel
     btnFinish.addEventListener('click', (e) => {
         e.preventDefault();
 
-        // 1. Vemos cuánto progreso tenía guardado la alumna (por defecto 0)
-        let progresoActual = parseInt(localStorage.getItem('prenatal_progress')) || 0;
+        // Leemos el progreso actual. El valor más bajo posible es 1.
+        let progresoActual = parseInt(localStorage.getItem('prenatal_progress')) || 1;
         
-        // 2. Queremos desbloquear la SIGUIENTE sesión. Si acaba de terminar la 1, necesitamos que el progreso suba a 2.
-        let siguienteSesion = sesionId + 1;
-        
-        // 3. Solo actualizamos si la siguiente sesión es un nivel mayor al que ya tenía
-        if (siguienteSesion > progresoActual) {
-            localStorage.setItem('prenatal_progress', siguienteSesion);
+        // Si la sesión en la que estoy es IGUAL O MAYOR al nivel máximo que había alcanzado,
+        // significa que acabo de superar mi propio récord. Debo desbloquear la siguiente.
+        if (sesionId >= progresoActual) {
+            localStorage.setItem('prenatal_progress', sesionId + 1);
         }
         
-        // 4. Redireccionamos con un pequeño retraso para asegurar que se guardó en memoria
+        // Redireccionamos con un pequeño retraso para asegurar el guardado
         setTimeout(() => {
             window.location.href = "bienvenido.html";
         }, 100);
