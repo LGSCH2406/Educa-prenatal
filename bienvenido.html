@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,51 +15,116 @@
             --text-dark: #333;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        
-        body { 
-            background: var(--primary); 
-            min-height: 100vh; 
-            padding: 40px 20px; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--primary);
+            min-height: 100vh;
+            padding: 40px 20px;
             color: white;
             overflow-x: hidden;
             position: relative;
         }
 
         /* Fondo Animado */
-        .circle { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.05); z-index: 1; pointer-events: none; }
-        .c1 { width: 500px; height: 500px; top: -150px; left: -100px; animation: move 20s infinite alternate; }
-        .c2 { width: 300px; height: 300px; bottom: -50px; right: -50px; animation: move 15s infinite alternate-reverse; }
-        @keyframes move { to { transform: translate(60px, 100px); } }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 1;
+            pointer-events: none;
+        }
 
-        .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
+        .c1 {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            left: -100px;
+            animation: move 20s infinite alternate;
+        }
+
+        .c2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            right: -50px;
+            animation: move 15s infinite alternate-reverse;
+        }
+
+        @keyframes move {
+            to {
+                transform: translate(60px, 100px);
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
 
         /* Barra superior */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
-        .header h1 { font-size: 36px; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .header p { opacity: 0.8; font-weight: 300; }
-
-        .logout-btn { 
-            background: var(--white-glow); color: white; padding: 12px 25px; 
-            border-radius: 15px; text-decoration: none; font-weight: 600; 
-            backdrop-filter: blur(10px); transition: 0.3s; border: 1px solid rgba(255,255,255,0.3);
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
         }
-        .logout-btn:hover { background: white; color: var(--primary); }
+
+        .header h1 {
+            font-size: 36px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        .logout-btn {
+            background: var(--white-glow);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: var(--primary);
+        }
 
         /* Panel de Sesiones */
         .sessions-panel {
             background: white;
             border-radius: 30px;
             padding: 50px 40px;
-            box-shadow: 0 0 0 10px var(--white-glow), 0 25px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 0 0 10px var(--white-glow), 0 25px 60px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.8s ease-out;
             position: relative;
             z-index: 20;
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .panel-title {
@@ -70,7 +136,13 @@
         }
 
         .panel-title::after {
-            content: ''; display: block; width: 60px; height: 4px; background: var(--accent); margin: 10px auto 0; border-radius: 2px;
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            margin: 10px auto 0;
+            border-radius: 2px;
         }
 
         .sessions-grid {
@@ -108,19 +180,52 @@
             border: 2px dashed #ddd;
         }
 
-        .lock-icon { font-size: 35px; margin-bottom: 10px; display: none; color: #bbb;}
-        .session-card.locked .lock-icon { display: block; }
-        .session-card.locked .session-status { font-size: 12px; text-transform: uppercase; margin-top: 10px; color: #999;}
+        .lock-icon {
+            font-size: 35px;
+            margin-bottom: 10px;
+            display: none;
+            color: #bbb;
+        }
 
-        .session-number { font-size: 14px; font-weight: 600; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px;}
-        .session-title { font-size: 28px; font-weight: 600; margin: 5px 0; }
+        .session-card.locked .lock-icon {
+            display: block;
+        }
+
+        .session-card.locked .session-status {
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            color: #999;
+        }
+
+        .session-number {
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .session-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 5px 0;
+        }
 
         @media (max-width: 850px) {
-            .sessions-panel { padding: 30px 20px; border-radius: 20px; }
-            .sessions-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+            .sessions-panel {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+
+            .sessions-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 15px;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="circle c1"></div>
@@ -138,13 +243,14 @@
         <div class="sessions-panel">
             <h2 class="panel-title">Tu Programa Prenatal Digital</h2>
             <div class="sessions-grid" id="sessionsGrid">
-                </div>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
@@ -152,47 +258,56 @@
             projectId: "educa-prenatal",
             storageBucket: "educa-prenatal.firebasestorage.app",
             messagingSenderId: "474992751698",
-            appId: "1:474992751698:web:f313f8fdef5ff266a45b8b"
+            appId: "1:474992751698:web:f313f8def5ff266a45b8b"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        // Progreso local: cuántas sesiones ha completado el usuario
-        let completedSessions = parseInt(localStorage.getItem('prenatal_progress')) || 0;
         const sessionsGrid = document.getElementById("sessionsGrid");
 
-        // Función única para navegar al detalle de la sesión
-        function loadVideos(sessionNum) {
-            window.location.href = `sesion_detalle.html?id=${sessionNum}`;
-        }
+        // REEMPLAZA tu lógica de carga de progreso por esta:
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Obtenemos el progreso real de este usuario desde Firestore
+                const userDocRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userDocRef);
 
-        function renderDashboard() {
+                let completedSessions = 0;
+                if (userSnap.exists()) {
+                    completedSessions = userSnap.data().progress || 0;
+                }
+
+                // Llamas a tu función de renderizado pasando el progreso real
+                renderDashboard(completedSessions);
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+        function renderDashboard(completedSessions) {
             sessionsGrid.innerHTML = "";
             document.getElementById("userMsg").innerText = `Has completado ${completedSessions} de 8 sesiones.`;
 
             for (let i = 1; i <= 8; i++) {
-                // Se desbloquea la siguiente sesión a la completada (i <= completedSessions + 1)
                 const isLocked = i > (completedSessions + 1);
                 const card = document.createElement("div");
                 card.className = `session-card ${isLocked ? 'locked' : ''}`;
-                
                 card.innerHTML = `
-                    <div class="lock-icon">🔒</div>
-                    <div class="session-number">Módulo</div>
-                    <div class="session-title">Sesión ${i}</div>
-                    <div class="session-status">${isLocked ? 'Bloqueado' : '¡Listo para ver!'}</div>
-                `;
+                <div class="lock-icon">${isLocked ? '🔒' : '🔓'}</div>
+                <div class="session-number">Módulo</div>
+                <div class="session-title">Sesión ${i}</div>
+                <div class="session-status">${isLocked ? 'Bloqueado' : '¡Listo para ver!'}</div>
+            `;
 
                 if (!isLocked) {
-                    card.onclick = () => loadVideos(i);
+                    // ASEGÚRATE QUE EL NOMBRE DEL ARCHIVO AQUÍ SEA IGUAL AL DE TU CARPETA
+                    card.onclick = () => window.location.href = `sesion_detalle.html?id=${i}`;
                 }
                 sessionsGrid.appendChild(card);
             }
         }
-
-        // Ejecutar al cargar la página
-        renderDashboard();
     </script>
 </body>
+
 </html>
