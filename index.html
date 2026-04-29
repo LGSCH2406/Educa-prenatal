@@ -40,14 +40,11 @@
         
         .input-group { position: relative; margin-bottom: 20px; display: flex; align-items: center; }
         input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #ddd; font-size: 15px; outline: none; }
-        
-        /* Ajuste para que el texto no choque con el ojo */
         #password { padding-right: 45px; }
 
         label { position: absolute; top: 14px; left: 14px; color: #888; transition: .3s; pointer-events: none; }
         input:focus + label, input:valid + label { top: -8px; font-size: 11px; background: white; padding: 0 5px; color: #6d0f1f; }
         
-        /* Estilo del icono del ojito */
         #togglePassword {
             position: absolute;
             right: 15px;
@@ -74,18 +71,21 @@
         <div class="title">Bienvenida</div>
         <div class="subtitle">Accede a tu plataforma de educación prenatal</div>
         
-        <div class="input-group">
-            <input type="email" id="usuario" required>
-            <label>Correo electrónico</label>
-        </div>
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="email" id="usuario" required>
+                <label>Correo electrónico</label>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="password" required>
+                <label>Contraseña</label>
+                <i class="bi bi-eye-slash" id="togglePassword"></i>
+            </div>
+            
+            <button type="submit" id="btn">Ingresar</button>
+        </form>
         
-        <div class="input-group">
-            <input type="password" id="password" required>
-            <label>Contraseña</label>
-            <i class="bi bi-eye-slash" id="togglePassword"></i>
-        </div>
-        
-        <button id="btn">Ingresar</button>
         <div class="error" id="error"></div>
     </div>
 
@@ -106,7 +106,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Lógica para mostrar/ocultar contraseña
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#password');
 
@@ -117,11 +116,18 @@
             this.classList.toggle('bi-eye-slash');
         });
 
-        // Lógica de Inicio de Sesión
-        document.getElementById("btn").addEventListener("click", async () => {
+        // NUEVA LÓGICA DE SUBMIT (Captura el Enter automáticamente)
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault(); // Evita que la página se recargue
+            
             const email = document.getElementById("usuario").value.trim();
             const pass = document.getElementById("password").value;
             const errorDiv = document.getElementById("error");
+            const btn = document.getElementById("btn");
+
+            // Bloqueamos el botón mientras carga
+            btn.disabled = true;
+            btn.innerText = "Cargando...";
 
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, pass);
@@ -135,6 +141,8 @@
                 }
             } catch (error) {
                 errorDiv.innerText = "Correo o contraseña incorrectos.";
+                btn.disabled = false;
+                btn.innerText = "Ingresar";
             }
         });
     </script>
