@@ -176,7 +176,7 @@
 
     <div class="footer-cta">
         <button id="btnFinish" class="btn-finish" disabled>
-            🔒 Termina de ver el video para avanzar
+            🔒 Termina de ver los videos para avanzar
         </button>
     </div>
 </div>
@@ -221,11 +221,8 @@
         }
     });
 
-    // 🌟 CORRECCIÓN 1 AQUÍ: Cambio de "<=" a "<"
-    // El nivel por defecto es 1 (porque la sesión 1 siempre está libre).
     let progress = parseInt(localStorage.getItem('prenatal_progress')) || 1; 
     
-    // Solo si el progreso guardado es MAYOR a la sesión actual (ej: progreso 2, sesión 1), auto-desbloqueamos.
     if (sesionId < progress) {
         btnFinish.disabled = false;
         btnFinish.classList.add("btn-active");
@@ -236,7 +233,6 @@
         const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
         const snap = await getDocs(q);
 
-        // Si no hay videos, se desbloquea el botón automáticamente
         if (snap.empty) {
             videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
                 <h3 style="color:var(--fucsia)">Próximamente</h3>
@@ -297,8 +293,8 @@
 
     function activarReproductorInvisible() {
         const videos = document.querySelectorAll('video');
+        const totalVideosEnSesion = videos.length; // 🌟 NUEVO: Sabemos cuántos videos hay en total
         
-        // Control de cuántos videos distintos ha completado hoy
         const videosVistos = new Set(); 
 
         videos.forEach((video, index) => {
@@ -371,14 +367,24 @@
                 controlsGroup.classList.remove('playing');
                 if (document.fullscreenElement) document.exitFullscreen();
 
-                btnFinish.disabled = false;
-                btnFinish.classList.add("btn-active");
-                btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+                // 🌟 LÓGICA MODIFICADA: Verificamos si este video es nuevo para el contador
+                const esVideoNuevoParaContador = !videosVistos.has(index);
+                
+                // Registramos que ya vio ESTE video específico
+                videosVistos.add(index);
 
-                // Enviamos el progreso a Firestore para el Admin
-                if (!videosVistos.has(index) && currentUserDocId) {
-                    videosVistos.add(index); 
-                    
+                // 🌟 SOLO SI YA VIO TODOS LOS VIDEOS DE LA PÁGINA, SE ACTIVA EL BOTÓN
+                if (videosVistos.size === totalVideosEnSesion) {
+                    btnFinish.disabled = false;
+                    btnFinish.classList.add("btn-active");
+                    btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+                } else {
+                    // Si le faltan videos, le avisamos sutilmente en el botón
+                    btnFinish.innerHTML = `🔒 Visto ${videosVistos.size} de ${totalVideosEnSesion} videos...`;
+                }
+
+                // Enviamos el progreso a Firestore para que el Admin vea las "bolitas" actualizarse una a una
+                if (esVideoNuevoParaContador && currentUserDocId) {
                     let userProgress = currentUserData.progress || {};
                     let vidsVistosBaseDeDatos = userProgress[sesionId] || 0;
                     
@@ -401,20 +407,15 @@
         });
     }
 
-    // 🌟 CORRECCIÓN 2 AQUÍ: Lógica sólida para subir de nivel
     btnFinish.addEventListener('click', (e) => {
         e.preventDefault();
 
-        // Leemos el progreso actual. El valor más bajo posible es 1.
         let progresoActual = parseInt(localStorage.getItem('prenatal_progress')) || 1;
         
-        // Si la sesión en la que estoy es IGUAL O MAYOR al nivel máximo que había alcanzado,
-        // significa que acabo de superar mi propio récord. Debo desbloquear la siguiente.
         if (sesionId >= progresoActual) {
             localStorage.setItem('prenatal_progress', sesionId + 1);
         }
         
-        // Redireccionamos con un pequeño retraso para asegurar el guardado
         setTimeout(() => {
             window.location.href = "bienvenido.html";
         }, 100);
