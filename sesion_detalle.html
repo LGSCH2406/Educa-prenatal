@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sesión Detalle | Educa-prenatal</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --fucsia: #d81b60; 
+        :root {
+            --fucsia: #d81b60;
             --fucsia-dark: #ad1457;
             --fucsia-light: #f06292;
             --white: #ffffff;
             --bg-soft: #fff5f8;
         }
 
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background: var(--bg-soft); 
-            margin: 0; 
-            padding: 0; 
-            color: #444; 
-            background-image: 
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-soft);
+            margin: 0;
+            padding: 0;
+            color: #444;
+            background-image:
                 radial-gradient(circle at 0% 0%, rgba(216, 27, 96, 0.08) 0%, transparent 35%),
                 radial-gradient(circle at 100% 100%, rgba(216, 27, 96, 0.05) 0%, transparent 35%);
         }
@@ -35,203 +36,352 @@
             z-index: 1;
         }
 
-        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
-
-        .nav-top { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-start;
-            margin-bottom: 10px; 
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        .logo-img { 
-            height: 180px; 
+        .nav-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .logo-img {
+            height: 180px;
             width: auto;
-            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3)); 
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
             transition: transform 0.3s ease;
             margin-top: -20px;
         }
-        
-        .back-link { 
-            color: white; 
-            text-decoration: none; 
-            font-weight: 600; 
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
             font-size: 15px;
-            background: rgba(255,255,255,0.2); 
-            padding: 12px 24px; 
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
             border-radius: 15px;
-            backdrop-filter: blur(8px); 
+            backdrop-filter: blur(8px);
             transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .session-info { margin-top: -30px; }
-        .session-info h1 { font-size: 48px; margin: 0; font-weight: 600; letter-spacing: -1.5px; }
+        .session-info {
+            margin-top: -30px;
+        }
 
-        .main-content { transform: translateY(-60px); z-index: 10; position: relative; }
+        .session-info h1 {
+            font-size: 48px;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: -1.5px;
+        }
 
-        .video-wrapper { 
-            background: var(--white); 
-            border-radius: 40px; 
-            overflow: hidden; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12); 
+        .main-content {
+            transform: translateY(-60px);
+            z-index: 10;
+            position: relative;
+        }
+
+        .video-wrapper {
+            background: var(--white);
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
             border: 2px solid var(--white);
             margin-bottom: 30px;
         }
 
         /* --- REPRODUCTOR --- */
-        .video-player-box { 
-            position: relative; 
-            padding-bottom: 56.25%; 
-            height: 0; 
-            overflow: hidden; 
-            background: #000; 
+        .video-player-box {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
         }
 
-        .video-player-box video { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; 
+        .video-player-box video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
         }
 
-        .video-body { padding: 45px; text-align: center; }
-        .video-body h3 { font-size: 32px; color: var(--fucsia-dark); margin-bottom: 15px; }
-        
+        .video-body {
+            padding: 45px;
+            text-align: center;
+        }
+
+        .video-body h3 {
+            font-size: 32px;
+            color: var(--fucsia-dark);
+            margin-bottom: 15px;
+        }
+
         /* --- ESTILOS DEL BOTÓN DE COMPLETAR --- */
-        .btn-finish { 
-            width: 100%; padding: 25px; border-radius: 25px; border: none;
-            background: #e0e0e0; color: #888; font-size: 20px; font-weight: 600;
-            cursor: pointer; transition: 0.4s ease; margin-top: 30px;
+        .btn-finish {
+            width: 100%;
+            padding: 25px;
+            border-radius: 25px;
+            border: none;
+            background: #e0e0e0;
+            color: #888;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.4s ease;
+            margin-top: 30px;
         }
-        
+
         .btn-finish:disabled {
             cursor: not-allowed;
             opacity: 0.8;
         }
 
-        .btn-active { 
-            background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%); 
-            color: white; box-shadow: 0 15px 35px rgba(216, 27, 96, 0.4); animation: pulse 2s infinite;
+        .btn-active {
+            background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%);
+            color: white;
+            box-shadow: 0 15px 35px rgba(216, 27, 96, 0.4);
+            animation: pulse 2s infinite;
         }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
 
         /* --- CONTROLES CENTRALES --- */
         .video-player-controls {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            display: flex; align-items: center; gap: 25px; z-index: 10; transition: opacity 0.3s ease; opacity: 1; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+            opacity: 1;
         }
-        .video-player-controls.playing { opacity: 0; pointer-events: none; }
-        .video-player-box:hover .video-player-controls.playing { opacity: 1; pointer-events: auto; }
+
+        .video-player-controls.playing {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .video-player-box:hover .video-player-controls.playing {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
         .btn-custom-ctrl {
-            background: rgba(216, 27, 96, 0.95); color: white; border: none; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; cursor: pointer;
-            transition: transform 0.2s ease, background-color 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.4); padding: 0;
+            background: rgba(216, 27, 96, 0.95);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            padding: 0;
         }
-        .btn-custom-ctrl:hover { transform: scale(1.1); background: var(--fucsia-dark); }
-        .btn-play-pause { width: 80px; height: 80px; font-size: 35px; padding-left: 8px; }
-        .btn-play-pause.is-pausing { padding-left: 0 !important; }
-        .btn-rewind { width: 65px; height: 65px; font-size: 16px; font-weight: 600; }
+
+        .btn-custom-ctrl:hover {
+            transform: scale(1.1);
+            background: var(--fucsia-dark);
+        }
+
+        .btn-play-pause {
+            width: 80px;
+            height: 80px;
+            font-size: 35px;
+            padding-left: 8px;
+        }
+
+        .btn-play-pause.is-pausing {
+            padding-left: 0 !important;
+        }
+
+        .btn-rewind {
+            width: 65px;
+            height: 65px;
+            font-size: 16px;
+            font-weight: 600;
+        }
 
         /* --- CONTROLES INFERIORES --- */
         .video-bottom-controls {
-            position: absolute; bottom: 20px; right: 20px; display: flex; gap: 12px; z-index: 10;
-            opacity: 0; transition: opacity 0.3s ease;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .video-player-box:hover .video-bottom-controls { opacity: 1; }
+
+        .video-player-box:hover .video-bottom-controls {
+            opacity: 1;
+        }
+
         .btn-bottom-ctrl {
-            background: rgba(0, 0, 0, 0.5); color: white; border: none; border-radius: 50%; width: 45px; height: 45px;
-            font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer;
-            transition: 0.3s ease; backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+            backdrop-filter: blur(4px);
         }
-        .btn-bottom-ctrl:hover { background: var(--fucsia); transform: scale(1.1); }
+
+        .btn-bottom-ctrl:hover {
+            background: var(--fucsia);
+            transform: scale(1.1);
+        }
 
         .video-time-display {
-            position: absolute; bottom: 20px; left: 20px; background: rgba(0, 0, 0, 0.5); color: white;
-            font-family: monospace; font-size: 14px; font-weight: 600; padding: 8px 14px; border-radius: 12px;
-            backdrop-filter: blur(4px); z-index: 10; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
-        .video-player-box:hover .video-time-display { opacity: 1; }
 
-        .custom-progress-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.3); z-index: 10; pointer-events: none; }
-        .custom-progress-fill { height: 100%; background: var(--fucsia); width: 0%; transition: width 0.1s linear; }
+        .video-player-box:hover .video-time-display {
+            opacity: 1;
+        }
+
+        .custom-progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .custom-progress-fill {
+            height: 100%;
+            background: var(--fucsia);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="header-bar">
-    <div class="container">
-        <div class="nav-top">
-            <a href="bienvenido.html" class="back-link">← Ver todas las sesiones</a>
-            <img src="logo.png" alt="Logo" class="logo-img">
-        </div>
-        <div class="session-info">
-            <h1 id="txtSesion">Cargando sesión...</h1>
-            <p style="opacity: 0.95; font-size: 19px;">Tu camino hacia una maternidad informada ✨</p>
+    <div class="header-bar">
+        <div class="container">
+            <div class="nav-top">
+                <a href="bienvenido.html" class="back-link">← Ver todas las sesiones</a>
+                <img src="logo.png" alt="Logo" class="logo-img">
+            </div>
+            <div class="session-info">
+                <h1 id="txtSesion">Cargando sesión...</h1>
+                <p style="opacity: 0.95; font-size: 19px;">Tu camino hacia una maternidad informada ✨</p>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="container main-content">
-    <div id="videoContainer"></div>
+    <div class="container main-content">
+        <div id="videoContainer"></div>
 
-    <div class="footer-cta">
-        <button id="btnFinish" class="btn-finish" disabled>
-            🔒 Termina de ver el video para avanzar
-        </button>
+        <div class="footer-cta">
+            <button id="btnFinish" class="btn-finish" disabled>
+                🔒 Termina de ver el video para avanzar
+            </button>
+        </div>
     </div>
-</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
-        authDomain: "educa-prenatal.firebaseapp.com",
-        projectId: "educa-prenatal",
-        storageBucket: "educa-prenatal.firebasestorage.app",
-        messagingSenderId: "474992751698",
-        appId: "1:474992751698:web:f313f8def5ff266a45b8b8"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
+            authDomain: "educa-prenatal.firebaseapp.com",
+            projectId: "educa-prenatal",
+            storageBucket: "educa-prenatal.firebasestorage.app",
+            messagingSenderId: "474992751698",
+            appId: "1:474992751698:web:f313f8def5ff266a45b8b8"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    const params = new URLSearchParams(window.location.search);
-    const sesionId = parseInt(params.get('id')) || 1;
+        const params = new URLSearchParams(window.location.search);
+        const sesionId = parseInt(params.get('id')) || 1;
 
-    document.getElementById("txtSesion").innerText = `Sesión ${sesionId}`;
-    const videoContainer = document.getElementById("videoContainer");
-    const btnFinish = document.getElementById("btnFinish");
+        document.getElementById("txtSesion").innerText = `Sesión ${sesionId}`;
+        const videoContainer = document.getElementById("videoContainer");
+        const btnFinish = document.getElementById("btnFinish");
 
-    // Verificar si la usuaria ya había completado esta sesión antes
-    let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
-    if (sesionId <= progress) {
-        // Si ya la completó, desbloqueamos el botón desde el principio
-        btnFinish.disabled = false;
-        btnFinish.classList.add("btn-active");
-        btnFinish.innerHTML = "✨ ¡Completar Sesión!";
-    }
+        // Verificar si la usuaria ya había completado esta sesión antes
+        let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
+        if (sesionId <= progress) {
+            // Si ya la completó, desbloqueamos el botón desde el principio
+            btnFinish.disabled = false;
+            btnFinish.classList.add("btn-active");
+            btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+        }
 
-    async function loadData() {
-        const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
-        const snap = await getDocs(q);
+        async function loadData() {
+            const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
+            const snap = await getDocs(q);
 
-        if (snap.empty) {
-            videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
+            if (snap.empty) {
+                videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
                 <h3 style="color:var(--fucsia)">Próximamente</h3>
                 <p>Aún no hay videos disponibles para la sesión ${sesionId}.</p>
             </div>`;
-            return;
-        }
+                return;
+            }
 
-        videoContainer.innerHTML = "";
-        let index = 0; 
+            videoContainer.innerHTML = "";
+            let index = 0;
 
-        snap.forEach(doc => {
-            const data = doc.data();
-            
-            videoContainer.innerHTML += `
+            snap.forEach(doc => {
+                const data = doc.data();
+
+                videoContainer.innerHTML += `
                 <div class="video-wrapper">
                     <div class="video-player-box" id="player-box-${index}">
                         <video id="video-${index}" src="${data.videoUrl}" style="width: 100%; height: 100%; cursor: pointer; object-fit: cover;"></video>
@@ -258,109 +408,134 @@
                     </div>
                 </div>
             `;
-            index++;
-        });
-
-        activarReproductorInvisible();
-    }
-
-    function formatTime(seconds) {
-        if (isNaN(seconds)) return "0:00";
-        const min = Math.floor(seconds / 60);
-        const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
-        return `${min}:${sec}`;
-    }
-
-    function activarReproductorInvisible() {
-        const videos = document.querySelectorAll('video');
-
-        videos.forEach((video, index) => {
-            const playerBox = document.getElementById(`player-box-${index}`);
-            const playBtn = document.getElementById(`btn-play-${index}`);
-            const backBtn = document.getElementById(`btn-back-${index}`);
-            const controlsGroup = document.getElementById(`controls-group-${index}`);
-            const muteBtn = document.getElementById(`btn-mute-${index}`);
-            const fullBtn = document.getElementById(`btn-full-${index}`);
-            const progressFill = document.getElementById(`progress-fill-${index}`);
-            const timeDisplay = document.getElementById(`time-display-${index}`);
-
-            const togglePlay = () => {
-                if (video.paused) {
-                    video.play().then(() => {
-                        playBtn.innerHTML = "⏸"; 
-                        playBtn.classList.add('is-pausing'); 
-                        controlsGroup.classList.add('playing'); 
-                    }).catch(e => console.error("Error al reproducir:", e));
-                } else {
-                    video.pause();
-                    playBtn.innerHTML = "▶"; 
-                    playBtn.classList.remove('is-pausing'); 
-                    controlsGroup.classList.remove('playing'); 
-                }
-            };
-
-            const rewind10Seconds = (e) => {
-                e.stopPropagation(); 
-                video.currentTime = Math.max(0, video.currentTime - 10);
-            };
-
-            muteBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                video.muted = !video.muted; 
-                muteBtn.innerHTML = video.muted ? "🔇" : "🔊"; 
+                index++;
             });
 
-            fullBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                if (!document.fullscreenElement) {
-                    if (playerBox.requestFullscreen) playerBox.requestFullscreen();
-                    else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
-                } else {
-                    if (document.exitFullscreen) document.exitFullscreen();
-                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                }
-            });
-
-            video.addEventListener('loadedmetadata', () => {
-                timeDisplay.innerText = `0:00 / ${formatTime(video.duration)}`;
-            });
-
-            video.addEventListener('timeupdate', () => {
-                if (video.duration) {
-                    const percentage = (video.currentTime / video.duration) * 100;
-                    progressFill.style.width = `${percentage}%`;
-                    timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
-                }
-            });
-
-            video.addEventListener('click', togglePlay);
-            playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
-            backBtn.addEventListener('click', rewind10Seconds);
-
-            // 🌟 MAGIA AQUÍ: Cuando el video termina
-            video.addEventListener('ended', () => {
-                playBtn.innerHTML = "▶";
-                playBtn.classList.remove('is-pausing');
-                controlsGroup.classList.remove('playing');
-                if (document.fullscreenElement) document.exitFullscreen();
-
-                // Desbloqueamos el botón de finalizar sesión
-                btnFinish.disabled = false;
-                btnFinish.classList.add("btn-active");
-                btnFinish.innerHTML = "✨ ¡Completar Sesión!";
-            });
-        });
-    }
-
-    btnFinish.onclick = () => {
-        let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
-        if (sesionId > progress) {
-            localStorage.setItem('prenatal_progress', sesionId);
+            activarReproductorInvisible();
         }
-        window.location.href = "bienvenido.html";
-    };
 
-    loadData();
-</script>
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${min}:${sec}`;
+        }
+
+        function activarReproductorInvisible() {
+            const videos = document.querySelectorAll('video');
+
+            videos.forEach((video, index) => {
+                const playerBox = document.getElementById(`player-box-${index}`);
+                const playBtn = document.getElementById(`btn-play-${index}`);
+                const backBtn = document.getElementById(`btn-back-${index}`);
+                const controlsGroup = document.getElementById(`controls-group-${index}`);
+                const muteBtn = document.getElementById(`btn-mute-${index}`);
+                const fullBtn = document.getElementById(`btn-full-${index}`);
+                const progressFill = document.getElementById(`progress-fill-${index}`);
+                const timeDisplay = document.getElementById(`time-display-${index}`);
+
+                const togglePlay = () => {
+                    if (video.paused) {
+                        video.play().then(() => {
+                            playBtn.innerHTML = "⏸";
+                            playBtn.classList.add('is-pausing');
+                            controlsGroup.classList.add('playing');
+                        }).catch(e => console.error("Error al reproducir:", e));
+                    } else {
+                        video.pause();
+                        playBtn.innerHTML = "▶";
+                        playBtn.classList.remove('is-pausing');
+                        controlsGroup.classList.remove('playing');
+                    }
+                };
+
+                const rewind10Seconds = (e) => {
+                    e.stopPropagation();
+                    video.currentTime = Math.max(0, video.currentTime - 10);
+                };
+
+                muteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    video.muted = !video.muted;
+                    muteBtn.innerHTML = video.muted ? "🔇" : "🔊";
+                });
+
+                fullBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!document.fullscreenElement) {
+                        if (playerBox.requestFullscreen) playerBox.requestFullscreen();
+                        else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
+                    } else {
+                        if (document.exitFullscreen) document.exitFullscreen();
+                        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                    }
+                });
+
+                video.addEventListener('loadedmetadata', () => {
+                    timeDisplay.innerText = `0:00 / ${formatTime(video.duration)}`;
+                });
+
+                video.addEventListener('timeupdate', () => {
+                    if (video.duration) {
+                        const percentage = (video.currentTime / video.duration) * 100;
+                        progressFill.style.width = `${percentage}%`;
+                        timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+                    }
+                });
+
+                video.addEventListener('click', togglePlay);
+                playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
+                backBtn.addEventListener('click', rewind10Seconds);
+
+                // 🌟 MAGIA AQUÍ: Cuando el video termina
+                video.addEventListener('ended', () => {
+                    playBtn.innerHTML = "▶";
+                    playBtn.classList.remove('is-pausing');
+                    controlsGroup.classList.remove('playing');
+                    if (document.fullscreenElement) document.exitFullscreen();
+
+                    // Desbloqueamos el botón de finalizar sesión
+                    btnFinish.disabled = false;
+                    btnFinish.classList.add("btn-active");
+                    btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+                });
+            });
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userSnap = await getDoc(doc(db, "users", user.uid));
+                if (userSnap.exists()) {
+                    const progress = userSnap.data().progress || 0;
+                    if (sesionId <= progress) {
+                        // Función que tú ya tienes para activar el botón
+                        activarBotonFinalizar();
+                    }
+                }
+                loadData(); // Tu función de cargar videos
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+        btnFinish.onclick = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+                const currentProgress = userSnap.exists() ? (userSnap.data().progress || 0) : 0;
+
+                // Solo guardamos si es un avance nuevo
+                if (sesionId > currentProgress) {
+                    await updateDoc(userRef, {
+                        progress: sesionId
+                    });
+                }
+                window.location.href = "bienvenido.html";
+            }
+        };
+
+        loadData();
+    </script>
 </body>
+
 </html>
