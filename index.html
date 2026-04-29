@@ -71,21 +71,18 @@
         <div class="title">Bienvenida</div>
         <div class="subtitle">Accede a tu plataforma de educación prenatal</div>
         
-        <form id="loginForm">
-            <div class="input-group">
-                <input type="email" id="usuario" required>
-                <label>Correo electrónico</label>
-            </div>
-            
-            <div class="input-group">
-                <input type="password" id="password" required>
-                <label>Contraseña</label>
-                <i class="bi bi-eye-slash" id="togglePassword"></i>
-            </div>
-            
-            <button type="submit" id="btn">Ingresar</button>
-        </form>
+        <div class="input-group">
+            <input type="email" id="usuario" required>
+            <label>Correo electrónico</label>
+        </div>
         
+        <div class="input-group">
+            <input type="password" id="password" required>
+            <label>Contraseña</label>
+            <i class="bi bi-eye-slash" id="togglePassword"></i>
+        </div>
+        
+        <button id="btn">Ingresar</button>
         <div class="error" id="error"></div>
     </div>
 
@@ -106,26 +103,19 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        const togglePassword = document.querySelector('#togglePassword');
-        const passwordInput = document.querySelector('#password');
+        const passwordInput = document.getElementById('password');
+        const usuarioInput = document.getElementById('usuario');
+        const togglePassword = document.getElementById('togglePassword');
+        const btn = document.getElementById("btn");
 
-        togglePassword.addEventListener('click', function () {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('bi-eye');
-            this.classList.toggle('bi-eye-slash');
-        });
-
-        // NUEVA LÓGICA DE SUBMIT (Captura el Enter automáticamente)
-        document.getElementById("loginForm").addEventListener("submit", async (e) => {
-            e.preventDefault(); // Evita que la página se recargue
-            
-            const email = document.getElementById("usuario").value.trim();
-            const pass = document.getElementById("password").value;
+        // Función de Login centralizada
+        const iniciarSesion = async () => {
+            const email = usuarioInput.value.trim();
+            const pass = passwordInput.value;
             const errorDiv = document.getElementById("error");
-            const btn = document.getElementById("btn");
 
-            // Bloqueamos el botón mientras carga
+            if(!email || !pass) return;
+
             btn.disabled = true;
             btn.innerText = "Cargando...";
 
@@ -144,6 +134,28 @@
                 btn.disabled = false;
                 btn.innerText = "Ingresar";
             }
+        };
+
+        // Escuchar click en el botón
+        btn.addEventListener("click", iniciarSesion);
+
+        // ESCUCHAR TECLA ENTER EN LOS INPUTS
+        const manejarEnter = (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                iniciarSesion();
+            }
+        };
+
+        usuarioInput.addEventListener("keypress", manejarEnter);
+        passwordInput.addEventListener("keypress", manejarEnter);
+
+        // Lógica del ojito
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
         });
     </script>
 </body>
