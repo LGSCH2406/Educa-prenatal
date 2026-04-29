@@ -249,7 +249,6 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -262,35 +261,35 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
         const auth = getAuth(app);
 
         const sessionsGrid = document.getElementById("sessionsGrid");
 
-        // REEMPLAZA tu lógica de carga de progreso por esta:
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Obtenemos el progreso real de este usuario desde Firestore
-                const userDocRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userDocRef);
+                // 🌟 MAGIA AQUÍ: Leemos el nivel que `sesion_detalle.html` nos dejó en la memoria
+                // Si la alumna es nueva, el valor será 1 por defecto.
+                let nivelDesbloqueado = parseInt(localStorage.getItem('prenatal_progress')) || 1;
 
-                let completedSessions = 0;
-                if (userSnap.exists()) {
-                    completedSessions = userSnap.data().progress || 0;
-                }
-
-                // Llamas a tu función de renderizado pasando el progreso real
-                renderDashboard(completedSessions);
+                // Construimos las tarjetas con base en ese número
+                renderDashboard(nivelDesbloqueado);
             } else {
                 window.location.href = "login.html";
             }
         });
-        function renderDashboard(completedSessions) {
+
+        function renderDashboard(nivelDesbloqueado) {
             sessionsGrid.innerHTML = "";
-            document.getElementById("userMsg").innerText = `Has completado ${completedSessions} de 8 sesiones.`;
+            
+            // Un pequeño arreglo visual para que no diga "tienes 9 de 8 sesiones" si termina todo
+            let sesionesVisuales = Math.min(nivelDesbloqueado, 8);
+            document.getElementById("userMsg").innerText = `Tienes ${sesionesVisuales} de 8 sesiones desbloqueadas.`;
 
             for (let i = 1; i <= 8; i++) {
-                const isLocked = i > (completedSessions + 1);
+                // 🌟 LÓGICA DE CANDADOS CORREGIDA:
+                // Si la tarjeta que estoy dibujando (i) es MAYOR al nivel alcanzado, la bloqueo.
+                const isLocked = i > nivelDesbloqueado;
+                
                 const card = document.createElement("div");
                 card.className = `session-card ${isLocked ? 'locked' : ''}`;
                 card.innerHTML = `
@@ -298,56 +297,15 @@
                 <div class="session-number">Módulo</div>
                 <div class="session-title">Sesión ${i}</div>
                 <div class="session-status">${isLocked ? 'Bloqueado' : '¡Listo para ver!'}</div>
-            `;
+                `;
 
                 if (!isLocked) {
-                    // ASEGÚRATE QUE EL NOMBRE DEL ARCHIVO AQUÍ SEA IGUAL AL DE TU CARPETA
+                    // Solo permite hacer clic si NO está bloqueada
                     card.onclick = () => window.location.href = `sesion_detalle.html?id=${i}`;
                 }
                 sessionsGrid.appendChild(card);
             }
         }
-    </script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Leemos cuál es el progreso máximo que la usuaria ha alcanzado
-            let progresoAlcanzado = parseInt(localStorage.getItem('prenatal_progress')) || 0;
-
-            // Esperamos un momento a que las tarjetas se rendericen
-            setTimeout(() => {
-                const sessionCards = document.querySelectorAll('.session-card');
-
-                sessionCards.forEach((card, index) => {
-                    const numSesion = index + 1; // index empieza en 0, así que sumamos 1
-                    
-                    // Si el número de la sesión es 1, SIEMPRE está desbloqueada.
-                    // Si el número de la sesión es menor o igual al progreso + 1, se desbloquea.
-                    if (numSesion === 1 || numSesion <= progresoAlcanzado + 1) {
-                        card.classList.remove('locked');
-                        const lockIcon = card.querySelector('.lock-icon');
-                        if (lockIcon) lockIcon.innerText = '🔓';
-                        
-                        const statusText = card.querySelector('.session-status');
-                        if (statusText) statusText.innerText = '¡Listo para ver!';
-                        
-                        // Añadimos el enlace para las tarjetas desbloqueadas localmente
-                        card.onclick = () => window.location.href = `sesion_detalle.html?id=${numSesion}`;
-                    } else {
-                        // Si no, la mantenemos bloqueada visualmente
-                        card.classList.add('locked');
-                        const lockIcon = card.querySelector('.lock-icon');
-                        if (lockIcon) lockIcon.innerText = '🔒';
-                        
-                        const statusText = card.querySelector('.session-status');
-                        if (statusText) statusText.innerText = 'Bloqueado';
-                        
-                        // Evitamos que se pueda hacer clic
-                        card.onclick = null; 
-                    }
-                });
-            }, 500); // 500ms de espera para que Firebase y la función renderDashboard terminen primero
-        });
     </script>
 </body>
 
