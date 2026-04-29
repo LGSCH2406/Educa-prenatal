@@ -172,11 +172,11 @@
             width: 80px;
             height: 80px;
             font-size: 35px;
-            padding-left: 8px; /* Ajuste visual para el triángulo ▶️ */
+            padding-left: 8px; /* Ajuste visual para el triángulo ▶ */
         }
 
         .btn-play-pause.is-pausing {
-            padding-left: 0 !important; /* Centra el ícono de Pausa ⏸️ */
+            padding-left: 0 !important; /* Centra el ícono de Pausa ⏸ */
         }
 
         .btn-rewind {
@@ -233,7 +233,7 @@
     const params = new URLSearchParams(window.location.search);
     const sesionId = parseInt(params.get('id')) || 1;
 
-    document.getElementById("txtSesion").innerText = Sesión ${sesionId};
+    document.getElementById("txtSesion").innerText = `Sesión ${sesionId}`;
     const videoContainer = document.getElementById("videoContainer");
     const btnFinish = document.getElementById("btnFinish");
 
@@ -266,7 +266,7 @@
                             
                             <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind" title="Retroceder 10 segundos">↺ 10s</button>
                             
-                            <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶️</button>
+                            <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶</button>
                         
                         </div>
                     </div>
@@ -288,21 +288,21 @@
         const videos = document.querySelectorAll('video');
 
         videos.forEach((video, index) => {
-            const playBtn = document.getElementById(btn-play-${index});
-            const backBtn = document.getElementById(btn-back-${index});
-            const controlsGroup = document.getElementById(controls-group-${index});
+            const playBtn = document.getElementById(`btn-play-${index}`);
+            const backBtn = document.getElementById(`btn-back-${index}`);
+            const controlsGroup = document.getElementById(`controls-group-${index}`);
 
             // Función para alternar Play/Pausa y cambiar íconos/estilos
             const togglePlay = () => {
                 if (video.paused) {
                     video.play().then(() => {
-                        playBtn.innerHTML = "⏸️"; // Ícono de pausa
+                        playBtn.innerHTML = "⏸"; // Ícono de pausa
                         playBtn.classList.add('is-pausing'); // Quitar padding extra
                         controlsGroup.classList.add('playing'); // Ocultar grupo entero
                     }).catch(e => console.error("Error al reproducir:", e));
                 } else {
                     video.pause();
-                    playBtn.innerHTML = "▶️"; // Ícono de play
+                    playBtn.innerHTML = "▶"; // Ícono de play
                     playBtn.classList.remove('is-pausing'); // Volver a poner padding extra
                     controlsGroup.classList.remove('playing'); // Mostrar grupo entero
                 }
@@ -334,7 +334,7 @@
 
             // Sincronizar UI si el video termina (vuelve a aparecer el grupo con ícono Play)
             video.addEventListener('ended', () => {
-                playBtn.innerHTML = "▶️";
+                playBtn.innerHTML = "▶";
                 playBtn.classList.remove('is-pausing');
                 controlsGroup.classList.remove('playing');
             });
