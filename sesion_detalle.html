@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sesión Detalle | Educa-prenatal</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
+    <style>
         :root { 
             --fucsia: #d81b60; 
             --fucsia-dark: #ad1457;
@@ -133,7 +133,7 @@
             transform: translate(-50%, -50%);
             display: flex;
             align-items: center;
-            gap: 25px; /* Espacio elegante entre botones */
+            gap: 25px; 
             z-index: 10;
             transition: opacity 0.3s ease;
             opacity: 1; 
@@ -172,18 +172,56 @@
             width: 80px;
             height: 80px;
             font-size: 35px;
-            padding-left: 8px; /* Ajuste visual para el triángulo ▶ */
+            padding-left: 8px; 
         }
 
         .btn-play-pause.is-pausing {
-            padding-left: 0 !important; /* Centra el ícono de Pausa ⏸ */
+            padding-left: 0 !important; 
         }
 
         .btn-rewind {
             width: 65px;
             height: 65px;
-            font-size: 16px; /* Letra un poco más pequeña para que quepa bien el texto */
+            font-size: 16px; 
             font-weight: 600;
+        }
+
+        /* --- NUEVOS CONTROLES INFERIORES (Volumen / Pantalla Completa) --- */
+        .video-bottom-controls {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Se muestran al pasar el mouse sobre la caja del video */
+        .video-player-box:hover .video-bottom-controls {
+            opacity: 1;
+        }
+
+        .btn-bottom-ctrl {
+            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-bottom-ctrl:hover {
+            background: var(--fucsia); /* Cambia a tu fucsia al pasar el mouse */
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -203,8 +241,7 @@
 </div>
 
 <div class="container main-content">
-    <div id="videoContainer">
-        </div>
+    <div id="videoContainer"></div>
 
     <div class="footer-cta">
         <button id="btnFinish" class="btn-finish btn-active">
@@ -217,7 +254,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // 1. Tu configuración de Firebase se mantiene intacta
+    // 1. Tu configuración de Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
         authDomain: "educa-prenatal.firebaseapp.com",
@@ -251,23 +288,25 @@
         }
 
         videoContainer.innerHTML = "";
-        let index = 0; // Usamos un contador para darle un ID único a cada video
+        let index = 0; 
 
         snap.forEach(doc => {
             const data = doc.data();
             
-            // Leemos el campo "data.videoUrl" en lugar de "data.videoDriveId"
+            // Fíjate en el id="player-box-${index}" que añadimos a la caja principal
             videoContainer.innerHTML += `
                 <div class="video-wrapper">
-                    <div class="video-player-box">
+                    <div class="video-player-box" id="player-box-${index}">
                         <video id="video-${index}" src="${data.videoUrl}" style="width: 100%; height: 100%; cursor: pointer; object-fit: cover;"></video>
                         
                         <div id="controls-group-${index}" class="video-player-controls">
-                            
                             <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind" title="Retroceder 10 segundos">↺ 10s</button>
-                            
                             <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶</button>
-                        
+                        </div>
+
+                        <div class="video-bottom-controls">
+                            <button id="btn-mute-${index}" class="btn-bottom-ctrl" title="Silenciar/Sonido">🔊</button>
+                            <button id="btn-full-${index}" class="btn-bottom-ctrl" title="Pantalla Completa">⛶</button>
                         </div>
                     </div>
                     <div class="video-body">
@@ -279,69 +318,97 @@
             index++;
         });
 
-        // 3. Una vez que los videos están en la página, activamos los clics
+        // 3. Activamos la lógica
         activarReproductorInvisible();
     }
 
-    // 4. NUEVA FUNCIÓN: Lógica para Reproducir/Pausar al hacer clic
+    // 4. Lógica de todos los botones
     function activarReproductorInvisible() {
         const videos = document.querySelectorAll('video');
 
         videos.forEach((video, index) => {
+            // Seleccionamos las cajas y botones
+            const playerBox = document.getElementById(`player-box-${index}`);
             const playBtn = document.getElementById(`btn-play-${index}`);
             const backBtn = document.getElementById(`btn-back-${index}`);
             const controlsGroup = document.getElementById(`controls-group-${index}`);
+            
+            // Botones inferiores
+            const muteBtn = document.getElementById(`btn-mute-${index}`);
+            const fullBtn = document.getElementById(`btn-full-${index}`);
 
-            // Función para alternar Play/Pausa y cambiar íconos/estilos
+            // Lógica Play / Pausa
             const togglePlay = () => {
                 if (video.paused) {
                     video.play().then(() => {
-                        playBtn.innerHTML = "⏸"; // Ícono de pausa
-                        playBtn.classList.add('is-pausing'); // Quitar padding extra
-                        controlsGroup.classList.add('playing'); // Ocultar grupo entero
+                        playBtn.innerHTML = "⏸"; 
+                        playBtn.classList.add('is-pausing'); 
+                        controlsGroup.classList.add('playing'); 
                     }).catch(e => console.error("Error al reproducir:", e));
                 } else {
                     video.pause();
-                    playBtn.innerHTML = "▶"; // Ícono de play
-                    playBtn.classList.remove('is-pausing'); // Volver a poner padding extra
-                    controlsGroup.classList.remove('playing'); // Mostrar grupo entero
+                    playBtn.innerHTML = "▶"; 
+                    playBtn.classList.remove('is-pausing'); 
+                    controlsGroup.classList.remove('playing'); 
                 }
             };
 
-            // Lógica del botón de retroceso (↺)
+            // Lógica Retroceder 10s
             const rewind10Seconds = (e) => {
-                // Detenemos la propagación para que el clic NO active togglePlay del video contenedor
                 e.stopPropagation(); 
-                
-                // Restamos 10 segundos al tiempo actual.
-                // Math.max(0, ...) asegura que nunca bajemos de 0 (el inicio).
                 video.currentTime = Math.max(0, video.currentTime - 10);
             };
 
-            // --- ASIGNAR EVENTOS DE CLIC ---
-            
-            // Clic en el video físico: Reproduce/Pausa
+            // Lógica Silenciar (Mute)
+            muteBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Evita que se pause el video al hacer clic
+                video.muted = !video.muted; // Alternar estado
+                muteBtn.innerHTML = video.muted ? "🔇" : "🔊"; // Cambiar icono
+            });
+
+            // Lógica Pantalla Completa
+            fullBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Evita que se pause el video al hacer clic
+                
+                // Pedimos pantalla completa a la CAJA NEGRA completa, no solo al video.
+                // Así los botones fucsias se siguen viendo en pantalla completa.
+                if (!document.fullscreenElement) {
+                    if (playerBox.requestFullscreen) {
+                        playerBox.requestFullscreen();
+                    } else if (playerBox.webkitRequestFullscreen) { /* Safari */
+                        playerBox.webkitRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) { /* Safari */
+                        document.webkitExitFullscreen();
+                    }
+                }
+            });
+
+            // --- ASIGNAR EVENTOS DE CLIC CENTRALES ---
             video.addEventListener('click', togglePlay);
             
-            // Clic en el botón Play/Pausa
             playBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Evitar clic doble con el video debajo
+                e.stopPropagation(); 
                 togglePlay();
             });
 
-            // Clic en el nuevo botón de Retroceder (↺)
             backBtn.addEventListener('click', rewind10Seconds);
 
-            // Sincronizar UI si el video termina (vuelve a aparecer el grupo con ícono Play)
+            // Sincronizar UI al terminar el video
             video.addEventListener('ended', () => {
                 playBtn.innerHTML = "▶";
                 playBtn.classList.remove('is-pausing');
                 controlsGroup.classList.remove('playing');
+                // Salir de pantalla completa si estaba activa
+                if (document.fullscreenElement) document.exitFullscreen();
             });
         });
     }
 
-    // 5. El botón de finalizar sesión se mantiene igual
+    // 5. Botón de Finalizar Sesión
     btnFinish.onclick = () => {
         let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
         if (sesionId > progress) {
