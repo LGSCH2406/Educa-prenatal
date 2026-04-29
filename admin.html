@@ -326,7 +326,7 @@
                 showCancelButton: true, confirmButtonColor: '#d81b60', confirmButtonText: 'Sí, salir', cancelButtonText: 'Cancelar'
             });
             if (res.isConfirmed) {
-                try { await signOut(auth); window.location.href = "login.html"; } 
+                try { await signOut(auth); window.location.href = "index.html"; } 
                 catch (error) { window.location.href = "index.html"; }
             }
         };
