@@ -66,12 +66,7 @@
         }
 
         .session-info { margin-top: -30px; }
-        .session-info h1 { 
-            font-size: 48px; 
-            margin: 0; 
-            font-weight: 600; 
-            letter-spacing: -1.5px;
-        }
+        .session-info h1 { font-size: 48px; margin: 0; font-weight: 600; letter-spacing: -1.5px; }
 
         .main-content { transform: translateY(-60px); z-index: 10; position: relative; }
 
@@ -84,145 +79,81 @@
             margin-bottom: 30px;
         }
 
-        /* --- REPRODUCTOR 100% INVISIBLE --- */
+        /* --- REPRODUCTOR --- */
         .video-player-box { 
             position: relative; 
-            padding-bottom: 56.25%; /* Mantiene la proporción 16:9 */
+            padding-bottom: 56.25%; 
             height: 0; 
             overflow: hidden; 
             background: #000; 
-            border-bottom: 8px solid var(--fucsia-light); 
         }
 
         .video-player-box video { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            cursor: pointer; 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; 
         }
 
         .video-body { padding: 45px; text-align: center; }
         .video-body h3 { font-size: 32px; color: var(--fucsia-dark); margin-bottom: 15px; }
         
+        /* --- ESTILOS DEL BOTÓN DE COMPLETAR --- */
         .btn-finish { 
             width: 100%; padding: 25px; border-radius: 25px; border: none;
             background: #e0e0e0; color: #888; font-size: 20px; font-weight: 600;
             cursor: pointer; transition: 0.4s ease; margin-top: 30px;
         }
+        
+        .btn-finish:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
 
         .btn-active { 
             background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%); 
-            color: white; 
-            box-shadow: 0 15px 35px rgba(216, 27, 96, 0.4);
-            animation: pulse 2s infinite;
+            color: white; box-shadow: 0 15px 35px rgba(216, 27, 96, 0.4); animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-        /* --- ESTILOS DE CONTROLES PERSONALIZADOS GRUPALES --- */
+        /* --- CONTROLES CENTRALES --- */
         .video-player-controls {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            align-items: center;
-            gap: 25px; 
-            z-index: 10;
-            transition: opacity 0.3s ease;
-            opacity: 1; 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            display: flex; align-items: center; gap: 25px; z-index: 10; transition: opacity 0.3s ease; opacity: 1; 
         }
-
-        .video-player-controls.playing {
-            opacity: 0;
-            pointer-events: none; 
-        }
-
-        .video-player-box:hover .video-player-controls.playing {
-            opacity: 1;
-            pointer-events: auto; 
-        }
+        .video-player-controls.playing { opacity: 0; pointer-events: none; }
+        .video-player-box:hover .video-player-controls.playing { opacity: 1; pointer-events: auto; }
 
         .btn-custom-ctrl {
-            background: rgba(216, 27, 96, 0.95); 
-            color: white;
-            border: none;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s ease, background-color 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-            padding: 0;
+            background: rgba(216, 27, 96, 0.95); color: white; border: none; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.4); padding: 0;
         }
+        .btn-custom-ctrl:hover { transform: scale(1.1); background: var(--fucsia-dark); }
+        .btn-play-pause { width: 80px; height: 80px; font-size: 35px; padding-left: 8px; }
+        .btn-play-pause.is-pausing { padding-left: 0 !important; }
+        .btn-rewind { width: 65px; height: 65px; font-size: 16px; font-weight: 600; }
 
-        .btn-custom-ctrl:hover {
-            transform: scale(1.1);
-            background: var(--fucsia-dark);
-        }
-
-        .btn-play-pause {
-            width: 80px;
-            height: 80px;
-            font-size: 35px;
-            padding-left: 8px; 
-        }
-
-        .btn-play-pause.is-pausing {
-            padding-left: 0 !important; 
-        }
-
-        .btn-rewind {
-            width: 65px;
-            height: 65px;
-            font-size: 16px; 
-            font-weight: 600;
-        }
-
-        /* --- NUEVOS CONTROLES INFERIORES (Volumen / Pantalla Completa) --- */
+        /* --- CONTROLES INFERIORES --- */
         .video-bottom-controls {
-            position: absolute;
-            bottom: 15px;
-            right: 20px;
-            display: flex;
-            gap: 12px;
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            position: absolute; bottom: 20px; right: 20px; display: flex; gap: 12px; z-index: 10;
+            opacity: 0; transition: opacity 0.3s ease;
         }
-
-        /* Se muestran al pasar el mouse sobre la caja del video */
-        .video-player-box:hover .video-bottom-controls {
-            opacity: 1;
-        }
-
+        .video-player-box:hover .video-bottom-controls { opacity: 1; }
         .btn-bottom-ctrl {
-            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            font-size: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: 0.3s ease;
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.5); color: white; border: none; border-radius: 50%; width: 45px; height: 45px;
+            font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: 0.3s ease; backdrop-filter: blur(4px);
         }
+        .btn-bottom-ctrl:hover { background: var(--fucsia); transform: scale(1.1); }
 
-        .btn-bottom-ctrl:hover {
-            background: var(--fucsia); /* Cambia a tu fucsia al pasar el mouse */
-            transform: scale(1.1);
+        .video-time-display {
+            position: absolute; bottom: 20px; left: 20px; background: rgba(0, 0, 0, 0.5); color: white;
+            font-family: monospace; font-size: 14px; font-weight: 600; padding: 8px 14px; border-radius: 12px;
+            backdrop-filter: blur(4px); z-index: 10; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
         }
+        .video-player-box:hover .video-time-display { opacity: 1; }
+
+        .custom-progress-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.3); z-index: 10; pointer-events: none; }
+        .custom-progress-fill { height: 100%; background: var(--fucsia); width: 0%; transition: width 0.1s linear; }
     </style>
 </head>
 <body>
@@ -244,8 +175,8 @@
     <div id="videoContainer"></div>
 
     <div class="footer-cta">
-        <button id="btnFinish" class="btn-finish btn-active">
-            ✨ ¡Completar Sesión!
+        <button id="btnFinish" class="btn-finish" disabled>
+            🔒 Termina de ver el video para avanzar
         </button>
     </div>
 </div>
@@ -254,7 +185,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // 1. Tu configuración de Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
         authDomain: "educa-prenatal.firebaseapp.com",
@@ -274,8 +204,16 @@
     const videoContainer = document.getElementById("videoContainer");
     const btnFinish = document.getElementById("btnFinish");
 
+    // Verificar si la usuaria ya había completado esta sesión antes
+    let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
+    if (sesionId <= progress) {
+        // Si ya la completó, desbloqueamos el botón desde el principio
+        btnFinish.disabled = false;
+        btnFinish.classList.add("btn-active");
+        btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+    }
+
     async function loadData() {
-        // Buscamos los videos en Firestore
         const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
         const snap = await getDocs(q);
 
@@ -293,7 +231,6 @@
         snap.forEach(doc => {
             const data = doc.data();
             
-            // Fíjate en el id="player-box-${index}" que añadimos a la caja principal
             videoContainer.innerHTML += `
                 <div class="video-wrapper">
                     <div class="video-player-box" id="player-box-${index}">
@@ -304,9 +241,15 @@
                             <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶</button>
                         </div>
 
+                        <div id="time-display-${index}" class="video-time-display">0:00 / 0:00</div>
+
                         <div class="video-bottom-controls">
                             <button id="btn-mute-${index}" class="btn-bottom-ctrl" title="Silenciar/Sonido">🔊</button>
                             <button id="btn-full-${index}" class="btn-bottom-ctrl" title="Pantalla Completa">⛶</button>
+                        </div>
+
+                        <div class="custom-progress-bar">
+                            <div id="progress-fill-${index}" class="custom-progress-fill"></div>
                         </div>
                     </div>
                     <div class="video-body">
@@ -318,26 +261,29 @@
             index++;
         });
 
-        // 3. Activamos la lógica
         activarReproductorInvisible();
     }
 
-    // 4. Lógica de todos los botones
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return "0:00";
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${min}:${sec}`;
+    }
+
     function activarReproductorInvisible() {
         const videos = document.querySelectorAll('video');
 
         videos.forEach((video, index) => {
-            // Seleccionamos las cajas y botones
             const playerBox = document.getElementById(`player-box-${index}`);
             const playBtn = document.getElementById(`btn-play-${index}`);
             const backBtn = document.getElementById(`btn-back-${index}`);
             const controlsGroup = document.getElementById(`controls-group-${index}`);
-            
-            // Botones inferiores
             const muteBtn = document.getElementById(`btn-mute-${index}`);
             const fullBtn = document.getElementById(`btn-full-${index}`);
+            const progressFill = document.getElementById(`progress-fill-${index}`);
+            const timeDisplay = document.getElementById(`time-display-${index}`);
 
-            // Lógica Play / Pausa
             const togglePlay = () => {
                 if (video.paused) {
                     video.play().then(() => {
@@ -353,62 +299,59 @@
                 }
             };
 
-            // Lógica Retroceder 10s
             const rewind10Seconds = (e) => {
                 e.stopPropagation(); 
                 video.currentTime = Math.max(0, video.currentTime - 10);
             };
 
-            // Lógica Silenciar (Mute)
             muteBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Evita que se pause el video al hacer clic
-                video.muted = !video.muted; // Alternar estado
-                muteBtn.innerHTML = video.muted ? "🔇" : "🔊"; // Cambiar icono
+                e.stopPropagation(); 
+                video.muted = !video.muted; 
+                muteBtn.innerHTML = video.muted ? "🔇" : "🔊"; 
             });
 
-            // Lógica Pantalla Completa
             fullBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Evita que se pause el video al hacer clic
-                
-                // Pedimos pantalla completa a la CAJA NEGRA completa, no solo al video.
-                // Así los botones fucsias se siguen viendo en pantalla completa.
+                e.stopPropagation(); 
                 if (!document.fullscreenElement) {
-                    if (playerBox.requestFullscreen) {
-                        playerBox.requestFullscreen();
-                    } else if (playerBox.webkitRequestFullscreen) { /* Safari */
-                        playerBox.webkitRequestFullscreen();
-                    }
+                    if (playerBox.requestFullscreen) playerBox.requestFullscreen();
+                    else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
                 } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    } else if (document.webkitExitFullscreen) { /* Safari */
-                        document.webkitExitFullscreen();
-                    }
+                    if (document.exitFullscreen) document.exitFullscreen();
+                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
                 }
             });
 
-            // --- ASIGNAR EVENTOS DE CLIC CENTRALES ---
-            video.addEventListener('click', togglePlay);
-            
-            playBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                togglePlay();
+            video.addEventListener('loadedmetadata', () => {
+                timeDisplay.innerText = `0:00 / ${formatTime(video.duration)}`;
             });
 
+            video.addEventListener('timeupdate', () => {
+                if (video.duration) {
+                    const percentage = (video.currentTime / video.duration) * 100;
+                    progressFill.style.width = `${percentage}%`;
+                    timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+                }
+            });
+
+            video.addEventListener('click', togglePlay);
+            playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
             backBtn.addEventListener('click', rewind10Seconds);
 
-            // Sincronizar UI al terminar el video
+            // 🌟 MAGIA AQUÍ: Cuando el video termina
             video.addEventListener('ended', () => {
                 playBtn.innerHTML = "▶";
                 playBtn.classList.remove('is-pausing');
                 controlsGroup.classList.remove('playing');
-                // Salir de pantalla completa si estaba activa
                 if (document.fullscreenElement) document.exitFullscreen();
+
+                // Desbloqueamos el botón de finalizar sesión
+                btnFinish.disabled = false;
+                btnFinish.classList.add("btn-active");
+                btnFinish.innerHTML = "✨ ¡Completar Sesión!";
             });
         });
     }
 
-    // 5. Botón de Finalizar Sesión
     btnFinish.onclick = () => {
         let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
         if (sesionId > progress) {
