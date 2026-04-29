@@ -320,14 +320,27 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        window.logout = async () => {
+       window.logout = async () => {
             const res = await Swal.fire({
-                title: '¿Cerrar sesión?', text: "Serás redirigido al login", icon: 'question',
-                showCancelButton: true, confirmButtonColor: '#d81b60', confirmButtonText: 'Sí, salir', cancelButtonText: 'Cancelar'
+                title: '¿Cerrar sesión?',
+                text: "Serás redirigido al inicio",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d81b60',
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Cancelar'
             });
+
             if (res.isConfirmed) {
-                try { await signOut(auth); window.location.href = "index.html"; } 
-                catch (error) { window.location.href = "index.html"; }
+                try {
+                    await signOut(auth);
+                    // CAMBIO AQUÍ: de login.html a index.html
+                    window.location.href = "index.html";
+                }
+                catch (error) {
+                    // CAMBIO AQUÍ: de login.html a index.html
+                    window.location.href = "index.html";
+                }
             }
         };
 
