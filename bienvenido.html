@@ -308,6 +308,47 @@
             }
         }
     </script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Leemos cuál es el progreso máximo que la usuaria ha alcanzado
+            let progresoAlcanzado = parseInt(localStorage.getItem('prenatal_progress')) || 0;
+
+            // Esperamos un momento a que las tarjetas se rendericen
+            setTimeout(() => {
+                const sessionCards = document.querySelectorAll('.session-card');
+
+                sessionCards.forEach((card, index) => {
+                    const numSesion = index + 1; // index empieza en 0, así que sumamos 1
+                    
+                    // Si el número de la sesión es 1, SIEMPRE está desbloqueada.
+                    // Si el número de la sesión es menor o igual al progreso + 1, se desbloquea.
+                    if (numSesion === 1 || numSesion <= progresoAlcanzado + 1) {
+                        card.classList.remove('locked');
+                        const lockIcon = card.querySelector('.lock-icon');
+                        if (lockIcon) lockIcon.innerText = '🔓';
+                        
+                        const statusText = card.querySelector('.session-status');
+                        if (statusText) statusText.innerText = '¡Listo para ver!';
+                        
+                        // Añadimos el enlace para las tarjetas desbloqueadas localmente
+                        card.onclick = () => window.location.href = `sesion_detalle.html?id=${numSesion}`;
+                    } else {
+                        // Si no, la mantenemos bloqueada visualmente
+                        card.classList.add('locked');
+                        const lockIcon = card.querySelector('.lock-icon');
+                        if (lockIcon) lockIcon.innerText = '🔒';
+                        
+                        const statusText = card.querySelector('.session-status');
+                        if (statusText) statusText.innerText = 'Bloqueado';
+                        
+                        // Evitamos que se pueda hacer clic
+                        card.onclick = null; 
+                    }
+                });
+            }, 500); // 500ms de espera para que Firebase y la función renderDashboard terminen primero
+        });
+    </script>
 </body>
 
 </html>
