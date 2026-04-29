@@ -79,7 +79,6 @@
             margin-bottom: 30px;
         }
 
-        /* --- REPRODUCTOR --- */
         .video-player-box { 
             position: relative; 
             padding-bottom: 56.25%; 
@@ -95,7 +94,6 @@
         .video-body { padding: 45px; text-align: center; }
         .video-body h3 { font-size: 32px; color: var(--fucsia-dark); margin-bottom: 15px; }
         
-        /* --- ESTILOS DEL BOTÓN DE COMPLETAR --- */
         .btn-finish { 
             width: 100%; padding: 25px; border-radius: 25px; border: none;
             background: #e0e0e0; color: #888; font-size: 20px; font-weight: 600;
@@ -114,7 +112,6 @@
 
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-        /* --- CONTROLES CENTRALES --- */
         .video-player-controls {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             display: flex; align-items: center; gap: 25px; z-index: 10; transition: opacity 0.3s ease; opacity: 1; 
@@ -129,10 +126,8 @@
         }
         .btn-custom-ctrl:hover { transform: scale(1.1); background: var(--fucsia-dark); }
         .btn-play-pause { width: 80px; height: 80px; font-size: 35px; padding-left: 8px; }
-        .btn-play-pause.is-pausing { padding-left: 0 !important; }
         .btn-rewind { width: 65px; height: 65px; font-size: 16px; font-weight: 600; }
 
-        /* --- CONTROLES INFERIORES --- */
         .video-bottom-controls {
             position: absolute; bottom: 20px; right: 20px; display: flex; gap: 12px; z-index: 10;
             opacity: 0; transition: opacity 0.3s ease;
@@ -183,7 +178,10 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { 
+        getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
@@ -196,6 +194,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const params = new URLSearchParams(window.location.search);
     const sesionId = parseInt(params.get('id')) || 1;
@@ -204,64 +203,75 @@
     const videoContainer = document.getElementById("videoContainer");
     const btnFinish = document.getElementById("btnFinish");
 
-    // Verificar si la usuaria ya había completado esta sesión antes
-    let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
-    if (sesionId <= progress) {
-        // Si ya la completó, desbloqueamos el botón desde el principio
+    function activarBotonFinalizar() {
         btnFinish.disabled = false;
         btnFinish.classList.add("btn-active");
         btnFinish.innerHTML = "✨ ¡Completar Sesión!";
     }
 
-    async function loadData() {
-        const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
-        const snap = await getDocs(q);
-
-        if (snap.empty) {
-            videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
-                <h3 style="color:var(--fucsia)">Próximamente</h3>
-                <p>Aún no hay videos disponibles para la sesión ${sesionId}.</p>
-            </div>`;
-            return;
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const cloudProgress = userSnap.data().progress || 0;
+                    if (sesionId <= cloudProgress) activarBotonFinalizar();
+                }
+            } catch (e) {
+                console.error("Error al cargar perfil:", e);
+            }
         }
+        // Cargamos los videos SIEMPRE, incluso si no hay usuario logueado para que no de error
+        loadData();
+    });
 
-        videoContainer.innerHTML = "";
-        let index = 0; 
+    async function loadData() {
+        try {
+            const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
+            const snap = await getDocs(q);
 
-        snap.forEach(doc => {
-            const data = doc.data();
-            
-            videoContainer.innerHTML += `
-                <div class="video-wrapper">
-                    <div class="video-player-box" id="player-box-${index}">
-                        <video id="video-${index}" src="${data.videoUrl}" style="width: 100%; height: 100%; cursor: pointer; object-fit: cover;"></video>
-                        
-                        <div id="controls-group-${index}" class="video-player-controls">
-                            <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind" title="Retroceder 10 segundos">↺ 10s</button>
-                            <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶</button>
+            if (snap.empty) {
+                videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
+                    <h3 style="color:var(--fucsia)">Próximamente</h3>
+                    <p>Aún no hay videos disponibles para la sesión ${sesionId}.</p>
+                </div>`;
+                return;
+            }
+
+            videoContainer.innerHTML = "";
+            let index = 0; 
+
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                videoContainer.innerHTML += `
+                    <div class="video-wrapper">
+                        <div class="video-player-box" id="player-box-${index}">
+                            <video id="video-${index}" src="${data.videoUrl}" style="width: 100%; height: 100%; cursor: pointer; object-fit: cover;"></video>
+                            <div id="controls-group-${index}" class="video-player-controls">
+                                <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind">↺ 10s</button>
+                                <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶</button>
+                            </div>
+                            <div id="time-display-${index}" class="video-time-display">0:00 / 0:00</div>
+                            <div class="video-bottom-controls">
+                                <button id="btn-mute-${index}" class="btn-bottom-ctrl">🔊</button>
+                                <button id="btn-full-${index}" class="btn-bottom-ctrl">⛶</button>
+                            </div>
+                            <div class="custom-progress-bar">
+                                <div id="progress-fill-${index}" class="custom-progress-fill"></div>
+                            </div>
                         </div>
-
-                        <div id="time-display-${index}" class="video-time-display">0:00 / 0:00</div>
-
-                        <div class="video-bottom-controls">
-                            <button id="btn-mute-${index}" class="btn-bottom-ctrl" title="Silenciar/Sonido">🔊</button>
-                            <button id="btn-full-${index}" class="btn-bottom-ctrl" title="Pantalla Completa">⛶</button>
+                        <div class="video-body">
+                            <h3>${data.titulo}</h3>
+                            <p>Disfruta de este video educativo para el Módulo ${sesionId}.</p>
                         </div>
-
-                        <div class="custom-progress-bar">
-                            <div id="progress-fill-${index}" class="custom-progress-fill"></div>
-                        </div>
-                    </div>
-                    <div class="video-body">
-                        <h3>${data.titulo}</h3>
-                        <p>Disfruta de este video educativo para el Módulo ${sesionId}.</p>
-                    </div>
-                </div>
-            `;
-            index++;
-        });
-
-        activarReproductorInvisible();
+                    </div>`;
+                index++;
+            });
+            activarReproductorInvisible();
+        } catch(err) {
+            console.error("Error cargando videos:", err);
+        }
     }
 
     function formatTime(seconds) {
@@ -273,7 +283,6 @@
 
     function activarReproductorInvisible() {
         const videos = document.querySelectorAll('video');
-
         videos.forEach((video, index) => {
             const playerBox = document.getElementById(`player-box-${index}`);
             const playBtn = document.getElementById(`btn-play-${index}`);
@@ -288,41 +297,34 @@
                 if (video.paused) {
                     video.play().then(() => {
                         playBtn.innerHTML = "⏸"; 
-                        playBtn.classList.add('is-pausing'); 
                         controlsGroup.classList.add('playing'); 
-                    }).catch(e => console.error("Error al reproducir:", e));
+                    }).catch(e => console.error(e));
                 } else {
                     video.pause();
                     playBtn.innerHTML = "▶"; 
-                    playBtn.classList.remove('is-pausing'); 
                     controlsGroup.classList.remove('playing'); 
                 }
             };
 
-            const rewind10Seconds = (e) => {
-                e.stopPropagation(); 
+            video.addEventListener('click', togglePlay);
+            playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
+            backBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 video.currentTime = Math.max(0, video.currentTime - 10);
-            };
-
-            muteBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                video.muted = !video.muted; 
-                muteBtn.innerHTML = video.muted ? "🔇" : "🔊"; 
             });
-
+            muteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                video.muted = !video.muted;
+                muteBtn.innerHTML = video.muted ? "🔇" : "🔊";
+            });
             fullBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
+                e.stopPropagation();
                 if (!document.fullscreenElement) {
                     if (playerBox.requestFullscreen) playerBox.requestFullscreen();
                     else if (playerBox.webkitRequestFullscreen) playerBox.webkitRequestFullscreen();
                 } else {
                     if (document.exitFullscreen) document.exitFullscreen();
-                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
                 }
-            });
-
-            video.addEventListener('loadedmetadata', () => {
-                timeDisplay.innerText = `0:00 / ${formatTime(video.duration)}`;
             });
 
             video.addEventListener('timeupdate', () => {
@@ -333,34 +335,31 @@
                 }
             });
 
-            video.addEventListener('click', togglePlay);
-            playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
-            backBtn.addEventListener('click', rewind10Seconds);
-
-            // 🌟 MAGIA AQUÍ: Cuando el video termina
             video.addEventListener('ended', () => {
                 playBtn.innerHTML = "▶";
-                playBtn.classList.remove('is-pausing');
                 controlsGroup.classList.remove('playing');
-                if (document.fullscreenElement) document.exitFullscreen();
-
-                // Desbloqueamos el botón de finalizar sesión
-                btnFinish.disabled = false;
-                btnFinish.classList.add("btn-active");
-                btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+                activarBotonFinalizar();
             });
         });
     }
 
-    btnFinish.onclick = () => {
-        let progress = parseInt(localStorage.getItem('prenatal_progress')) || 0;
-        if (sesionId > progress) {
-            localStorage.setItem('prenatal_progress', sesionId);
+    btnFinish.onclick = async () => {
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+                const currentProgress = userSnap.exists() ? (userSnap.data().progress || 0) : 0;
+
+                if (sesionId > currentProgress) {
+                    await setDoc(userRef, { progress: sesionId }, { merge: true });
+                }
+            } catch (error) {
+                console.error("Error al guardar:", error);
+            }
         }
         window.location.href = "bienvenido.html";
     };
-
-    loadData();
 </script>
 </body>
 </html>
