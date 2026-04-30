@@ -316,45 +316,132 @@
 
         /* --- ESTILOS PARA MONITOREO (AGREGADO AQUI SIN BORRAR NADA) --- */
         .stat-card {
-            background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%); color: white; border-radius: 15px; padding: 1.5rem;
-            box-shadow: 0 10px 20px rgba(216, 27, 96, 0.2); transition: transform 0.3s ease; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(216, 27, 96, 0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-card h3 { font-size: 3rem; font-weight: 700; margin-bottom: 0; }
-        .stat-card p { opacity: 0.9; margin-bottom: 0; font-size: 1.1rem; font-weight: 600; }
-        .stat-icon { font-size: 4rem; position: absolute; right: 10px; bottom: -10px; opacity: 0.2; }
-        .stat-card-green { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); box-shadow: 0 10px 20px rgba(76, 175, 80, 0.2); }
-        .stat-card-blue { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); box-shadow: 0 10px 20px rgba(33, 150, 243, 0.2); }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            margin-bottom: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            font-size: 4rem;
+            position: absolute;
+            right: 10px;
+            bottom: -10px;
+            opacity: 0.2;
+        }
+
+        .stat-card-green {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.2);
+        }
+
+        .stat-card-blue {
+            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.2);
+        }
 
         .monitor-user-card {
-            background: white; border: 1px solid rgba(216, 27, 96, 0.1); border-radius: 12px; margin-bottom: 12px; overflow: hidden; transition: all 0.3s ease;
+            background: white;
+            border: 1px solid rgba(216, 27, 96, 0.1);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
+
         .monitor-user-header {
-            padding: 16px 20px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; color: var(--fucsia-dark);
+            padding: 16px 20px;
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--fucsia-dark);
         }
-        .monitor-user-header:hover { background: var(--fucsia-light); }
+
+        .monitor-user-header:hover {
+            background: var(--fucsia-light);
+        }
+
         .monitor-user-body {
-            display: none; padding: 20px 25px; background: white; border-top: 1px solid rgba(216, 27, 96, 0.1);
+            display: none;
+            padding: 20px 25px;
+            background: white;
+            border-top: 1px solid rgba(216, 27, 96, 0.1);
         }
-        .monitor-user-body.active { display: block; animation: fadeIn 0.3s ease; }
-        
+
+        .monitor-user-body.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
         .session-row {
-            display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed #eee;
         }
-        .session-row:last-child { border-bottom: none; }
-        .session-name { width: 100px; font-weight: 600; color: #555; }
-        
+
+        .session-row:last-child {
+            border-bottom: none;
+        }
+
+        .session-name {
+            width: 100px;
+            font-weight: 600;
+            color: #555;
+        }
+
         .session-dots {
-            flex: 1; display: flex; gap: 8px; padding: 0 15px; flex-wrap: wrap;
+            flex: 1;
+            display: flex;
+            gap: 8px;
+            padding: 0 15px;
+            flex-wrap: wrap;
         }
+
         .dot {
-            width: 14px; height: 14px; border-radius: 50%; background-color: #e0e0e0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .dot.watched {
-            background-color: var(--fucsia); box-shadow: 0 0 8px rgba(216, 27, 96, 0.4);
+            background-color: var(--fucsia);
+            box-shadow: 0 0 8px rgba(216, 27, 96, 0.4);
         }
+
         .session-progress-text {
-            width: 60px; text-align: right; font-size: 0.9rem; font-weight: 600; color: var(--fucsia);
+            width: 60px;
+            text-align: right;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--fucsia);
         }
     </style>
 </head>
@@ -378,6 +465,9 @@
             </div>
             <div class="nav-item" id="nav-monitor" onclick="showSection('monitor')">
                 <i class="me-2">📊</i> <span>Monitoreo</span>
+            </div>
+            <div class="nav-item" id="nav-queries" onclick="showSection('queries')">
+                <i class="me-2">💬</i> <span>Consultas</span>
             </div>
         </nav>
 
@@ -409,7 +499,7 @@
                 <div class="mb-4">
                     <label class="form-label">Título de la Lección</label>
                     <input type="text" id="vTitle" class="form-control form-control-lg"
-                        placeholder="Ingrese el título del video">
+                        placeholder="Ej: Ejercicios de respiración...">
                 </div>
 
                 <div class="row">
@@ -592,13 +682,62 @@
 
             <div class="glass-card mx-auto">
                 <h5 class="fw-bold mb-4">📊 Progreso por Usuaria</h5>
-                <p class="text-muted small mb-4">Haz clic en una usuaria para desplegar sus 8 sesiones. Cada bolita representa un video subido.</p>
-                
+                <p class="text-muted small mb-4">Haz clic en una usuaria para desplegar sus 8 sesiones. Cada bolita
+                    representa un video subido.</p>
+
                 <div id="monitor-users-container">
-                    </div>
+                </div>
             </div>
         </section>
+        <section id="section-queries" class="section-panel">
+    <header class="mb-4">
+        <h1 class="display-6 fw-bold">Consultas y Soporte</h1>
+        <p class="text-muted">Gestiona los mensajes y dudas enviadas por las usuarias.</p>
+    </header>
 
+    <div class="glass-card mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0">📩 Bandeja de Entrada</h5>
+            <div class="badge bg-fucsia p-2">3 Pendientes</div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Usuaria</th>
+                        <th>Asunto</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="queriesTableBody">
+                    <!-- Ejemplo de una fila de consulta -->
+                    <tr>
+                        <td>
+                            <div class="fw-bold">María González</div>
+                            <small class="text-muted">maria@example.com</small>
+                        </td>
+                        <td>Duda sobre ejercicios de la Sesión 3</td>
+                        <td>29 Abr, 2026</td>
+                        <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewQuery(1)">👁️ Ver</button>
+                            <button class="btn btn-sm btn-main" onclick="replyQuery(1)">✍️ Responder</button>
+                        </td>
+                    </tr>
+                    <!-- Si no hay datos -->
+                    <tr id="noQueriesRow" style="display: none;">
+                        <td colspan="5" class="text-center py-5 text-muted italic">
+                            No hay consultas nuevas por el momento.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -610,8 +749,8 @@
         import { getAuth, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // --- TUS DATOS DE CLOUDINARY (YA CONFIGURADOS) ---
-        const CLOUD_NAME = 'dqcju1tki'; 
-        const UPLOAD_PRESET = 'educa_videos_preset'; 
+        const CLOUD_NAME = 'dqcju1tki';
+        const UPLOAD_PRESET = 'educa_videos_preset';
 
         // Configuración corregida según tu consola de Firebase
         const firebaseConfig = {
@@ -633,7 +772,7 @@
         const secondaryApp = initializeApp(firebaseConfig, "Secondary");
         const secondaryAuth = getAuth(secondaryApp);
 
-        
+
 
         // --- FUNCIONES DE NAVEGACIÓN Y SESIÓN ---
         window.logout = async () => {
@@ -669,7 +808,7 @@
                 document.getElementById("videoTableBody").innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted italic">Selecciona una sesión para ver los videos.</td></tr>`;
             }
             if (id === 'users') { loadUsers(); }
-            
+
             // 🌟 AGREGADO AQUI: Al hacer click en Monitoreo, carga los datos.
             if (id === 'monitor') { loadStats(); }
         };
@@ -906,7 +1045,7 @@
                 }
             }
         };
-         // --- SUBIDA DE VIDEO A CLOUDINARY Y FIRESTORE ---
+        // --- SUBIDA DE VIDEO A CLOUDINARY Y FIRESTORE ---
         document.getElementById("btnPublish").onclick = async () => {
             const btn = document.getElementById("btnPublish");
             const title = document.getElementById("vTitle").value.trim();
@@ -914,7 +1053,7 @@
             const fileInput = document.getElementById("videoInput");
             const archivo = fileInput.files[0];
 
-            if(!title || !session || !archivo) {
+            if (!title || !session || !archivo) {
                 return Swal.fire('Atención', 'Por favor completa todos los campos y selecciona un archivo de video (.mp4).', 'info');
             }
 
@@ -925,13 +1064,13 @@
                 // 1. Enviar el archivo a Cloudinary
                 const formData = new FormData();
                 formData.append('file', archivo);
-                formData.append('upload_preset', UPLOAD_PRESET); 
+                formData.append('upload_preset', UPLOAD_PRESET);
 
                 const resCloudinary = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 const datosVideo = await resCloudinary.json();
 
                 if (!datosVideo.secure_url) {
@@ -947,12 +1086,12 @@
                 });
 
                 Swal.fire('¡Éxito!', 'El video fue subido y asignado a la sesión correctamente.', 'success');
-                
+
                 // Limpiar todo para la siguiente subida
                 document.getElementById("vTitle").value = "";
                 document.getElementById("vSession").value = "";
                 fileInput.value = "";
-                
+
             } catch (e) {
                 console.error(e);
                 Swal.fire('Error', e.message, 'error');
@@ -965,12 +1104,12 @@
         // 🌟 LÓGICA DE MONITOREO (AGREGADA AQUI SIN BORRAR NADA) 🌟
         async function loadStats() {
             try {
-                const videoCounts = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0};
+                const videoCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
                 const videosSnap = await getDocs(collection(db, "videos"));
-                
+
                 videosSnap.forEach(doc => {
                     let s = parseInt(doc.data().sesion);
-                    if(s >= 1 && s <= 8) videoCounts[s]++;
+                    if (s >= 1 && s <= 8) videoCounts[s]++;
                 });
 
                 document.getElementById('stat-total-videos').innerText = videosSnap.size;
@@ -983,32 +1122,32 @@
                 usersSnap.forEach(userDoc => {
                     const u = userDoc.data();
                     totalUsers++;
-                    
+
                     // Aseguramos que si no existe u.active se cuenta como true
-                    if (u.active !== false) activeUsers++; 
-                    
-                    let userProgress = u.progress || {}; 
+                    if (u.active !== false) activeUsers++;
+
+                    let userProgress = u.progress || {};
                     let rowsHtml = "";
-                    
-                    for(let i=1; i<=8; i++) {
+
+                    for (let i = 1; i <= 8; i++) {
                         let totalVids = videoCounts[i];
-                        let watchedVids = userProgress[i.toString()] || userProgress[i] || 0; 
-                        
+                        let watchedVids = userProgress[i.toString()] || userProgress[i] || 0;
+
                         let dotsHtml = "";
                         if (totalVids === 0) {
                             dotsHtml = `<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">Sin videos aún</span>`;
                         } else {
-                            for(let v=1; v<=totalVids; v++) {
-                                if(v <= watchedVids) {
+                            for (let v = 1; v <= totalVids; v++) {
+                                if (v <= watchedVids) {
                                     dotsHtml += `<div class="dot watched" title="Video Visto"></div>`;
                                 } else {
                                     dotsHtml += `<div class="dot" title="Video Pendiente"></div>`;
                                 }
                             }
                         }
-                        
+
                         let pct = totalVids > 0 ? Math.round((watchedVids / totalVids) * 100) : 0;
-                        
+
                         rowsHtml += `
                             <div class="session-row">
                                 <div class="session-name">Sesión ${i}</div>
@@ -1036,11 +1175,11 @@
 
                 document.getElementById('stat-total-users').innerText = totalUsers;
                 document.getElementById('stat-active-users').innerText = activeUsers;
-                
+
                 if (totalUsers === 0) {
                     htmlContent = `<div class="text-center py-4 text-muted">No hay usuarias registradas en la base de datos.</div>`;
                 }
-                
+
                 document.getElementById('monitor-users-container').innerHTML = htmlContent;
 
             } catch (error) {
