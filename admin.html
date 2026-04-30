@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Educación Prenatal Digital | Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -645,54 +646,60 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Contraseña</label>
-                                <input type="password" id="newUserPassword" class="form-control"
-                                    placeholder="Mínimo 6 caracteres">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Semana de Embarazo</label>
-                                <input type="number" id="newUserWeek" class="form-control" min="1" max="40"
-                                    placeholder="36">
-                            </div>
-                        </div>
-                        <button class="btn btn-main" onclick="createUser()">
-                            👤 Crear Usuario
-                        </button>
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-bold">📋 Lista de Usuarios</h5>
-                            <div class="search-input">
-                                <input type="text" id="userSearch" class="form-control form-control-lg"
-                                    placeholder="🔍 Buscar por nombre o email...">
+                                <div class="input-group">
+                                    <input type="password" id="newUserPassword" class="form-control"
+                                        placeholder="Mínimo 6 caracteres">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye-slash" id="eyeIcon"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Semana de Embarazo</label>
+                            <input type="number" id="newUserWeek" class="form-control" min="1" max="40"
+                                placeholder="36">
+                        </div>
+                    </div>
+                    <button class="btn btn-main" onclick="createUser()">
+                        👤 Crear Usuario
+                    </button>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">📋 Lista de Usuarios</h5>
+                        <div class="search-input">
+                            <input type="text" id="userSearch" class="form-control form-control-lg"
+                                placeholder="🔍 Buscar por nombre o email...">
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Semana</th>
-                                <th>Estado</th>
-                                <th>Fecha Registro</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <tr>
-                                <td colspan="6" class="text-center py-5 text-muted italic">
-                                    Cargando usuarias...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Código</th> <!-- Cambiado de Email a Código -->
+                            <th>Semana</th>
+                            <th>Estado</th>
+                            <th>Fecha Registro</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted italic">
+                                Cargando usuarias...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             </div>
         </section>
 
@@ -823,10 +830,9 @@
             // ESTA ES LA LÍNEA QUE FALTA:
             if (id === 'queries') { loadQueries(); }
         };
-        // --- GESTIÓN DE USUARIAS ---
         window.createUser = async () => {
             const name = document.getElementById("newUserName").value.trim();
-            const code = document.getElementById("userCode").value.trim(); // Capturamos el código
+            const code = document.getElementById("userCode").value.trim();
             const email = document.getElementById("newUserEmail").value;
             const password = document.getElementById("newUserPassword").value;
             const week = parseInt(document.getElementById("newUserWeek").value);
@@ -843,15 +849,13 @@
             });
 
             try {
-                // Crear en Auth usando la app secundaria
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
                 const user = userCredential.user;
 
-                // Guardar en Firestore (Añadimos el campo "code")
                 await addDoc(collection(db, "users"), {
                     uid: user.uid,
                     name: name,
-                    code: code.toUpperCase(), // Guardamos el código en mayúsculas
+                    code: code.toUpperCase(),
                     email: email,
                     week: week,
                     active: true,
@@ -862,12 +866,21 @@
 
                 Swal.fire('¡Éxito!', `Usuaria ${name} registrada correctamente`, 'success');
 
-                // Limpiar campos (Ahora incluimos el campo userCode)
+                // --- LIMPIEZA DE CAMPOS Y RESET DE ICONO ---
                 document.getElementById("newUserName").value = "";
-                document.getElementById("userCode").value = ""; // <--- ¡Importante limpiar este también!
+                document.getElementById("userCode").value = "";
                 document.getElementById("newUserEmail").value = "";
-                document.getElementById("newUserPassword").value = "";
                 document.getElementById("newUserWeek").value = "";
+
+                const passInput = document.getElementById("newUserPassword");
+                const eyeIcon = document.getElementById("eyeIcon");
+
+                passInput.value = "";
+                passInput.type = "password"; // Volver a ocultar clave
+
+                // Reset del icono al estilo de tu login (ojo tachado)
+                eyeIcon.classList.remove("bi-eye");
+                eyeIcon.classList.add("bi-eye-slash");
 
                 loadUsers();
 
@@ -881,7 +894,6 @@
                 Swal.fire('Error', mensaje, 'error');
             }
         };
-
         window.toggleUserStatus = async (userId, currentStatus) => {
             // Si currentStatus es undefined o null por algún error de datos, forzamos a boolean
             const statusBool = Boolean(currentStatus);
@@ -917,6 +929,7 @@
 
         async function loadUsers(searchTerm = '') {
             const tableBody = document.getElementById("usersTableBody");
+            // Mantenemos tu spinner rojo
             tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-danger"></div></td></tr>`;
 
             try {
@@ -927,18 +940,22 @@
                 usersSnap.forEach(userDoc => {
                     const data = userDoc.data();
                     const name = data.name || 'N/A';
-                    const email = data.email || 'N/A';
+                    const code = data.code || 'S/N'; // Extraemos el código
 
-                    // Si el campo 'active' no existe en la base de datos, lo tratamos como true por defecto
                     const isActive = data.active !== undefined ? data.active : true;
 
-                    if (searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase()) && !email.toLowerCase().includes(searchTerm.toLowerCase())) return;
+                    // Ajustamos el filtro: Ahora busca en el Nombre O en el Código
+                    const cumpleFiltro = !searchTerm ||
+                        name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        code.toLowerCase().includes(searchTerm.toLowerCase());
+
+                    if (!cumpleFiltro) return;
 
                     encontrados++;
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
                 <td><strong>${name}</strong></td>
-                <td>${email}</td>
+                <td><span class="badge bg-light text-dark border">${code}</span></td> <!-- Reemplazamos Email por Código -->
                 <td>${data.week} sem</td>
                 <td>
                     <span class="badge ${isActive ? 'bg-success' : 'bg-secondary'}">
@@ -956,13 +973,14 @@
                     tableBody.appendChild(tr);
                 });
 
-                if (encontrados === 0) tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5">No hay resultados.</td></tr>`;
+                if (encontrados === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5">No hay resultados para "${searchTerm}".</td></tr>`;
+                }
             } catch (e) {
                 console.error(e);
                 tableBody.innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Error de conexión al cargar usuarias.</td></tr>";
             }
         }
-
         window.deleteUser = async (userDocId) => {
             const res = await Swal.fire({ title: '¿Eliminar?', text: "Se borrará de la base de datos.", icon: 'warning', showCancelButton: true });
             if (res.isConfirmed) {
@@ -1321,6 +1339,23 @@
                 emailField.value = codigo.toLowerCase() + "@gmail.com";
             } else {
                 emailField.value = "";
+            }
+        });
+
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            const passwordField = document.getElementById("newUserPassword");
+            const eyeIcon = document.getElementById("eyeIcon");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                // Cambia a ojo abierto
+                eyeIcon.classList.remove("bi-eye-slash");
+                eyeIcon.classList.add("bi-eye");
+            } else {
+                passwordField.type = "password";
+                // Cambia a ojo tachado
+                eyeIcon.classList.remove("bi-eye");
+                eyeIcon.classList.add("bi-eye-slash");
             }
         });
     </script>
