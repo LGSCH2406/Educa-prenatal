@@ -14,6 +14,7 @@
             --primary-light: #a82036;
             --accent: #f1a7b0;
             --white-glow: rgba(255, 255, 255, 0.2);
+            --text-dark: #333;
         }
 
         body {
@@ -45,7 +46,6 @@
             z-index: 10;
         }
 
-        /* Header mejorado con Bootstrap */
         .header-box {
             display: flex;
             justify-content: space-between;
@@ -55,13 +55,12 @@
             gap: 20px;
         }
 
-        /* Panel de Sesiones Blanco */
         .sessions-panel {
             background: white;
             border-radius: 30px;
             padding: 40px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-            color: #333;
+            color: var(--text-dark);
         }
 
         .panel-title {
@@ -71,7 +70,6 @@
             margin-bottom: 40px;
         }
 
-        /* Cards de Sesiones */
         .session-card {
             background: #f8f9fa;
             border-radius: 20px;
@@ -99,24 +97,6 @@
 
         .lock-icon { font-size: 2rem; margin-bottom: 10px; }
 
-        /* Estilos específicos para el Modal (Bootstrap usa sus clases, esto es refuerzo) */
-        .modal-content {
-            border-radius: 25px;
-            border: none;
-        }
-        .modal-header {
-            background: var(--primary);
-            color: white;
-            border-radius: 25px 25px 0 0;
-        }
-        .btn-primary-custom {
-            background: var(--primary);
-            border: none;
-            padding: 10px 25px;
-            border-radius: 12px;
-        }
-        .btn-primary-custom:hover { background: var(--primary-light); }
-
         .btn-query-nav {
             background: var(--accent);
             color: var(--primary) !important;
@@ -124,10 +104,44 @@
             border-radius: 15px;
             padding: 12px 20px;
             transition: 0.3s;
+            border: none;
         }
+
         .btn-query-nav:hover {
             background: white;
             transform: scale(1.05);
+        }
+
+        /* Estilos del Historial de Consultas */
+        .query-item {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 0;
+        }
+        .query-question {
+            background: #fdf2f4;
+            padding: 12px 18px;
+            border-radius: 18px 18px 18px 0;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: #555;
+            display: inline-block;
+            max-width: 90%;
+        }
+        .query-answer {
+            background: #f1f3f5;
+            padding: 12px 18px;
+            border-radius: 18px 18px 0 18px;
+            margin-left: auto;
+            font-size: 0.95rem;
+            border-left: 4px solid var(--primary);
+            color: #333;
+            max-width: 90%;
+        }
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -138,16 +152,14 @@
     <div class="circle c2"></div>
 
     <div class="container container-custom">
-        <!-- HEADER CON BOTÓN DE CONSULTA VISIBLE -->
-        <header class="header-box">
+        <header class="header-box text-white">
             <div class="text-start">
                 <h1 class="display-5 fw-bold mb-0">Bienvenida ✨</h1>
                 <p id="userMsg" class="lead opacity-75">Cargando tu progreso...</p>
             </div>
             <div class="d-flex gap-2">
-                <!-- BOTÓN DE CONSULTA MUY VISIBLE -->
-                <button class="btn btn-query-nav shadow-sm" data-bs-toggle="modal" data-bs-target="#modalQuery">
-                    💬 Hacer una Consulta
+                <button class="btn btn-query-nav shadow-sm" data-bs-toggle="modal" data-bs-target="#modalQueries">
+                    💬 Mis Consultas
                 </button>
                 <a href="index.html" class="btn btn-outline-light d-flex align-items-center" style="border-radius: 15px; padding: 0 20px;">
                     Cerrar Sesión
@@ -155,38 +167,60 @@
             </div>
         </header>
 
-        <!-- PANEL PRINCIPAL -->
         <main class="sessions-panel">
             <h2 class="panel-title">Tu Programa Prenatal Digital</h2>
-            
             <div class="row g-4" id="sessionsGrid">
-                <!-- Las sesiones se cargarán aquí -->
+                <!-- Se carga vía JS -->
             </div>
         </main>
     </div>
 
-    <!-- MODAL DE CONSULTAS (BOOTSTRAP 5) -->
-    <div class="modal fade" id="modalQuery" tabindex="-1" aria-labelledby="modalQueryLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-dark">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalQueryLabel">¿Tienes alguna duda? ✨</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- MODAL DE CENTRO DE CONSULTAS -->
+    <div class="modal fade" id="modalQueries" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content text-dark" style="border-radius: 25px;">
+                <div class="modal-header border-0 pb-0" style="padding: 25px;">
+                    <h5 class="modal-title fw-bold" style="color: var(--primary);">Centro de Consultas ✨</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="text-muted small">Escribe tu consulta y el administrador te responderá lo antes posible.</p>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Asunto</label>
-                        <input type="text" id="querySubject" class="form-control" placeholder="Ej: Duda sobre la Sesión 1">
+                <div class="modal-body" style="padding: 25px;">
+                    <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active px-4" id="btn-tab-hist" data-bs-toggle="pill" data-bs-target="#tab-history" style="border-radius: 12px;">Mis Dudas</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link px-4" data-bs-toggle="pill" data-bs-target="#tab-new" style="border-radius: 12px;">Nueva Consulta</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Pestaña Historial -->
+                        <div class="tab-pane fade show active" id="tab-history">
+                            <div id="queriesList" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                                <div class="text-center py-5">
+                                    <div class="spinner-border text-danger" role="status"></div>
+                                    <p class="mt-2 text-muted">Cargando tus dudas...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pestaña Nueva -->
+                        <div class="tab-pane fade" id="tab-new">
+                            <div class="bg-light p-4 rounded-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Asunto</label>
+                                    <input type="text" id="querySubject" class="form-control border-0 shadow-sm" placeholder="Ej: Duda con ejercicios de respiración" style="border-radius: 10px; padding: 12px;">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">Tu Mensaje</label>
+                                    <textarea id="queryMessage" class="form-control border-0 shadow-sm" rows="4" placeholder="Escribe aquí tu pregunta detallada..." style="border-radius: 10px; padding: 12px; resize: none;"></textarea>
+                                </div>
+                                <button class="btn btn-danger w-100 py-3 shadow" id="btnSendQuery" style="background: var(--primary); border:none; border-radius:15px; font-weight: 600;">
+                                    Enviar Consulta al Admin
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tu Mensaje</label>
-                        <textarea id="queryMessage" class="form-control" rows="4" placeholder="Cuéntanos en qué podemos ayudarte..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 12px;">Cancelar</button>
-                    <button type="button" class="btn btn-primary-custom text-white" id="btnSendQuery">Enviar Consulta</button>
                 </div>
             </div>
         </div>
@@ -198,7 +232,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
@@ -214,73 +248,98 @@
         const db = getFirestore(app);
 
         const sessionsGrid = document.getElementById("sessionsGrid");
+        const queriesList = document.getElementById("queriesList");
 
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                try {
-                    const q = query(collection(db, "users"), where("uid", "==", user.uid));
-                    const snap = await getDocs(q);
-                    
-                    if (!snap.empty) {
-                        const userData = snap.docs[0].data();
-                        const nivelDesbloqueado = userData.nivelDesbloqueado || 1;
-                        
-                        document.getElementById("userMsg").innerText = 
-                            `¡Hola, ${userData.nombre || 'Mamita'}! Tienes ${Math.min(nivelDesbloqueado, 8)} de 8 sesiones desbloqueadas.`;
-                        
-                        renderDashboard(nivelDesbloqueado);
-                    } else {
-                        renderDashboard(1);
-                        document.getElementById("userMsg").innerText = "¡Bienvenida! Comienza tu primera sesión.";
-                    }
-                } catch (error) {
-                    console.error("Error al cargar datos:", error);
-                    renderDashboard(1);
-                }
+                loadUserData(user);
+                listenToQueries(user.uid);
             } else {
                 window.location.href = "index.html";
             }
         });
 
-        function renderDashboard(nivelDesbloqueado) {
+        async function loadUserData(user) {
+            try {
+                const q = query(collection(db, "users"), where("uid", "==", user.uid));
+                const snap = await getDocs(q);
+                if (!snap.empty) {
+                    const userData = snap.docs[0].data();
+                    const nivel = userData.nivelDesbloqueado || 1;
+                    document.getElementById("userMsg").innerText = `¡Hola, ${userData.nombre || 'Mamita'}! Tienes ${Math.min(nivel, 8)} de 8 sesiones desbloqueadas.`;
+                    renderDashboard(nivel);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function renderDashboard(nivel) {
             sessionsGrid.innerHTML = "";
             for (let i = 1; i <= 8; i++) {
-                const isLocked = i > nivelDesbloqueado;
-                
+                const isLocked = i > nivel;
                 const col = document.createElement("div");
                 col.className = "col-6 col-md-4 col-lg-3";
-                
                 col.innerHTML = `
                     <div class="session-card ${isLocked ? 'locked' : ''}">
                         <div class="lock-icon">${isLocked ? '🔒' : '🔓'}</div>
                         <div class="small text-uppercase opacity-75">Módulo</div>
                         <div class="h4 fw-bold">Sesión ${i}</div>
-                        <div class="small mt-2">${isLocked ? 'Bloqueado' : '¡Listo para ver!'}</div>
-                    </div>
-                `;
-
-                if (!isLocked) {
-                    col.querySelector('.session-card').onclick = () => window.location.href = `sesion_detalle.html?id=${i}`;
-                }
+                    </div>`;
+                if (!isLocked) col.querySelector('.session-card').onclick = () => window.location.href = `sesion_detalle.html?id=${i}`;
                 sessionsGrid.appendChild(col);
             }
         }
 
-        // FUNCIONALIDAD DE CONSULTAS (MANTENIDA ✅)
+        // --- SISTEMA DE CONSULTAS EN TIEMPO REAL ---
+        function listenToQueries(uid) {
+            // Consulta simple para evitar problemas de índices
+            const q = query(collection(db, "queries"), where("uid", "==", uid));
+
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    queriesList.innerHTML = `
+                        <div class="text-center py-5">
+                            <p class="text-muted">No has realizado ninguna consulta aún.</p>
+                        </div>`;
+                    return;
+                }
+
+                let items = [];
+                snapshot.forEach(doc => items.push({id: doc.id, ...doc.data()}));
+                
+                // Ordenar por fecha manualmente (descendente)
+                items.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                queriesList.innerHTML = "";
+                items.forEach(data => {
+                    const div = document.createElement("div");
+                    div.className = "query-item";
+                    div.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold" style="color: var(--primary);">${data.subject || 'Sin Asunto'}</span>
+                            <span class="status-badge ${data.reply ? 'bg-success text-white' : 'bg-warning text-dark'}">
+                                ${data.reply ? 'Respondido' : 'Pendiente'}
+                            </span>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="query-question">${data.message}</div>
+                            ${data.reply ? `<div class="query-answer"><strong>Respuesta:</strong><br>${data.reply}</div>` : ''}
+                        </div>
+                    `;
+                    queriesList.appendChild(div);
+                });
+            });
+        }
+
         document.getElementById("btnSendQuery").addEventListener("click", async () => {
             const user = auth.currentUser;
             const subject = document.getElementById("querySubject").value.trim();
             const message = document.getElementById("queryMessage").value.trim();
 
-            if (!subject || !message) {
-                alert("Por favor, completa todos los campos.");
-                return;
-            }
+            if (!subject || !message) return alert("Por favor escribe un asunto y tu mensaje.");
 
             try {
-                const btn = document.getElementById("btnSendQuery");
-                btn.innerText = "Enviando...";
-                btn.disabled = true;
+                document.getElementById("btnSendQuery").disabled = true;
+                document.getElementById("btnSendQuery").innerText = "Enviando...";
 
                 await addDoc(collection(db, "queries"), {
                     uid: user.uid,
@@ -288,24 +347,23 @@
                     userEmail: user.email,
                     subject: subject,
                     message: message,
+                    reply: null,
                     status: "Pendiente",
                     createdAt: serverTimestamp()
                 });
 
-                // Cerrar modal usando Bootstrap API
-                const modalElement = document.getElementById('modalQuery');
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                modalInstance.hide();
-
-                alert("¡Tu consulta ha sido enviada con éxito!");
                 document.getElementById("querySubject").value = "";
                 document.getElementById("queryMessage").value = "";
+                
+                // Volver a la pestaña de historial
+                const tabHist = new bootstrap.Tab(document.getElementById('btn-tab-hist'));
+                tabHist.show();
+
             } catch (e) {
-                console.error(e);
-                alert("Error al enviar la consulta.");
+                alert("Error al enviar. Inténtalo de nuevo.");
             } finally {
-                document.getElementById("btnSendQuery").innerText = "Enviar Consulta";
                 document.getElementById("btnSendQuery").disabled = false;
+                document.getElementById("btnSendQuery").innerText = "Enviar Consulta al Admin";
             }
         });
     </script>
