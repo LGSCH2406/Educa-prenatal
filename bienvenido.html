@@ -183,57 +183,59 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-admin sticky-top shadow-sm bg-white py-2">
-    <div class="container-fluid d-flex align-items-center justify-content-between">
-        
-        <!-- SECCIÓN IZQUIERDA: Logo y Nombre -->
-        <a class="navbar-brand d-flex align-items-center m-0" href="#">
-            <img src="logo.png" alt="Logo" style="height: 50px; width: auto;" class="me-2">
-            <span class="brand-logo d-none d-sm-inline" style="font-size: 1.2rem; font-weight: 800; color: #ff4d7d;">
-                EDUCA-PRENATAL
-            </span>
-        </a>
+    <nav class="navbar navbar-expand-lg navbar-admin sticky-top shadow-sm bg-white py-2">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
 
-        <!-- SECCIÓN DERECHA: Solo los botones de siempre -->
-        <div class="d-flex align-items-center gap-3">
-            
-            <!-- Info del Usuario -->
-            <div class="text-end d-none d-md-block">
-                <p id="userMsg" class="mb-0 small fw-bold text-muted text-uppercase" style="line-height: 1; color: #ff4d7d !important;">
-                    Cargando perfil...
-                </p>
-                <span class="badge bg-success" style="font-size: 0.6rem;">USUARIO ACTIVO</span>
-            </div>
+            <!-- SECCIÓN IZQUIERDA: Logo y Nombre -->
+            <a class="navbar-brand d-flex align-items-center m-0" href="#">
+                <img src="logo.png" alt="Logo" style="height: 50px; width: auto;" class="me-2">
+                <span class="brand-logo d-none d-sm-inline"
+                    style="font-size: 1.2rem; font-weight: 800; color: #ff4d7d;">
+                    EDUCA-PRENATAL
+                </span>
+            </a>
 
-            <!-- BOTÓN CONSULTAS (El de siempre) -->
-            <button class="btn btn-pink btn-sm d-flex align-items-center px-3 py-2 rounded-pill shadow-sm" 
+            <!-- SECCIÓN DERECHA: Solo los botones de siempre -->
+            <div class="d-flex align-items-center gap-3">
+
+                <!-- Info del Usuario -->
+                <div class="text-end d-none d-md-block">
+                    <p id="userMsg" class="mb-0 small fw-bold text-muted text-uppercase"
+                        style="line-height: 1; color: #ff4d7d !important;">
+                        Cargando perfil...
+                    </p>
+                    <span class="badge bg-success" style="font-size: 0.6rem;">USUARIO ACTIVO</span>
+                </div>
+
+                <!-- BOTÓN CONSULTAS (El de siempre) -->
+                <button class="btn btn-pink btn-sm d-flex align-items-center px-3 py-2 rounded-pill shadow-sm"
                     data-bs-toggle="modal" data-bs-target="#modalQueries"
                     style="background-color: #ff4d7d; color: white; border: none;">
-                <i class="bi bi-chat-heart-fill me-2"></i>
-                <span class="fw-bold">Consultas</span>
-            </button>
-
-            <!-- BOTÓN SALIR (El de siempre) -->
-            <div class="dropdown">
-                <button class="btn btn-danger btn-sm dropdown-toggle rounded-pill shadow-sm px-3 py-2" 
-                        type="button" id="dropdownLogout" data-bs-toggle="dropdown" aria-expanded="false"
-                        style="background-color: #d63384; border: none;">
-                    <i class="bi bi-box-arrow-right me-1"></i>
-                    <span class="d-none d-sm-inline fw-bold">Salir</span>
+                    <i class="bi bi-chat-heart-fill me-2"></i>
+                    <span class="fw-bold">Consultas</span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" 
-                    aria-labelledby="dropdownLogout" style="border-radius: 16px;">
-                    <li>
-                        <a class="dropdown-item fw-bold text-danger py-2" href="index.html">
-                            <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
-                        </a>
-                    </li>
-                </ul>
-            </div>
 
+                <!-- BOTÓN SALIR (El de siempre) -->
+                <div class="dropdown">
+                    <button class="btn btn-danger btn-sm dropdown-toggle rounded-pill shadow-sm px-3 py-2" type="button"
+                        id="dropdownLogout" data-bs-toggle="dropdown" aria-expanded="false"
+                        style="background-color: #d63384; border: none;">
+                        <i class="bi bi-box-arrow-right me-1"></i>
+                        <span class="d-none d-sm-inline fw-bold">Salir</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" aria-labelledby="dropdownLogout"
+                        style="border-radius: 16px;">
+                        <li>
+                            <a class="dropdown-item fw-bold text-danger py-2" href="index.html">
+                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
     <div class="container py-5">
 
         <!-- ESTADÍSTICAS -->
@@ -672,8 +674,14 @@
             const msg = document.getElementById("queryMessage").value.trim();
 
             try {
+                // Obtenemos los datos actuales de la usuaria del elemento HTML que ya cargaste
+                // O directamente del objeto auth.currentUser
+                const user = auth.currentUser;
+
                 await addDoc(collection(db, "queries"), {
-                    uid: auth.currentUser.uid,
+                    uid: user.uid,
+                    userName: user.displayName || "Usuaria", // Se guarda el nombre
+                    userEmail: user.email || "Sin correo",   // Se guarda el correo[cite: 1]
                     subject: sub,
                     message: msg,
                     reply: null,
@@ -684,7 +692,7 @@
                 document.getElementById("querySubject").value = "";
                 document.getElementById("queryMessage").value = "";
                 sendModal.hide();
-                // Cerrar modal principal después de 1 segundo
+
                 setTimeout(() => {
                     const queriesModal = bootstrap.Modal.getInstance(document.getElementById('modalQueries'));
                     queriesModal.hide();
