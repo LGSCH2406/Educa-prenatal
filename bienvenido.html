@@ -35,9 +35,28 @@
             z-index: 1;
             pointer-events: none;
         }
-        .c1 { width: 500px; height: 500px; top: -150px; left: -100px; animation: move 20s infinite alternate; }
-        .c2 { width: 300px; height: 300px; bottom: -50px; right: -50px; animation: move 15s infinite alternate-reverse; }
-        @keyframes move { to { transform: translate(60px, 100px); } }
+
+        .c1 {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            left: -100px;
+            animation: move 20s infinite alternate;
+        }
+
+        .c2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            right: -50px;
+            animation: move 15s infinite alternate-reverse;
+        }
+
+        @keyframes move {
+            to {
+                transform: translate(60px, 100px);
+            }
+        }
 
         .container-custom {
             max-width: 1100px;
@@ -95,7 +114,10 @@
             border: 2px dashed #dee2e6;
         }
 
-        .lock-icon { font-size: 2rem; margin-bottom: 10px; }
+        .lock-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
 
         .btn-query-nav {
             background: var(--accent);
@@ -116,7 +138,9 @@
         .query-item {
             border-bottom: 1px solid #f0f0f0;
             padding: 20px 0;
+            position: relative;
         }
+
         .query-question {
             background: #fdf2f4;
             padding: 12px 18px;
@@ -127,6 +151,7 @@
             display: inline-block;
             max-width: 90%;
         }
+
         .query-answer {
             background: #f1f3f5;
             padding: 12px 18px;
@@ -137,11 +162,101 @@
             color: #333;
             max-width: 90%;
         }
+
         .status-badge {
             font-size: 0.75rem;
             padding: 4px 10px;
             border-radius: 20px;
             font-weight: 600;
+        }
+
+        .query-actions {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .btn-query-action {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .btn-edit-query {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .btn-edit-query:hover {
+            background: #ffeaa7;
+            color: #856404;
+        }
+
+        .btn-delete-query {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .btn-delete-query:hover {
+            background: #f5c6cb;
+            color: #721c24;
+        }
+
+        .btn-query-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal de edición */
+        .modal-edit .form-control {
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        /* Mejoras visuales modal */
+        .modal-content {
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .nav-pills .nav-link {
+            background: #f1f3f5;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .nav-pills .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Tarjetas de consulta más modernas */
+        .query-item {
+            background: white;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            transition: 0.2s;
+        }
+
+        .query-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        /* burbujas mejoradas */
+        .query-question {
+            background: #ffe5ea;
+            color: #6d0f1f;
+        }
+
+        .query-answer {
+            background: #f1f3f5;
         }
     </style>
 </head>
@@ -161,7 +276,8 @@
                 <button class="btn btn-query-nav shadow-sm" data-bs-toggle="modal" data-bs-target="#modalQueries">
                     💬 Mis Consultas
                 </button>
-                <a href="index.html" class="btn btn-outline-light d-flex align-items-center" style="border-radius: 15px; padding: 0 20px;">
+                <a href="index.html" class="btn btn-outline-light d-flex align-items-center"
+                    style="border-radius: 15px; padding: 0 20px;">
                     Cerrar Sesión
                 </a>
             </div>
@@ -186,10 +302,12 @@
                 <div class="modal-body" style="padding: 25px;">
                     <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active px-4" id="btn-tab-hist" data-bs-toggle="pill" data-bs-target="#tab-history" style="border-radius: 12px;">Mis Dudas</button>
+                            <button class="nav-link active px-4" id="btn-tab-hist" data-bs-toggle="pill"
+                                data-bs-target="#tab-history" style="border-radius: 12px;">Mis Dudas</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link px-4" data-bs-toggle="pill" data-bs-target="#tab-new" style="border-radius: 12px;">Nueva Consulta</button>
+                            <button class="nav-link px-4" data-bs-toggle="pill" data-bs-target="#tab-new"
+                                style="border-radius: 12px;">Nueva Consulta</button>
                         </li>
                     </ul>
 
@@ -209,17 +327,54 @@
                             <div class="bg-light p-4 rounded-4">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold small text-uppercase text-muted">Asunto</label>
-                                    <input type="text" id="querySubject" class="form-control border-0 shadow-sm" placeholder="Ej: Duda con ejercicios de respiración" style="border-radius: 10px; padding: 12px;">
+                                    <input type="text" id="querySubject" class="form-control border-0 shadow-sm"
+                                        placeholder="Ej: Duda con ejercicios de respiración"
+                                        style="border-radius: 10px; padding: 12px;">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold small text-uppercase text-muted">Tu Mensaje</label>
-                                    <textarea id="queryMessage" class="form-control border-0 shadow-sm" rows="4" placeholder="Escribe aquí tu pregunta detallada..." style="border-radius: 10px; padding: 12px; resize: none;"></textarea>
+                                    <textarea id="queryMessage" class="form-control border-0 shadow-sm" rows="4"
+                                        placeholder="Escribe aquí tu pregunta detallada..."
+                                        style="border-radius: 10px; padding: 12px; resize: none;"></textarea>
                                 </div>
-                                <button class="btn btn-danger w-100 py-3 shadow" id="btnSendQuery" style="background: var(--primary); border:none; border-radius:15px; font-weight: 600;">
+                                <button class="btn btn-danger w-100 py-3 shadow" id="btnSendQuery"
+                                    style="background: var(--primary); border:none; border-radius:15px; font-weight: 600;">
                                     Enviar Consulta al Admin
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDICIÓN DE CONSULTA -->
+    <div class="modal fade" id="modalEditQuery" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-dark modal-edit">
+                <div class="modal-header border-0" style="padding: 25px;">
+                    <h5 class="modal-title fw-bold" style="color: var(--primary);">Editar Consulta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 25px;">
+                    <input type="hidden" id="editQueryId">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase text-muted">Asunto</label>
+                        <input type="text" id="editQuerySubject" class="form-control"
+                            placeholder="Asunto de la consulta">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase text-muted">Mensaje</label>
+                        <textarea id="editQueryMessage" class="form-control" rows="4"
+                            placeholder="Tu mensaje..."></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary flex-grow-1" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="btn btn-danger flex-grow-1" id="btnUpdateQuery"
+                            style="background: var(--primary); border:none; border-radius:15px; font-weight: 600;">
+                            Actualizar Consulta
+                        </button>
                     </div>
                 </div>
             </div>
@@ -232,7 +387,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
@@ -291,7 +446,6 @@
 
         // --- SISTEMA DE CONSULTAS EN TIEMPO REAL ---
         function listenToQueries(uid) {
-            // Consulta simple para evitar problemas de índices
             const q = query(collection(db, "queries"), where("uid", "==", uid));
 
             onSnapshot(q, (snapshot) => {
@@ -304,8 +458,8 @@
                 }
 
                 let items = [];
-                snapshot.forEach(doc => items.push({id: doc.id, ...doc.data()}));
-                
+                snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+
                 // Ordenar por fecha manualmente (descendente)
                 items.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
@@ -313,22 +467,120 @@
                 items.forEach(data => {
                     const div = document.createElement("div");
                     div.className = "query-item";
+                    const canEdit = !data.reply; // Solo se puede editar si NO tiene respuesta
                     div.innerHTML = `
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-bold" style="color: var(--primary);">${data.subject || 'Sin Asunto'}</span>
-                            <span class="status-badge ${data.reply ? 'bg-success text-white' : 'bg-warning text-dark'}">
-                                ${data.reply ? 'Respondido' : 'Pendiente'}
-                            </span>
-                        </div>
-                        <div class="d-flex flex-column gap-2">
-                            <div class="query-question">${data.message}</div>
-                            ${data.reply ? `<div class="query-answer"><strong>Respuesta:</strong><br>${data.reply}</div>` : ''}
-                        </div>
-                    `;
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex flex-column">
+            <span class="fw-bold" style="color: var(--primary);">
+                ${data.subject || 'Sin Asunto'}
+            </span>
+            <span class="status-badge ${data.reply ? 'bg-success text-white' : 'bg-warning text-dark'} mt-1">
+                ${data.reply ? 'Respondido' : 'Pendiente'}
+            </span>
+        </div>
+
+        ${canEdit ? `
+        <div class="query-actions">
+            <button class="btn btn-query-action btn-edit-query"
+                data-id="${data.id}"
+                data-subject="${data.subject || ''}"
+                data-message="${data.message || ''}"
+                title="Editar">
+                ✏️
+            </button>
+
+            <button class="btn btn-query-action btn-delete-query"
+                data-id="${data.id}"
+                title="Eliminar">
+                🗑️
+            </button>
+        </div>
+        ` : ''}
+    </div>
+
+    <div class="d-flex flex-column gap-2 ${canEdit ? 'pt-2' : ''}">
+        <div class="query-question">${data.message}</div>
+        ${data.reply ? `
+            <div class="query-answer">
+                <strong>Respuesta:</strong><br>${data.reply}
+            </div>
+        ` : ''}
+    </div>
+`;
                     queriesList.appendChild(div);
                 });
+
+                // Event listeners para botones de acción
+                setupQueryActions();
             });
         }
+
+        function setupQueryActions() {
+            // Botones de editar
+            document.querySelectorAll('.btn-edit-query').forEach(btn => {
+                btn.onclick = function () {
+                    const queryId = this.dataset.id;
+                    const subject = this.dataset.subject;
+                    const message = this.dataset.message;
+
+                    document.getElementById('editQueryId').value = queryId;
+                    document.getElementById('editQuerySubject').value = subject;
+                    document.getElementById('editQueryMessage').value = message;
+
+                    new bootstrap.Modal(document.getElementById('modalEditQuery')).show();
+                };
+            });
+
+            // Botones de eliminar
+            document.querySelectorAll('.btn-delete-query').forEach(btn => {
+                btn.onclick = async function () {
+                    if (!confirm('¿Estás segura de que quieres eliminar esta consulta? No podrás recuperarla.')) {
+                        return;
+                    }
+
+                    const queryId = this.dataset.id;
+                    try {
+                        await deleteDoc(doc(db, "queries", queryId));
+                        // El onSnapshot se encargará de actualizar la lista automáticamente
+                    } catch (e) {
+                        alert('Error al eliminar la consulta. Inténtalo de nuevo.');
+                        console.error(e);
+                    }
+                };
+            });
+        }
+
+        // Event listener para actualizar consulta
+        document.getElementById("btnUpdateQuery").addEventListener("click", async () => {
+            const queryId = document.getElementById("editQueryId").value;
+            const subject = document.getElementById("editQuerySubject").value.trim();
+            const message = document.getElementById("editQueryMessage").value.trim();
+
+            if (!subject || !message) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+
+            try {
+                document.getElementById("btnUpdateQuery").disabled = true;
+                document.getElementById("btnUpdateQuery").innerText = "Actualizando...";
+
+                await updateDoc(doc(db, "queries", queryId), {
+                    subject: subject,
+                    message: message,
+                    updatedAt: serverTimestamp()
+                });
+
+                bootstrap.Modal.getInstance(document.getElementById('modalEditQuery')).hide();
+
+            } catch (e) {
+                alert("Error al actualizar. Inténtalo de nuevo.");
+                console.error(e);
+            } finally {
+                document.getElementById("btnUpdateQuery").disabled = false;
+                document.getElementById("btnUpdateQuery").innerText = "Actualizar Consulta";
+            }
+        });
 
         document.getElementById("btnSendQuery").addEventListener("click", async () => {
             const user = auth.currentUser;
@@ -354,7 +606,7 @@
 
                 document.getElementById("querySubject").value = "";
                 document.getElementById("queryMessage").value = "";
-                
+
                 // Volver a la pestaña de historial
                 const tabHist = new bootstrap.Tab(document.getElementById('btn-tab-hist'));
                 tabHist.show();
@@ -368,4 +620,5 @@
         });
     </script>
 </body>
+
 </html>
