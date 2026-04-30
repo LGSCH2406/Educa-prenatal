@@ -89,7 +89,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
         import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -128,26 +128,29 @@
                 const user = userCredential.user;
                 const emailLogueado = user.email.toLowerCase();
 
-                // 2. Si es Admin, entra directo
-                if (emailLogueado === "gus24060102@gmail.com") {
+                // --- NUEVA LÓGICA DE ADMINISTRADORES ---
+                const admins = [
+                    "gus24060102@gmail.com", 
+                    "maryjesmith@gmail.com"
+                ];
+
+                if (admins.includes(emailLogueado)) {
                     window.location.href = "admin.html";
                     return;
                 }
+                // ---------------------------------------
 
-                // 3. Verificamos ESTADO en Firestore usando el UID
+                // 2. Verificamos ESTADO en Firestore usando el UID para usuarios normales
                 const q = query(collection(db, "users"), where("uid", "==", user.uid));
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
                     const userData = querySnapshot.docs[0].data();
                     
-                    // Si active es explícitamente false
                     if (userData.active === false) {
-                        await signOut(auth); // Cerramos la sesión que Auth acaba de abrir
-                        
+                        await signOut(auth);
                         btn.disabled = false;
                         btn.innerText = "Ingresar";
-                        
                         return Swal.fire({
                             icon: 'error',
                             title: 'Cuenta Inhabilitada',
@@ -156,7 +159,7 @@
                         });
                     }
                 } else {
-                    // Si no encontramos el documento por UID, probamos por EMAIL (doble verificación)
+                    // Doble verificación por EMAIL
                     const q2 = query(collection(db, "users"), where("email", "==", emailLogueado));
                     const snap2 = await getDocs(q2);
                     if (!snap2.empty && snap2.docs[0].data().active === false) {
@@ -167,7 +170,7 @@
                     }
                 }
 
-                // 4. Si todo está bien, entra
+                // 3. Si todo está bien, entra como usuario normal
                 window.location.href = "bienvenido.html";
 
             } catch (error) {
