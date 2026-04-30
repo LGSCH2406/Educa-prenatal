@@ -40,10 +40,27 @@
             pointer-events: none;
         }
 
-        .c1 { width: 500px; height: 500px; top: -150px; left: -100px; animation: move 20s infinite alternate; }
-        .c2 { width: 300px; height: 300px; bottom: -50px; right: -50px; animation: move 15s infinite alternate-reverse; }
+        .c1 {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            left: -100px;
+            animation: move 20s infinite alternate;
+        }
 
-        @keyframes move { to { transform: translate(60px, 100px); } }
+        .c2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            right: -50px;
+            animation: move 15s infinite alternate-reverse;
+        }
+
+        @keyframes move {
+            to {
+                transform: translate(60px, 100px);
+            }
+        }
 
         .container {
             max-width: 1100px;
@@ -60,8 +77,15 @@
             margin-bottom: 50px;
         }
 
-        .header h1 { font-size: 36px; text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
-        .header p { opacity: 0.8; font-weight: 300; }
+        .header h1 {
+            font-size: 36px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-weight: 300;
+        }
 
         .logout-btn {
             background: var(--white-glow);
@@ -73,10 +97,12 @@
             backdrop-filter: blur(10px);
             transition: 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer;
         }
 
-        .logout-btn:hover { background: white; color: var(--primary); }
+        .logout-btn:hover {
+            background: white;
+            color: var(--primary);
+        }
 
         /* Panel de Sesiones */
         .sessions-panel {
@@ -90,8 +116,15 @@
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .panel-title {
@@ -139,6 +172,7 @@
             box-shadow: 0 15px 30px rgba(109, 15, 31, 0.3);
         }
 
+        /* Estado Bloqueado */
         .session-card.locked {
             background: #f0f0f0;
             color: #aaa;
@@ -146,21 +180,54 @@
             border: 2px dashed #ddd;
         }
 
-        .lock-icon { font-size: 35px; margin-bottom: 10px; display: block; color: #bbb; }
-        .session-card.locked .lock-icon { display: block; }
+        .lock-icon {
+            font-size: 35px;
+            margin-bottom: 10px;
+            display: none;
+            color: #bbb;
+        }
 
-        .session-number { font-size: 14px; font-weight: 600; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
-        .session-title { font-size: 28px; font-weight: 600; margin: 5px 0; }
-        .session-status { font-size: 12px; text-transform: uppercase; margin-top: 10px; }
+        .session-card.locked .lock-icon {
+            display: block;
+        }
+
+        .session-card.locked .session-status {
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            color: #999;
+        }
+
+        .session-number {
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .session-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 5px 0;
+        }
 
         @media (max-width: 850px) {
-            .sessions-panel { padding: 30px 20px; border-radius: 20px; }
-            .sessions-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+            .sessions-panel {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+
+            .sessions-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 15px;
+            }
         }
     </style>
 </head>
 
 <body>
+
     <div class="circle c1"></div>
     <div class="circle c2"></div>
 
@@ -170,19 +237,21 @@
                 <h1>Bienvenida ✨</h1>
                 <p id="userMsg">Cargando tu progreso...</p>
             </div>
-            <button id="btnLogout" class="logout-btn">Cerrar Sesión</button>
+            <a href="index.html" class="logout-btn">Cerrar Sesión</a>
         </div>
 
         <div class="sessions-panel">
             <h2 class="panel-title">Tu Programa Prenatal Digital</h2>
-            <div class="sessions-grid" id="sessionsGrid"></div>
+            <div class="sessions-grid" id="sessionsGrid">
+            </div>
         </div>
     </div>
 
+    <!-- 🔥 JAVASCRIPT CORREGIDO: AHORA LEE DESDE FIREBASE ✅ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
@@ -194,45 +263,49 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
         const auth = getAuth(app);
-
-        // Botón Cerrar Sesión
-        document.getElementById('btnLogout').addEventListener('click', () => {
-            signOut(auth).then(() => { window.location.href = "index.html"; });
-        });
+        const db = getFirestore(app);
 
         const sessionsGrid = document.getElementById("sessionsGrid");
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Buscamos el progreso real en Firebase
-                const userDocRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userDocRef);
-
-                let nivelDesbloqueado = 1; // Sesión 1 abierta por defecto
-
-                if (userSnap.exists()) {
-                    // Obtenemos nivelDesbloqueado (número de sesión en la que va)
-                    nivelDesbloqueado = userSnap.data().nivelDesbloqueado || 1;
+                try {
+                    // 🔥 LEEMOS DESDE FIREBASE (NO LOCALSTORAGE) ✅
+                    const q = query(collection(db, "users"), where("uid", "==", user.uid));
+                    const snap = await getDocs(q);
                     
-                    // Sincronizamos con localStorage por si acaso
-                    localStorage.setItem('prenatal_progress', nivelDesbloqueado);
+                    if (!snap.empty) {
+                        const userData = snap.docs[0].data();
+                        const nivelDesbloqueado = userData.nivelDesbloqueado || 1;
+                        
+                        // 💾 Backup en localStorage (opcional)
+                        localStorage.setItem('prenatal_progress', nivelDesbloqueado);
+                        
+                        document.getElementById("userMsg").innerText = 
+                            `¡Bienvenida! Tienes ${Math.min(nivelDesbloqueado, 8)} de 8 sesiones desbloqueadas.`;
+                        
+                        renderDashboard(nivelDesbloqueado);
+                    } else {
+                        // Usuario nuevo
+                        renderDashboard(1);
+                        document.getElementById("userMsg").innerText = 
+                            "¡Comienza tu primera sesión del programa prenatal!";
+                    }
+                } catch (error) {
+                    console.error("Error cargando progreso:", error);
+                    renderDashboard(1);
+                    document.getElementById("userMsg").innerText = "Error al cargar. Intenta de nuevo.";
                 }
-
-                renderDashboard(nivelDesbloqueado);
             } else {
-                window.location.href = "index.html";
+                window.location.href = "login.html";
             }
         });
 
         function renderDashboard(nivelDesbloqueado) {
             sessionsGrid.innerHTML = "";
-            let completadas = nivelDesbloqueado - 1;
-            document.getElementById("userMsg").innerText = `Has completado ${completadas} de 8 sesiones.`;
-
+            
             for (let i = 1; i <= 8; i++) {
-                // Una sesión está bloqueada si su número (i) es mayor al nivel alcanzado
                 const isLocked = i > nivelDesbloqueado;
                 
                 const card = document.createElement("div");
@@ -245,12 +318,13 @@
                 `;
 
                 if (!isLocked) {
-                    // Agregamos refresh=timestamp para evitar que cargue versiones viejas de la página
-                    card.onclick = () => window.location.href = `sesion_detalle.html?id=${i}&refresh=${new Date().getTime()}`;
+                    card.onclick = () => window.location.href = `sesion_detalle.html?id=${i}`;
                 }
                 sessionsGrid.appendChild(card);
             }
         }
     </script>
+
 </body>
+
 </html>
