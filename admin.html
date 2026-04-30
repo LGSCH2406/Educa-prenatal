@@ -1276,30 +1276,27 @@
                 Swal.fire('Error', 'No se pudo guardar la respuesta', 'error');
             }
         };
-        window.deleteUser = async (userId, userUid) => {
+        window.deleteUser = async (userDocId) => {
             const res = await Swal.fire({
-                title: '¿Eliminar usuario y sus consultas?',
-                text: "Se borrarán todos sus registros de forma permanente.",
+                title: '¿Eliminar usuaria?',
+                text: "Se borrará el registro de la base de datos permanentemente.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar todo'
+                confirmButtonColor: '#d81b60',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
             });
 
             if (res.isConfirmed) {
                 try {
-                    // 1. Eliminar el documento del usuario
-                    await deleteDoc(doc(db, "users", userId));
+                    // Solo elimina el documento del usuario en la colección "users"
+                    await deleteDoc(doc(db, "users", userDocId));
 
-                    // 2. Buscar y eliminar todas sus consultas
-                    const q = query(collection(db, "queries"), where("uid", "==", userUid));
-                    const querySnap = await getDocs(q);
-
-                    const deletePromises = querySnap.docs.map(d => deleteDoc(d.ref));
-                    await Promise.all(deletePromises);
-
-                    Swal.fire('Eliminado', 'Usuario y consultas borrados con éxito.', 'success');
-                } catch (e) {
-                    Swal.fire('Error', 'No se pudo completar la limpieza.', 'error');
+                    Swal.fire('Eliminado', 'La usuaria ha sido quitada del sistema.', 'success');
+                    loadUsers(); // Recarga la tabla de usuarios
+                } catch (error) {
+                    console.error("Error al eliminar:", error);
+                    Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
                 }
             }
         };
