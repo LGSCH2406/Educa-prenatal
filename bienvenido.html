@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Educa-prenatal | Mis Sesiones</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,23 +14,16 @@
             --primary-light: #a82036;
             --accent: #f1a7b0;
             --white-glow: rgba(255, 255, 255, 0.2);
-            --text-dark: #333;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
         }
 
         body {
             background: var(--primary);
             min-height: 100vh;
-            padding: 40px 20px;
+            font-family: 'Outfit', sans-serif;
             color: white;
             overflow-x: hidden;
             position: relative;
+            padding-bottom: 50px;
         }
 
         /* Fondo Animado */
@@ -39,189 +34,100 @@
             z-index: 1;
             pointer-events: none;
         }
+        .c1 { width: 500px; height: 500px; top: -150px; left: -100px; animation: move 20s infinite alternate; }
+        .c2 { width: 300px; height: 300px; bottom: -50px; right: -50px; animation: move 15s infinite alternate-reverse; }
+        @keyframes move { to { transform: translate(60px, 100px); } }
 
-        .c1 {
-            width: 500px;
-            height: 500px;
-            top: -150px;
-            left: -100px;
-            animation: move 20s infinite alternate;
-        }
-
-        .c2 {
-            width: 300px;
-            height: 300px;
-            bottom: -50px;
-            right: -50px;
-            animation: move 15s infinite alternate-reverse;
-        }
-
-        @keyframes move {
-            to {
-                transform: translate(60px, 100px);
-            }
-        }
-
-        .container {
+        .container-custom {
             max-width: 1100px;
             margin: 0 auto;
             position: relative;
             z-index: 10;
         }
 
-        /* Barra superior */
-        .header {
+        /* Header mejorado con Bootstrap */
+        .header-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 50px;
+            padding: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .header h1 {
-            font-size: 36px;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .header p {
-            opacity: 0.8;
-            font-weight: 300;
-        }
-
-        .logout-btn {
-            background: var(--white-glow);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 15px;
-            text-decoration: none;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .logout-btn:hover {
-            background: white;
-            color: var(--primary);
-        }
-
-        /* Panel de Sesiones */
+        /* Panel de Sesiones Blanco */
         .sessions-panel {
             background: white;
             border-radius: 30px;
-            padding: 50px 40px;
-            box-shadow: 0 0 0 10px var(--white-glow), 0 25px 60px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.8s ease-out;
-            position: relative;
-            z-index: 20;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.98);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            padding: 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+            color: #333;
         }
 
         .panel-title {
             color: var(--primary);
-            font-size: 28px;
-            margin-bottom: 35px;
+            font-weight: 600;
             text-align: center;
-            position: relative;
+            margin-bottom: 40px;
         }
 
-        .panel-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 4px;
-            background: var(--accent);
-            margin: 10px auto 0;
-            border-radius: 2px;
-        }
-
-        .sessions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-        }
-
+        /* Cards de Sesiones */
         .session-card {
-            background: #fafafa;
+            background: #f8f9fa;
             border-radius: 20px;
-            padding: 35px 20px;
+            padding: 30px 15px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: var(--primary);
+            transition: all 0.3s ease;
             border: 2px solid #eee;
-            position: relative;
-            overflow: hidden;
+            height: 100%;
         }
 
         .session-card:not(.locked):hover {
-            transform: translateY(-10px) scale(1.02);
+            transform: translateY(-10px);
             background: var(--primary);
             color: white;
             border-color: var(--primary);
-            box-shadow: 0 15px 30px rgba(109, 15, 31, 0.3);
         }
 
-        /* Estado Bloqueado */
         .session-card.locked {
-            background: #f0f0f0;
-            color: #aaa;
+            background: #e9ecef;
+            color: #adb5bd;
             cursor: not-allowed;
-            border: 2px dashed #ddd;
+            border: 2px dashed #dee2e6;
         }
 
-        .lock-icon {
-            font-size: 35px;
-            margin-bottom: 10px;
-            display: none;
-            color: #bbb;
-        }
+        .lock-icon { font-size: 2rem; margin-bottom: 10px; }
 
-        .session-card.locked .lock-icon {
-            display: block;
+        /* Estilos específicos para el Modal (Bootstrap usa sus clases, esto es refuerzo) */
+        .modal-content {
+            border-radius: 25px;
+            border: none;
         }
-
-        .session-card.locked .session-status {
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-top: 10px;
-            color: #999;
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            border-radius: 25px 25px 0 0;
         }
+        .btn-primary-custom {
+            background: var(--primary);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 12px;
+        }
+        .btn-primary-custom:hover { background: var(--primary-light); }
 
-        .session-number {
-            font-size: 14px;
+        .btn-query-nav {
+            background: var(--accent);
+            color: var(--primary) !important;
             font-weight: 600;
-            opacity: 0.7;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border-radius: 15px;
+            padding: 12px 20px;
+            transition: 0.3s;
         }
-
-        .session-title {
-            font-size: 28px;
-            font-weight: 600;
-            margin: 5px 0;
-        }
-
-        @media (max-width: 850px) {
-            .sessions-panel {
-                padding: 30px 20px;
-                border-radius: 20px;
-            }
-
-            .sessions-grid {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-                gap: 15px;
-            }
+        .btn-query-nav:hover {
+            background: white;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -231,27 +137,68 @@
     <div class="circle c1"></div>
     <div class="circle c2"></div>
 
-    <div class="container">
-        <div class="header">
-            <div>
-                <h1>Bienvenida ✨</h1>
-                <p id="userMsg">Cargando tu progreso...</p>
+    <div class="container container-custom">
+        <!-- HEADER CON BOTÓN DE CONSULTA VISIBLE -->
+        <header class="header-box">
+            <div class="text-start">
+                <h1 class="display-5 fw-bold mb-0">Bienvenida ✨</h1>
+                <p id="userMsg" class="lead opacity-75">Cargando tu progreso...</p>
             </div>
-            <a href="index.html" class="logout-btn">Cerrar Sesión</a>
-        </div>
+            <div class="d-flex gap-2">
+                <!-- BOTÓN DE CONSULTA MUY VISIBLE -->
+                <button class="btn btn-query-nav shadow-sm" data-bs-toggle="modal" data-bs-target="#modalQuery">
+                    💬 Hacer una Consulta
+                </button>
+                <a href="index.html" class="btn btn-outline-light d-flex align-items-center" style="border-radius: 15px; padding: 0 20px;">
+                    Cerrar Sesión
+                </a>
+            </div>
+        </header>
 
-        <div class="sessions-panel">
+        <!-- PANEL PRINCIPAL -->
+        <main class="sessions-panel">
             <h2 class="panel-title">Tu Programa Prenatal Digital</h2>
-            <div class="sessions-grid" id="sessionsGrid">
+            
+            <div class="row g-4" id="sessionsGrid">
+                <!-- Las sesiones se cargarán aquí -->
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DE CONSULTAS (BOOTSTRAP 5) -->
+    <div class="modal fade" id="modalQuery" tabindex="-1" aria-labelledby="modalQueryLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalQueryLabel">¿Tienes alguna duda? ✨</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Escribe tu consulta y el administrador te responderá lo antes posible.</p>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Asunto</label>
+                        <input type="text" id="querySubject" class="form-control" placeholder="Ej: Duda sobre la Sesión 1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tu Mensaje</label>
+                        <textarea id="queryMessage" class="form-control" rows="4" placeholder="Cuéntanos en qué podemos ayudarte..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 12px;">Cancelar</button>
+                    <button type="button" class="btn btn-primary-custom text-white" id="btnSendQuery">Enviar Consulta</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 🔥 JAVASCRIPT CORREGIDO: AHORA LEE DESDE FIREBASE ✅ -->
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
@@ -271,7 +218,6 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
-                    // 🔥 LEEMOS DESDE FIREBASE (NO LOCALSTORAGE) ✅
                     const q = query(collection(db, "users"), where("uid", "==", user.uid));
                     const snap = await getDocs(q);
                     
@@ -279,52 +225,89 @@
                         const userData = snap.docs[0].data();
                         const nivelDesbloqueado = userData.nivelDesbloqueado || 1;
                         
-                        // 💾 Backup en localStorage (opcional)
-                        localStorage.setItem('prenatal_progress', nivelDesbloqueado);
-                        
                         document.getElementById("userMsg").innerText = 
-                            `¡Bienvenida! Tienes ${Math.min(nivelDesbloqueado, 8)} de 8 sesiones desbloqueadas.`;
+                            `¡Hola, ${userData.nombre || 'Mamita'}! Tienes ${Math.min(nivelDesbloqueado, 8)} de 8 sesiones desbloqueadas.`;
                         
                         renderDashboard(nivelDesbloqueado);
                     } else {
-                        // Usuario nuevo
                         renderDashboard(1);
-                        document.getElementById("userMsg").innerText = 
-                            "¡Comienza tu primera sesión del programa prenatal!";
+                        document.getElementById("userMsg").innerText = "¡Bienvenida! Comienza tu primera sesión.";
                     }
                 } catch (error) {
-                    console.error("Error cargando progreso:", error);
+                    console.error("Error al cargar datos:", error);
                     renderDashboard(1);
-                    document.getElementById("userMsg").innerText = "Error al cargar. Intenta de nuevo.";
                 }
             } else {
-                window.location.href = "login.html";
+                window.location.href = "index.html";
             }
         });
 
         function renderDashboard(nivelDesbloqueado) {
             sessionsGrid.innerHTML = "";
-            
             for (let i = 1; i <= 8; i++) {
                 const isLocked = i > nivelDesbloqueado;
                 
-                const card = document.createElement("div");
-                card.className = `session-card ${isLocked ? 'locked' : ''}`;
-                card.innerHTML = `
-                    <div class="lock-icon">${isLocked ? '🔒' : '🔓'}</div>
-                    <div class="session-number">Módulo</div>
-                    <div class="session-title">Sesión ${i}</div>
-                    <div class="session-status">${isLocked ? 'Bloqueado' : '¡Listo para ver!'}</div>
+                const col = document.createElement("div");
+                col.className = "col-6 col-md-4 col-lg-3";
+                
+                col.innerHTML = `
+                    <div class="session-card ${isLocked ? 'locked' : ''}">
+                        <div class="lock-icon">${isLocked ? '🔒' : '🔓'}</div>
+                        <div class="small text-uppercase opacity-75">Módulo</div>
+                        <div class="h4 fw-bold">Sesión ${i}</div>
+                        <div class="small mt-2">${isLocked ? 'Bloqueado' : '¡Listo para ver!'}</div>
+                    </div>
                 `;
 
                 if (!isLocked) {
-                    card.onclick = () => window.location.href = `sesion_detalle.html?id=${i}`;
+                    col.querySelector('.session-card').onclick = () => window.location.href = `sesion_detalle.html?id=${i}`;
                 }
-                sessionsGrid.appendChild(card);
+                sessionsGrid.appendChild(col);
             }
         }
+
+        // FUNCIONALIDAD DE CONSULTAS (MANTENIDA ✅)
+        document.getElementById("btnSendQuery").addEventListener("click", async () => {
+            const user = auth.currentUser;
+            const subject = document.getElementById("querySubject").value.trim();
+            const message = document.getElementById("queryMessage").value.trim();
+
+            if (!subject || !message) {
+                alert("Por favor, completa todos los campos.");
+                return;
+            }
+
+            try {
+                const btn = document.getElementById("btnSendQuery");
+                btn.innerText = "Enviando...";
+                btn.disabled = true;
+
+                await addDoc(collection(db, "queries"), {
+                    uid: user.uid,
+                    userName: user.displayName || "Usuario",
+                    userEmail: user.email,
+                    subject: subject,
+                    message: message,
+                    status: "Pendiente",
+                    createdAt: serverTimestamp()
+                });
+
+                // Cerrar modal usando Bootstrap API
+                const modalElement = document.getElementById('modalQuery');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+
+                alert("¡Tu consulta ha sido enviada con éxito!");
+                document.getElementById("querySubject").value = "";
+                document.getElementById("queryMessage").value = "";
+            } catch (e) {
+                console.error(e);
+                alert("Error al enviar la consulta.");
+            } finally {
+                document.getElementById("btnSendQuery").innerText = "Enviar Consulta";
+                document.getElementById("btnSendQuery").disabled = false;
+            }
+        });
     </script>
-
 </body>
-
 </html>
