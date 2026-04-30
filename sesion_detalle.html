@@ -155,7 +155,7 @@
         .custom-progress-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.3); z-index: 10; pointer-events: none; }
         .custom-progress-fill { height: 100%; background: var(--fucsia); width: 0%; transition: width 0.1s linear; }
 
-        /* 🌟 CAPA DE BLOQUEO PARA VIDEOS SECUENCIALES */
+        /* CAPA DE BLOQUEO PARA VIDEOS SECUENCIALES */
         .video-locked-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); color: white; display: flex; flex-direction: column;
@@ -191,12 +191,14 @@
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    // 🔥 ACTUALIZADO A LA VERSIÓN 11.4.0 PARA QUE COINCIDA CON TUS OTROS ARCHIVOS 🔥
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
+    // 🔥 API KEY CORREGIDA PARA QUE COINCIDA CON TUS OTROS ARCHIVOS 🔥
     const firebaseConfig = {
-        apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFEoAhEY0IuNM",
+        apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
         authDomain: "educa-prenatal.firebaseapp.com",
         projectId: "educa-prenatal",
         storageBucket: "educa-prenatal.firebasestorage.app",
@@ -220,7 +222,6 @@
     let nivelDesbloqueado = 1;
     let videosCompletadosNube = 0; 
 
-    // 🌟 CÓDIGO AGREGADO PARA LEER DE FIREBASE Y NO DE LOCALSTORAGE 🌟
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const q = query(collection(db, "users"), where("uid", "==", user.uid));
@@ -243,7 +244,7 @@
                 loadData(); 
             }
         } else {
-            window.location.href = "index.html";
+            window.location.href = "index.html"; 
         }
     });
 
@@ -290,6 +291,7 @@
                             <div id="progress-fill-${index}" class="custom-progress-fill"></div>
                         </div>
 
+                        <!-- CAPA DE BLOQUEO PARA SECUENCIA -->
                         <div class="video-locked-overlay" id="locked-overlay-${index}" style="display: none;">
                             <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
                             <p>Termina de ver el video anterior para desbloquear</p>
@@ -437,7 +439,7 @@
         });
     }
 
-    // 🌟 LÓGICA PARA SUBIR DE NIVEL MODIFICADA (Guarda en Nube, no en Local) 🌟
+    // 🌟 LÓGICA PARA SUBIR DE NIVEL MODIFICADA 🌟
     btnFinish.addEventListener('click', async (e) => {
         e.preventDefault();
 
