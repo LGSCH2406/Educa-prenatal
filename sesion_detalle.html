@@ -419,15 +419,17 @@
             const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
             const snap = await getDocs(q);
 
+            //
             if (snap.empty) {
                 videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
-                <h3 style="color:var(--fucsia)">Próximamente</h3>
-                <p>Aún no hay videos disponibles para la sesión ${sesionId}.</p>
-            </div>`;
+        <h3 style="color:var(--fucsia)">Contenido en preparación</h3>
+        <p>Aún no hay videos disponibles para la sesión ${sesionId}. Por favor, vuelve más tarde.</p>
+    </div>`;
 
-                btnFinish.disabled = false;
-                btnFinish.classList.add("btn-active");
-                btnFinish.innerHTML = "✨ Continuar (Sesión sin videos)";
+                // BLOQUEO: Mantenemos el botón deshabilitado y cambiamos el texto informativo
+                btnFinish.disabled = true;
+                btnFinish.classList.remove("btn-active");
+                btnFinish.innerHTML = "🔒 Esperando material de estudio";
                 return;
             }
 
