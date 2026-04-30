@@ -626,7 +626,7 @@
             <div class="glass-card mx-auto">
                 <div class="row mb-5">
                     <div class="col-lg-8">
-                        <h5 class="fw-bold mb-3">➕ Agregar Nueva Usuaria</h5>
+                        <h5 class="fw-bold mb-3">➕ Agregar Nuevo Usuario</h5>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nombre Completo</label>
@@ -649,7 +649,7 @@
                             </div>
                         </div>
                         <button class="btn btn-main" onclick="createUser()">
-                            👤 Crear Usuaria
+                            👤 Crear Usuario
                         </button>
                     </div>
                 </div>
@@ -657,7 +657,7 @@
                 <div class="row mb-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-bold">📋 Lista de Usuarias</h5>
+                            <h5 class="mb-0 fw-bold">📋 Lista de Usuarios</h5>
                             <div class="search-input">
                                 <input type="text" id="userSearch" class="form-control form-control-lg"
                                     placeholder="🔍 Buscar por nombre o email...">
@@ -693,21 +693,21 @@
         <section id="section-monitor" class="section-panel">
             <header class="mb-4">
                 <h1 class="display-6 fw-bold">Monitoreo de Plataforma</h1>
-                <p class="text-muted">Visualiza el progreso detallado de cada usuaria en las 8 sesiones.</p>
+                <p class="text-muted">Visualiza el progreso detallado de cada usuario en las 8 sesiones.</p>
             </header>
 
             <div class="row mb-4">
                 <div class="col-md-4 mb-3">
                     <div class="stat-card">
                         <i class="stat-icon">👩‍👧</i>
-                        <p>Total Usuarias Registradas</p>
+                        <p>Total Usuarios Registrados</p>
                         <h3 id="stat-total-users">0</h3>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <div class="stat-card stat-card-green">
                         <i class="stat-icon">✨</i>
-                        <p>Usuarias Activas Hoy</p>
+                        <p>Usuarios Activos Hoy</p>
                         <h3 id="stat-active-users">0</h3>
                     </div>
                 </div>
@@ -721,8 +721,8 @@
             </div>
 
             <div class="glass-card mx-auto">
-                <h5 class="fw-bold mb-4">📊 Progreso por Usuaria</h5>
-                <p class="text-muted small mb-4">Haz clic en una usuaria para desplegar sus 8 sesiones. Cada bolita
+                <h5 class="fw-bold mb-4">📊 Progreso por Usuario</h5>
+                <p class="text-muted small mb-4">Haz clic en un usuario para desplegar sus 8 sesiones. Cada bolita
                     representa un video subido.</p>
 
                 <div id="monitor-users-container">
@@ -732,7 +732,7 @@
         <section id="section-queries" class="section-panel">
             <header class="mb-4">
                 <h1 class="display-6 fw-bold">Centro de Consultas</h1>
-                <p class="text-muted">Responde a las dudas de tus usuarias en tiempo real.</p>
+                <p class="text-muted">Responde a las dudas de tus usuarios en tiempo real.</p>
             </header>
 
             <div class="glass-card mx-auto">
@@ -829,7 +829,7 @@
             }
 
             Swal.fire({
-                title: 'Creando usuaria...',
+                title: 'Creando usuario...',
                 text: 'Por favor espera',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
@@ -1181,7 +1181,7 @@
                 document.getElementById('stat-active-users').innerText = activeUsers;
 
                 if (totalUsers === 0) {
-                    htmlContent = `<div class="text-center py-4 text-muted">No hay usuarias registradas en la base de datos.</div>`;
+                    htmlContent = `<div class="text-center py-4 text-muted">No hay usuarios registrados en la base de datos.</div>`;
                 }
 
                 document.getElementById('monitor-users-container').innerHTML = htmlContent;
@@ -1194,7 +1194,7 @@
 
         window.loadQueries = () => {
             const container = document.getElementById("queries-container");
-            container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-danger"></div><p>Cargando consultas de usuarias...</p></div>`;
+            container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-danger"></div><p>Cargando consultas de usuarios...</p></div>`;
 
             onSnapshot(collection(db, "queries"), (snapshot) => {
                 container.innerHTML = "";
@@ -1244,7 +1244,7 @@
         window.deleteQueryManual = async (docId) => {
             const confirmacion = await Swal.fire({
                 title: '¿Eliminar consulta?',
-                text: "Se borrará del panel y del historial de la usuaria.",
+                text: "Se borrará del panel y del historial del usuario.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -1271,7 +1271,7 @@
                     status: "Respondido",
                     fechaRespuesta: serverTimestamp()
                 });
-                Swal.fire('¡Éxito!', 'Respuesta enviada a la usuaria', 'success');
+                Swal.fire('¡Éxito!', 'Respuesta enviada al usuario', 'success');
             } catch (e) {
                 Swal.fire('Error', 'No se pudo guardar la respuesta', 'error');
             }
