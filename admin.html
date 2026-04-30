@@ -634,9 +634,14 @@
                                     placeholder="Ingrese nombre completo">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" id="newUserEmail" class="form-control"
-                                    placeholder="Ingrese correo electrónico">
+                                <label class="form-label">Código de Usuario (Ej: GS001)</label>
+                                <!-- Campo limpio sin el sufijo visual -->
+                                <input type="text" id="userCode" class="form-control" placeholder="Ingrese el código">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email Generado (Solo Lectura)</label>
+                                <input type="email" id="newUserEmail" class="form-control bg-light" readonly
+                                    tabindex="-1">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Contraseña</label>
@@ -821,12 +826,13 @@
         // --- GESTIÓN DE USUARIAS ---
         window.createUser = async () => {
             const name = document.getElementById("newUserName").value.trim();
-            const email = document.getElementById("newUserEmail").value.trim();
+            const code = document.getElementById("userCode").value.trim(); // Capturamos el código
+            const email = document.getElementById("newUserEmail").value;
             const password = document.getElementById("newUserPassword").value;
             const week = parseInt(document.getElementById("newUserWeek").value);
 
-            if (!name || !email || !password || !week) {
-                return Swal.fire('Atención', 'Por favor completa todos los campos', 'info');
+            if (!name || !code || !password || !week) {
+                return Swal.fire('Atención', 'Completa todos los campos (Nombre, Código, Pass y Semana)', 'info');
             }
 
             Swal.fire({
@@ -841,10 +847,11 @@
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
                 const user = userCredential.user;
 
-                // Guardar en Firestore
+                // Guardar en Firestore (Añadimos el campo "code")
                 await addDoc(collection(db, "users"), {
                     uid: user.uid,
                     name: name,
+                    code: code.toUpperCase(), // Guardamos el código en mayúsculas
                     email: email,
                     week: week,
                     active: true,
@@ -855,8 +862,9 @@
 
                 Swal.fire('¡Éxito!', `Usuaria ${name} registrada correctamente`, 'success');
 
-                // Limpiar campos
+                // Limpiar campos (Ahora incluimos el campo userCode)
                 document.getElementById("newUserName").value = "";
+                document.getElementById("userCode").value = ""; // <--- ¡Importante limpiar este también!
                 document.getElementById("newUserEmail").value = "";
                 document.getElementById("newUserPassword").value = "";
                 document.getElementById("newUserWeek").value = "";
@@ -866,9 +874,9 @@
             } catch (error) {
                 console.error(error);
                 let mensaje = "No se pudo crear la usuaria.";
-                if (error.code === 'auth/email-already-in-use') mensaje = "Este correo ya está registrado.";
+                if (error.code === 'auth/email-already-in-use') mensaje = "Este código/correo ya está registrado.";
                 if (error.code === 'auth/weak-password') mensaje = "Contraseña débil (mínimo 6 caracteres).";
-                if (error.code === 'auth/api-key-not-valid') mensaje = "Error de configuración de API Key. Revisa Google Cloud.";
+                if (error.code === 'auth/api-key-not-valid') mensaje = "Error de configuración de API Key.";
 
                 Swal.fire('Error', mensaje, 'error');
             }
@@ -1303,6 +1311,18 @@
                 }
             }
         };
+
+        // Generador automático de correo basado en el código
+        document.getElementById("userCode").addEventListener("input", (e) => {
+            const codigo = e.target.value.trim();
+            const emailField = document.getElementById("newUserEmail");
+            if (codigo) {
+                // Convierte a minúsculas y añade el dominio automáticamente
+                emailField.value = codigo.toLowerCase() + "@gmail.com";
+            } else {
+                emailField.value = "";
+            }
+        });
     </script>
 </body>
 
