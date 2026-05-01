@@ -2,7 +2,7 @@
 <html lang="es">
 
 <head>
-    <link rel="icon" type="image/png" href="logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Educa-prenatal | Dashboard Profesional</title>
@@ -171,6 +171,14 @@
             }
         }
 
+        @media (max-width: 600px) {
+            .btn-download-diploma {
+                width: 100%;
+                font-size: 18px;
+                padding: 15px;
+            }
+        }
+
         .animate-fade {
             animation: fadeIn 0.6s ease-out forwards;
         }
@@ -187,6 +195,37 @@
             background: linear-gradient(45deg, #28a745, #20c997) !important;
             font-weight: 700 !important;
             text-transform: uppercase;
+        }
+
+        /* Contenedor del diploma */
+        #diplomaContainer {
+            width: 95%;
+            /* Ocupa casi todo el ancho en móviles */
+            max-width: 800px;
+            /* Tamaño máximo en PC */
+            margin: 20px auto;
+            overflow: hidden;
+            /* Evita que el contenido se salga */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* La imagen del diploma propiamente */
+        #diplomaImage {
+            width: 100%;
+            /* Se ajusta al ancho del contenedor */
+            height: auto;
+            /* Mantiene la proporción original */
+            display: block;
+            object-fit: contain;
+            /* Asegura que no se corte */
+        }
+
+        /* Si usas un modal para mostrarlo, ajusta el modal también */
+        .modal-content-diploma {
+            width: 90% !important;
+            margin: 10% auto !important;
+            padding: 10px !important;
         }
     </style>
 </head>
@@ -433,7 +472,7 @@
                             <!-- Dentro del modal del diploma -->
                             <div id="certificado-contenido" style="text-align: center;">
                                 <h1 id="diplomaUserName">NOMBRE DE LA MADRE</h2> <!-- Este ID es clave[cite: 1] -->
-                                <p>Por haber concluido exitosamente el programa Educa-Prenatal.</p>
+                                    <p>Por haber concluido exitosamente el programa Educa-Prenatal.</p>
                             </div>
                             <div style="margin-top: 30px; font-size: 0.9rem; color: #777;">
                                 <p>Educa-Prenatal © 2026 | Preparación Informada</p>
