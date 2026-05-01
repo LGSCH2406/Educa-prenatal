@@ -294,26 +294,50 @@
 
         @media (max-width: 992px) {
             .sidebar {
-                width: 80px;
-                padding: 2rem 0.5rem;
-                align-items: center;
+                left: -100%;
+                /* Oculto a la izquierda */
+                transition: all 0.3s ease;
+                width: 280px !important;
+                /* Recupera su ancho original en móvil */
+                display: flex !important;
+                /* Asegura que se vea al activarse */
+            }
+
+            .sidebar.active {
+                left: 0;
+                /* Aparece al dar click */
             }
 
             .sidebar .nav-item span,
             .sidebar h2,
             .sidebar p,
             .user-section-bottom {
-                display: none;
-            }
-
-            .logo-section img {
-                width: 60px;
+                display: block !important;
+                /* Muestra los textos en móvil */
             }
 
             .main-content {
-                margin-left: 80px;
-                width: calc(100% - 80px);
+                margin-left: 0 !important;
+                width: 100% !important;
                 padding: 1.5rem;
+                padding-top: 5rem;
+                /* Espacio para el botón de menú */
+            }
+
+            /* Fondo oscuro al abrir el menú */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
             }
         }
 
@@ -532,6 +556,11 @@
     </aside>
 
     <main class="main-content">
+        <!-- Botón de Menú para Móvil -->
+        <button class="btn d-lg-none" id="mobileMenuBtn"
+            style="position: fixed; top: 15px; left: 15px; z-index: 1100; background: var(--fucsia); color: white;">
+            <i class="bi bi-list"></i>
+        </button>
 
         <section id="section-publish" class="section-panel active">
             <header class="mb-4">
@@ -1412,8 +1441,8 @@
             document.getElementById("editUserId").value = id;
             document.getElementById("editUserName").value = name;
             document.getElementById("editUserCode").value = code;
-            document.getElementById("editUserPassword").value = ""; 
-            
+            document.getElementById("editUserPassword").value = "";
+
             const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
             modal.show();
         };
@@ -1434,53 +1463,81 @@
 
                 Swal.fire('¡Éxito!', 'Usuario actualizado', 'success');
                 bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
-                loadUsers(); 
+                loadUsers();
             } catch (error) {
                 Swal.fire('Error', 'No se pudo actualizar', 'error');
             }
         };
+
+        // Control del Menú Móvil
+        const sidebar = document.querySelector('.sidebar');
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+
+        // Crear el overlay (fondo oscuro) dinámicamente
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+
+        mobileBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Cerrar menú al elegir una sección (opcional pero recomendado)
+        const originalShowSection = window.showSection;
+        window.showSection = (id) => {
+            originalShowSection(id);
+            if (window.innerWidth <= 992) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        };
     </script> <!-- Este es el cierre que ya tenías -->
 </body>
+
 </html>
-    </script>
+</script>
 
-    <!-- ... código anterior ... -->
+<!-- ... código anterior ... -->
 
-    <!-- PEGAR AQUÍ EL MODAL DE EDICIÓN -->
-    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Editar Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- PEGAR AQUÍ EL MODAL DE EDICIÓN -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Editar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editUserId">
+                <div class="mb-3">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" id="editUserName" class="form-control">
                 </div>
-                <div class="modal-body">
-                    <input type="hidden" id="editUserId">
-                    <div class="mb-3">
-                        <label class="form-label">Nombre Completo</label>
-                        <input type="text" id="editUserName" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Código de Usuario</label>
-                        <input type="text" id="editUserCode" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Nueva Contraseña (Opcional)</label>
-                        <input type="password" id="editUserPassword" class="form-control"
-                            placeholder="Mínimo 6 caracteres">
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Código de Usuario</label>
+                    <input type="text" id="editUserCode" class="form-control">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-main" onclick="updateUser()">Guardar Cambios</button>
+                <div class="mb-3">
+                    <label class="form-label">Nueva Contraseña (Opcional)</label>
+                    <input type="password" id="editUserPassword" class="form-control" placeholder="Mínimo 6 caracteres">
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-main" onclick="updateUser()">Guardar Cambios</button>
             </div>
         </div>
     </div>
+</div>
 
 </body>
 
 </html>
 </body>
-
 </html>
