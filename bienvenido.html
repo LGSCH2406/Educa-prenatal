@@ -41,8 +41,16 @@
             font-weight: 800;
             font-size: 1.4rem;
             background: linear-gradient(45deg, var(--admin-pink), #ff85a1);
+
+            /* 1. Versión estándar para que el editor no marque error */
+            background-clip: text;
+
+            /* 2. Versiones Webkit para que funcione en Chrome/Edge/Safari */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+
+            /* 3. Asegurar que el color de fondo no tape el texto si algo falla */
+            color: var(--admin-pink);
         }
 
         /* --- CARDS DE ESTADÍSTICAS --- */
@@ -443,29 +451,47 @@
         });
 
         async function loadProfile(user) {
-            const q = query(collection(db, "users"), where("uid", "==", user.uid));
-            const snap = await getDocs(q);
-            if (!snap.empty) {
-                const data = snap.docs[0].data();
-                const nivel = data.nivelDesbloqueado || 1;
+            try {
+                // 1. Buscamos al usuario en la colección 'users'
+                const q = query(collection(db, "users"), where("uid", "==", user.uid));
+                const snap = await getDocs(q);
 
-                // ✅ NOMBRE REAL DEL USUARIO (siempre)
-                const nombreUsuario = data.nombre || data.displayName || 'MAMÁ'; // Fallback elegante
+                let nivel = 1; // Nivel por defecto
+                let nombreUsuario = user.displayName || "Mamá";
 
-                document.getElementById("userMsg").innerText = `¡BIENVENIDA, ${nombreUsuario.toUpperCase()}!`;
+                if (!snap.empty) {
+                    const data = snap.docs[0].data();
+                    nivel = data.nivelDesbloqueado || 1;
+                    nombreUsuario = data.nombre || data.displayName || nombreUsuario;
+                }
+
+                // 2. Actualizamos la interfaz
+                const userMsgElement = document.getElementById("userMsg");
+                if (userMsgElement) {
+                    userMsgElement.innerText = `¡BIENVENIDA, ${nombreUsuario.toUpperCase()}!`;
+                }
+
                 document.getElementById("statProgreso").innerText = `${Math.round((nivel / 8) * 100)}%`;
-                document.getElementById("statActual").innerText = `Módulo ${nivel}`;
+                document.getElementById("statActual").innerText = `Sesión ${nivel}`;
+
+                // 3. Renderizamos las sesiones
                 renderGrid(nivel);
+
+            } catch (error) {
+                console.error("Error cargando perfil:", error);
+                // Plan B: Si falla la base de datos, mostrar al menos el nivel 1 para que no se quede bloqueado
+                document.getElementById("userMsg").innerText = "¡BIENVENIDA!";
+                renderGrid(1);
             }
         }
 
-                  function renderGrid(nivel) {
+        function renderGrid(nivel) {
             const grid = document.getElementById("sessionsGrid");
             grid.innerHTML = "";
-            
+
             // Iconos relacionados a cada tema
             const iconList = ['🤰', '👗', '🩺', '🏥', '🧘', '🛌', '🍼', '🧠'];
-            
+
             // Nombres exactos de las sesiones de la imagen
             const nombresSesiones = [
                 "Conociendo mi Embarazo",
