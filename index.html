@@ -50,15 +50,11 @@
         }
 
         @keyframes move1 {
-            to {
-                transform: translate(60px, -60px);
-            }
+            to { transform: translate(60px, -60px); }
         }
 
         @keyframes move2 {
-            to {
-                transform: translate(-50px, -80px);
-            }
+            to { transform: translate(-50px, -80px); }
         }
 
         .login-container {
@@ -173,7 +169,6 @@
         <div class="subtitle">Accede a tu plataforma de educación prenatal</div>
 
         <div class="input-group">
-            <!-- Cambiado de type="email" a type="text" y id permanece igual -->
             <input type="text" id="usuario" required>
             <label>Código de usuario (Ej: GS001)</label>
         </div>
@@ -213,7 +208,7 @@
         const btn = document.getElementById("btn");
 
         const iniciarSesion = async () => {
-            const inputUsuario = usuarioInput.value.trim().toLowerCase(); // Capturamos lo que escribió
+            const inputUsuario = usuarioInput.value.trim().toLowerCase();
             const pass = passwordInput.value;
             const errorDiv = document.getElementById("error");
 
@@ -223,67 +218,57 @@
             btn.innerText = "Validando...";
             errorDiv.innerText = "";
 
-            // --- LÓGICA DE CONVERSIÓN DE CÓDIGO A EMAIL ---
-            // Si no contiene '@', asumimos que es un código y le sumamos el dominio
-            const emailFinal = inputUsuario.includes('@')
-                ? inputUsuario
-                : inputUsuario + "@gmail.com";
-            // ----------------------------------------------
+            const emailFinal = inputUsuario.includes('@') ? inputUsuario : inputUsuario + "@gmail.com";
 
             try {
-                // 1. Intentar entrar a Auth usando el email procesado
+                // 1. Autenticación en Firebase Auth[cite: 2]
                 const userCredential = await signInWithEmailAndPassword(auth, emailFinal, pass);
                 const user = userCredential.user;
                 const emailLogueado = user.email.toLowerCase();
 
-                // --- NUEVA LÓGICA DE ADMINISTRADORES ---
-                const admins = [
-                    "gus24060102@gmail.com",
-                    "maryjesmith@gmail.com"
-                ];
-
+                // Lógica de Administradores[cite: 2]
+                const admins = ["gus24060102@gmail.com", "maryjesmith@gmail.com"];
                 if (admins.includes(emailLogueado)) {
                     window.location.href = "admin.html";
                     return;
                 }
-                // ---------------------------------------
 
-                // 2. Verificamos ESTADO en Firestore usando el UID para usuarios normales
+                // 2. Verificación en Firestore[cite: 2]
                 const q = query(collection(db, "users"), where("uid", "==", user.uid));
                 const querySnapshot = await getDocs(q);
 
-                if (!querySnapshot.empty) {
-                    const userData = querySnapshot.docs[0].data();
-
-                    if (userData.active === false) {
-                        await signOut(auth);
-                        btn.disabled = false;
-                        btn.innerText = "Ingresar";
-                        return Swal.fire({
-                            icon: 'error',
-                            title: 'Cuenta Inhabilitada',
-                            text: 'Tu acceso ha sido restringido por el administrador.',
-                            confirmButtonColor: '#6d0f1f'
-                        });
-                    }
-                } else {
-                    // Doble verificación por EMAIL
-                    const q2 = query(collection(db, "users"), where("email", "==", emailLogueado));
-                    const snap2 = await getDocs(q2);
-                    if (!snap2.empty && snap2.docs[0].data().active === false) {
-                        await signOut(auth);
-                        btn.disabled = false;
-                        btn.innerText = "Ingresar";
-                        return Swal.fire({ icon: 'error', title: 'Cuenta Inhabilitada', confirmButtonColor: '#6d0f1f' });
-                    }
+                // CORRECCIÓN: Si el documento no existe (usuario eliminado en admin.html)[cite: 1, 2]
+                if (querySnapshot.empty) {
+                    await signOut(auth); // Cerramos sesión inmediatamente[cite: 2]
+                    btn.disabled = false;
+                    btn.innerText = "Ingresar";
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Acceso denegado',
+                        text: 'Esta cuenta ya no está registrada en el sistema.',
+                        confirmButtonColor: '#6d0f1f'
+                    });
                 }
 
-                // 3. Si todo está bien, entra como usuario normal
+                // Si existe, verificamos si está inhabilitada[cite: 2]
+                const userData = querySnapshot.docs[0].data();
+                if (userData.active === false) {
+                    await signOut(auth);
+                    btn.disabled = false;
+                    btn.innerText = "Ingresar";
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Cuenta Inhabilitada',
+                        text: 'Tu acceso ha sido restringido por el administrador.',
+                        confirmButtonColor: '#6d0f1f'
+                    });
+                }
+
+                // 3. Todo correcto, entra a la plataforma[cite: 2]
                 window.location.href = "bienvenido.html";
 
             } catch (error) {
                 console.error("Error:", error);
-                // Ajustamos el mensaje de error para que sea genérico
                 errorDiv.innerText = "Código o contraseña incorrectos.";
                 btn.disabled = false;
                 btn.innerText = "Ingresar";
@@ -310,5 +295,4 @@
         });
     </script>
 </body>
-
 </html>
