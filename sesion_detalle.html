@@ -363,14 +363,13 @@
         import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-        // 🔥 API KEY CORREGIDA PARA QUE COINCIDA CON TUS OTROS ARCHIVOS 🔥
-        const firebaseConfig = {
+       const firebaseConfig = {
             apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
             authDomain: "educa-prenatal.firebaseapp.com",
             projectId: "educa-prenatal",
             storageBucket: "educa-prenatal.firebasestorage.app",
             messagingSenderId: "474992751698",
-            appId: "1:474992751698:web:f313f8def5ff266a45b8b8"
+            appId: "1:474992751698:web:f313f8def5ff266a45b8b" // Eliminado el '8' extra al final
         };
 
         const app = initializeApp(firebaseConfig);
