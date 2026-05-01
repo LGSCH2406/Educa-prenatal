@@ -287,7 +287,8 @@
         }
 
         .search-input {
-            width: 100%;       /* Ocupa el espacio disponible */
+            width: 100%;
+            /* Ocupa el espacio disponible */
             max-width: 500px;
         }
 
@@ -516,10 +517,11 @@
         <div class="user-section-bottom">
             <div class="user-card">
                 <div class="user-info-row">
-                    <div class="user-avatar-bottom">G</div>
+                    <!-- La inicial se pondrá sola con JS -->
+                    <div class="user-avatar-bottom" id="adminAvatar">A</div>
                     <div class="user-info-bottom">
-                        <p class="user-name-bottom">gus24060102</p>
-                        <p class="user-email-bottom">gus24060102@gmail.com</p>
+                        <p class="user-name-bottom" id="adminDisplayName">Cargando...</p>
+                        <p class="user-email-bottom" id="adminDisplayEmail">Cargando...</p>
                     </div>
                 </div>
             </div>
@@ -675,16 +677,16 @@
             <!-- Div divisor para separar la tarjeta blanca de la sección de búsqueda -->
             <div class="py-4"></div>
             <div class="row mb-4 align-items-center"> <!-- Añadido align-items-center -->
-    <div class="col-md-6"> <!-- Cambiado de col-12 a col-md-6 -->
-        <h5 class="mb-0 fw-bold">📋 Lista de Usuarios</h5>
-    </div>
-    <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
-        <div class="search-input">
-            <input type="text" id="userSearch" class="form-control" 
-                   placeholder="🔍 Buscar por nombre o código...">
-        </div>
-    </div>
-</div>
+                <div class="col-md-6"> <!-- Cambiado de col-12 a col-md-6 -->
+                    <h5 class="mb-0 fw-bold">📋 Lista de Usuarios</h5>
+                </div>
+                <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
+                    <div class="search-input">
+                        <input type="text" id="userSearch" class="form-control"
+                            placeholder="🔍 Buscar por nombre o código...">
+                    </div>
+                </div>
+            </div>
             </div>
 
             <div class="table-responsive">
@@ -1366,6 +1368,30 @@
                 eyeIcon.classList.add("bi-eye-slash");
             }
         });
+
+        // ... al principio de tu script module en admin.html ...
+
+        // Función para cargar datos del administrador logueado
+        function displayAdminInfo() {
+            const name = localStorage.getItem("adminName") || "Administrador";
+            const email = localStorage.getItem("adminEmail") || "admin@correo.com";
+
+            document.getElementById("adminDisplayName").innerText = name;
+            document.getElementById("adminDisplayEmail").innerText = email;
+            // Pone la primera letra del nombre en el avatar
+            document.getElementById("adminAvatar").innerText = name.charAt(0).toUpperCase();
+        }
+
+        // Ejecutar al cargar la página
+        displayAdminInfo();
+
+        // También limpia el localStorage al cerrar sesión
+        const originalLogout = window.logout;
+        window.logout = async () => {
+            localStorage.removeItem("adminName");
+            localStorage.removeItem("adminEmail");
+            await originalLogout();
+        };
     </script>
 </body>
 
