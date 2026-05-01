@@ -501,52 +501,71 @@
                 if (!snap.empty) {
                     const data = snap.docs[0].data();
                     nivel = data.nivelDesbloqueado || 1;
+                    // Priorizamos el nombre guardado en la base de datos
                     nombreUsuario = data.nombre || data.displayName || nombreUsuario;
                 }
 
-                // 2. Actualizamos la interfaz
+                // 2. Actualizamos la interfaz principal
                 const userMsgElement = document.getElementById("userMsg");
                 if (userMsgElement) {
                     userMsgElement.innerText = `¡BIENVENIDA, ${nombreUsuario.toUpperCase()}!`;
                 }
 
-                document.getElementById("statProgreso").innerText = `${Math.round((nivel / 8) * 100)}%`;
-                document.getElementById("statActual").innerText = `Sesión ${nivel}`;
+                document.getElementById("statProgreso").innerText = `${Math.min(Math.round((nivel / 8) * 100), 100)}%`;
+                document.getElementById("statActual").innerText = nivel > 8 ? "¡Curso Completado!" : `Sesión ${nivel}`;
+
+                // --- DETALLE 1: Asignar nombre al Diploma ---
+                const diplomaNameElement = document.getElementById("diplomaUserName");
+                if (diplomaNameElement) {
+                    diplomaNameElement.innerText = nombreUsuario.toUpperCase();
+                }
 
                 // 3. Renderizamos las sesiones
                 renderGrid(nivel);
 
+                // --- DETALLE 2: Auto-apertura del diploma si viene de finalizar sesión 8 ---
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('showDiploma') === 'true') {
+                    const modalElement = document.getElementById('modalDiploma');
+                    if (modalElement) {
+                        const modalDiploma = new bootstrap.Modal(modalElement);
+                        modalDiploma.show();
+
+                        // Limpiamos la URL para que no se abra solo al recargar después
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                }
+
             } catch (error) {
                 console.error("Error cargando perfil:", error);
-                // Plan B: Si falla la base de datos, mostrar al menos el nivel 1 para que no se quede bloqueado
                 document.getElementById("userMsg").innerText = "¡BIENVENIDA!";
                 renderGrid(1);
             }
         }
 
-       function renderGrid(nivel) {
-    const grid = document.getElementById("sessionsGrid");
-    grid.innerHTML = "";
+        function renderGrid(nivel) {
+            const grid = document.getElementById("sessionsGrid");
+            grid.innerHTML = "";
 
-    // Iconos relacionados a cada tema
-    const iconList = ['🤰', '👗', '🩺', '🏥', '🧘', '🛌', '🍼', '🧠'];
+            // Iconos relacionados a cada tema
+            const iconList = ['🤰', '👗', '🩺', '🏥', '🧘', '🛌', '🍼', '🧠'];
 
-    // Nombres exactos de las sesiones de la imagen
-    const nombresSesiones = [
-        "Conociendo mi Embarazo",
-        "Cambios Físicos y Apariencia",
-        "Salud del Bebé y CPN",
-        "Preparación para el Parto",
-        "Manejo del Dolor y Relajación",
-        "Puerperio y Recuperación",
-        "Lactancia y Cuidado del Bebé",
-        "Preparación Emocional Maternidad"
-    ];
+            // Nombres exactos de las sesiones de la imagen
+            const nombresSesiones = [
+                "Conociendo mi Embarazo",
+                "Cambios Físicos y Apariencia",
+                "Salud del Bebé y CPN",
+                "Preparación para el Parto",
+                "Manejo del Dolor y Relajación",
+                "Puerperio y Recuperación",
+                "Lactancia y Cuidado del Bebé",
+                "Preparación Emocional Maternidad"
+            ];
 
-    // Renderizar las 8 sesiones normales
-    for (let i = 1; i <= 8; i++) {
-        const locked = i > nivel;
-        grid.innerHTML += `
+            // Renderizar las 8 sesiones normales
+            for (let i = 1; i <= 8; i++) {
+                const locked = i > nivel;
+                grid.innerHTML += `
             <div class="col-xl-3 col-lg-4 col-md-6">
                 <div class="session-card ${locked ? 'locked' : ''}" ${!locked ? `onclick="window.location.href='sesion_detalle.html?id=${i}'"` : ''}>
                     <div class="card-img-top-wrapper">${iconList[i - 1]}</div>
@@ -562,11 +581,11 @@
                     </div>
                 </div>
             </div>`;
-    }
+            }
 
-    // NUEVO: Agregar tarjeta de Certificado si el nivel es mayor a 8
-    if (nivel > 8) {
-        grid.innerHTML += `
+            // NUEVO: Agregar tarjeta de Certificado si el nivel es mayor a 8
+            if (nivel > 8) {
+                grid.innerHTML += `
             <div class="col-xl-3 col-lg-4 col-md-6">
                 <div class="session-card" style="border: 2px dashed #d4af37; background: #fffdf0;" data-bs-toggle="modal" data-bs-target="#modalDiploma">
                     <div class="card-img-top-wrapper" style="background: #fff8e1;">🎓</div>
@@ -582,8 +601,8 @@
                     </div>
                 </div>
             </div>`;
-    }
-}
+            }
+        }
         function listenQueries(uid) {
             // ✅ QUERY SOLO PARA CONSULTAS RESPONDIDAS (Requiere índice compuesto)
             const qResueltas = query(
@@ -836,14 +855,14 @@
         }
 
         window.downloadDiploma = () => {
-    const diploma = document.getElementById("diplomaToDownload");
-    html2canvas(diploma).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "Mi_Certificado_EducaPrenatal.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-    });
-};
+            const diploma = document.getElementById("diplomaToDownload");
+            html2canvas(diploma).then(canvas => {
+                const link = document.createElement("a");
+                link.download = "Mi_Certificado_EducaPrenatal.png";
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
+        };
 
     </script>
 </body>
