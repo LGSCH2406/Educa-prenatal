@@ -50,11 +50,15 @@
         }
 
         @keyframes move1 {
-            to { transform: translate(60px, -60px); }
+            to {
+                transform: translate(60px, -60px);
+            }
         }
 
         @keyframes move2 {
-            to { transform: translate(-50px, -80px); }
+            to {
+                transform: translate(-50px, -80px);
+            }
         }
 
         .login-container {
@@ -208,7 +212,7 @@
         const btn = document.getElementById("btn");
 
         const iniciarSesion = async () => {
-            const inputUsuario = usuarioInput.value.trim().toLowerCase();
+            const inputUsuario = usuarioInput.value.trim();
             const pass = passwordInput.value;
             const errorDiv = document.getElementById("error");
 
@@ -218,65 +222,61 @@
             btn.innerText = "Validando...";
             errorDiv.innerText = "";
 
-            const emailFinal = inputUsuario.includes('@') ? inputUsuario : inputUsuario + "@gmail.com";
-
             try {
-                // 1. Autenticación en Firebase Auth[cite: 2]
-                const userCredential = await signInWithEmailAndPassword(auth, emailFinal, pass);
+                let emailParaAuth = "";
+                let userData = null;
+
+                // 1. Lógica para Administradores (Acceso directo por correo)
+                const admins = ["gus24060102@gmail.com", "maryjesmith@gmail.com"];
+                if (inputUsuario.includes('@') && admins.includes(inputUsuario.toLowerCase())) {
+                    emailParaAuth = inputUsuario.toLowerCase();
+                } else {
+                    // 2. Búsqueda dinámica en Firestore por CÓDIGO[cite: 2]
+                    // Esto permite que si cambiaste el código de GS001 a GS002, el sistema sepa a qué cuenta entrar
+                    const q = query(collection(db, "users"), where("code", "==", inputUsuario.toUpperCase()));
+                    const querySnapshot = await getDocs(q);
+
+                    if (querySnapshot.empty) {
+                        // Si no existe el código, lanzamos error para ir al catch
+                        throw new Error("Usuario no encontrado");
+                    }
+
+                    userData = querySnapshot.docs[0].data();
+
+                    // Verificamos si la cuenta está inhabilitada antes de intentar el login[cite: 2]
+                    if (userData.active === false) {
+                        btn.disabled = false;
+                        btn.innerText = "Ingresar";
+                        return Swal.fire({
+                            icon: 'error',
+                            title: 'Cuenta Inhabilitada',
+                            text: 'Tu acceso ha sido restringido por el administrador.',
+                            confirmButtonColor: '#6d0f1f'
+                        });
+                    }
+
+                    // Usamos el email que está guardado en el documento de Firestore[cite: 2]
+                    emailParaAuth = userData.email;
+                }
+
+                // 3. Autenticación en Firebase Auth con el email recuperado[cite: 2]
+                const userCredential = await signInWithEmailAndPassword(auth, emailParaAuth, pass);
                 const user = userCredential.user;
                 const emailLogueado = user.email.toLowerCase();
 
-                // Lógica de Administradores[cite: 2]
-               // ... dentro de iniciarSesion en index.html ...
-
-// Lógica de Administradores
-                const admins = ["gus24060102@gmail.com", "maryjesmith@gmail.com"];
+                // 4. Redirección final
                 if (admins.includes(emailLogueado)) {
-                    // GUARDAR INFO DEL ADMIN ANTES DE REDIRIGIR
                     let adminName = emailLogueado === "gus24060102@gmail.com" ? "Gustavo Saldaña" : "Maryllini Ayala";
                     localStorage.setItem("adminName", adminName);
                     localStorage.setItem("adminEmail", emailLogueado);
-                    
                     window.location.href = "admin.html";
-                    return;
+                } else {
+                    window.location.href = "bienvenido.html";
                 }
-
-                // 2. Verificación en Firestore[cite: 2]
-                const q = query(collection(db, "users"), where("uid", "==", user.uid));
-                const querySnapshot = await getDocs(q);
-
-                // CORRECCIÓN: Si el documento no existe (usuario eliminado en admin.html)[cite: 1, 2]
-                if (querySnapshot.empty) {
-                    await signOut(auth); // Cerramos sesión inmediatamente[cite: 2]
-                    btn.disabled = false;
-                    btn.innerText = "Ingresar";
-                    return Swal.fire({
-                        icon: 'error',
-                        title: 'Acceso denegado',
-                        text: 'Esta cuenta ya no está registrada en el sistema.',
-                        confirmButtonColor: '#6d0f1f'
-                    });
-                }
-
-                // Si existe, verificamos si está inhabilitada[cite: 2]
-                const userData = querySnapshot.docs[0].data();
-                if (userData.active === false) {
-                    await signOut(auth);
-                    btn.disabled = false;
-                    btn.innerText = "Ingresar";
-                    return Swal.fire({
-                        icon: 'error',
-                        title: 'Cuenta Inhabilitada',
-                        text: 'Tu acceso ha sido restringido por el administrador.',
-                        confirmButtonColor: '#6d0f1f'
-                    });
-                }
-
-                // 3. Todo correcto, entra a la plataforma[cite: 2]
-                window.location.href = "bienvenido.html";
 
             } catch (error) {
                 console.error("Error:", error);
+                // Mensaje genérico por seguridad
                 errorDiv.innerText = "Código o contraseña incorrectos.";
                 btn.disabled = false;
                 btn.innerText = "Ingresar";
@@ -303,4 +303,5 @@
         });
     </script>
 </body>
+
 </html>
