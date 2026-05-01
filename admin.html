@@ -1003,12 +1003,6 @@
                 </td>
                 <td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
                 <td class="text-center">
-                    <!-- BOTÓN EDITAR (NUEVO) -->
-                    <button class="btn btn-sm btn-outline-primary me-1" 
-                            onclick="openEditModal('${userDoc.id}', '${name}', '${code}')">
-                        ✏️ Editar
-                    </button>
-
                     <!-- BOTÓN ESTADO -->
                     <button class="btn btn-sm ${isActive ? 'btn-outline-warning' : 'btn-outline-success'}" 
                             onclick="toggleUserStatus('${userDoc.id}', ${isActive})">
