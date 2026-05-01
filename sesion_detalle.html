@@ -571,39 +571,32 @@
         });
     }
 
-   btnFinish.addEventListener('click', async () => {
+  btnFinish.addEventListener('click', async () => {
     btnFinish.disabled = true;
-    btnFinish.innerHTML = "⏳ Guardando progreso...";
-    
-    let siguienteSesion = sesionId + 1;
+    btnFinish.innerHTML = "⏳ Guardando...";
     
     try {
-        // Guardar progreso en Firebase
+        let siguienteSesion = sesionId + 1;
+        
+        // Actualizamos el nivel en la base de datos si es necesario
         if (siguienteSesion > nivelDesbloqueado) {
             await updateDoc(doc(db, "users", currentUserDocId), { 
                 nivelDesbloqueado: siguienteSesion 
             });
         }
 
-        // Lógica para la Sesión Final (Sesión 8)
         if (sesionId === 8) {
+            // Mensaje de éxito total para la Sesión 8[cite: 1]
             Swal.fire({
-                title: '¡FELICITACIONES MAMA!',
-                text: 'Has completado satisfactoriamente todo el programa. ¡Tu diploma oficial está listo!',
+                title: '¡FELICITACIONES!',
+                text: 'Has completado satisfactoriamente todo el curso. Ya puedes descargar tu certificado.',
                 icon: 'success',
-                showCancelButton: true,
-                confirmButtonText: 'Ver mi Diploma 🎓',
-                cancelButtonText: 'Ir al Inicio',
+                confirmButtonText: 'Ir por mi Diploma 🎓',
                 confirmButtonColor: '#ff4d7d',
-                cancelButtonColor: '#6c757d',
                 allowOutsideClick: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Redirige y abre el diploma automáticamente
-                    window.location.href = "bienvenido.html?showDiploma=true";
-                } else {
-                    window.location.href = "bienvenido.html";
-                }
+            }).then(() => {
+                // Redirigimos al menú con la instrucción de abrir el diploma[cite: 1]
+                window.location.href = "bienvenido.html?showDiploma=true";
             });
         } else {
             // Flujo normal para otras sesiones
