@@ -415,6 +415,45 @@
         </div>
     </div>
 
+    <!-- Estructura del Diploma (Invisible hasta que se abra el modal) -->
+    <div class="modal fade" id="modalDiploma" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 bg-transparent">
+                <div class="modal-body p-0">
+                    <!-- Este es el contenedor que se convertirá en imagen -->
+                    <div id="diplomaToDownload"
+                        style="width: 800px; height: 600px; padding: 50px; background: white; border: 20px solid #ff4d7d; position: relative; text-align: center; margin: 0 auto; color: #333;">
+                        <div
+                            style="border: 5px solid #d4af37; height: 100%; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <img src="logo.png" style="width: 120px; margin-bottom: 20px;">
+                            <h1 style="font-family: serif; font-size: 50px; color: #e6396a; margin-bottom: 20px;">
+                                Certificado de Culminación</h1>
+                            <p style="font-size: 1.2rem; margin: 0;">Otorgado con orgullo a:</p>
+                            <div id="diplomaUserName"
+                                style="font-size: 35px; font-weight: 800; border-bottom: 2px solid #333; display: inline-block; padding: 0 30px; margin: 20px 0; text-transform: uppercase;">
+                                NOMBRE DE LA MADRE</div>
+                            <p style="font-size: 1.1rem; max-width: 600px; margin: 20px auto;">
+                                Por haber completado satisfactoriamente el programa de <b>Educación Prenatal
+                                    Digital</b>, demostrando compromiso y preparación integral para la llegada de su
+                                bebé.
+                            </p>
+                            <div style="margin-top: 30px; font-size: 0.9rem; color: #777;">
+                                <p>Educa-Prenatal © 2024 | Preparación Informada</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button class="btn btn-light btn-lg px-5 shadow" onclick="downloadDiploma()">
+                            <i class="bi bi-download me-2"></i>Descargar como Imagen (PNG)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Librería para convertir HTML a Imagen -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <!-- Firebase y JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -485,45 +524,66 @@
             }
         }
 
-        function renderGrid(nivel) {
-            const grid = document.getElementById("sessionsGrid");
-            grid.innerHTML = "";
+       function renderGrid(nivel) {
+    const grid = document.getElementById("sessionsGrid");
+    grid.innerHTML = "";
 
-            // Iconos relacionados a cada tema
-            const iconList = ['🤰', '👗', '🩺', '🏥', '🧘', '🛌', '🍼', '🧠'];
+    // Iconos relacionados a cada tema
+    const iconList = ['🤰', '👗', '🩺', '🏥', '🧘', '🛌', '🍼', '🧠'];
 
-            // Nombres exactos de las sesiones de la imagen
-            const nombresSesiones = [
-                "Conociendo mi Embarazo",
-                "Cambios Físicos y Apariencia",
-                "Salud del Bebé y CPN",
-                "Preparación para el Parto",
-                "Manejo del Dolor y Relajación",
-                "Puerperio y Recuperación",
-                "Lactancia y Cuidado del Bebé",
-                "Preparación Emocional Maternidad"
-            ];
+    // Nombres exactos de las sesiones de la imagen
+    const nombresSesiones = [
+        "Conociendo mi Embarazo",
+        "Cambios Físicos y Apariencia",
+        "Salud del Bebé y CPN",
+        "Preparación para el Parto",
+        "Manejo del Dolor y Relajación",
+        "Puerperio y Recuperación",
+        "Lactancia y Cuidado del Bebé",
+        "Preparación Emocional Maternidad"
+    ];
 
-            for (let i = 1; i <= 8; i++) {
-                const locked = i > nivel;
-                grid.innerHTML += `
-                    <div class="col-xl-3 col-lg-4 col-md-6">
-                        <div class="session-card ${locked ? 'locked' : ''}" ${!locked ? `onclick="window.location.href='sesion_detalle.html?id=${i}'"` : ''}>
-                            <div class="card-img-top-wrapper">${iconList[i - 1]}</div>
-                            <div class="card-body p-4 text-center">
-                                <h6 class="text-pink small fw-bold mb-1" style="color: var(--admin-pink);">SESIÓN ${i}</h6>
-                                <h5 class="fw-800 mb-3" style="font-size: 1.1rem; min-height: 3.2rem; display: flex; align-items: center; justify-content: center; line-height: 1.2;">
-                                    ${nombresSesiones[i - 1]}
-                                </h5>
-                                <p class="small text-muted mb-3">${locked ? 'Bloqueado por progreso' : 'Contenido disponible'}</p>
-                                <button class="btn ${locked ? 'btn-secondary' : 'btn-outline-pink'} btn-sm w-100 rounded-pill">
-                                    ${locked ? '<i class="bi bi-lock-fill"></i> Bloqueado' : 'Comenzar ahora'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>`;
-            }
-        }
+    // Renderizar las 8 sesiones normales
+    for (let i = 1; i <= 8; i++) {
+        const locked = i > nivel;
+        grid.innerHTML += `
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="session-card ${locked ? 'locked' : ''}" ${!locked ? `onclick="window.location.href='sesion_detalle.html?id=${i}'"` : ''}>
+                    <div class="card-img-top-wrapper">${iconList[i - 1]}</div>
+                    <div class="card-body p-4 text-center">
+                        <h6 class="text-pink small fw-bold mb-1" style="color: var(--admin-pink);">SESIÓN ${i}</h6>
+                        <h5 class="fw-800 mb-3" style="font-size: 1.1rem; min-height: 3.2rem; display: flex; align-items: center; justify-content: center; line-height: 1.2;">
+                            ${nombresSesiones[i - 1]}
+                        </h5>
+                        <p class="small text-muted mb-3">${locked ? 'Bloqueado por progreso' : 'Contenido disponible'}</p>
+                        <button class="btn ${locked ? 'btn-secondary' : 'btn-outline-pink'} btn-sm w-100 rounded-pill">
+                            ${locked ? '<i class="bi bi-lock-fill"></i> Bloqueado' : 'Comenzar ahora'}
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    // NUEVO: Agregar tarjeta de Certificado si el nivel es mayor a 8
+    if (nivel > 8) {
+        grid.innerHTML += `
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="session-card" style="border: 2px dashed #d4af37; background: #fffdf0;" data-bs-toggle="modal" data-bs-target="#modalDiploma">
+                    <div class="card-img-top-wrapper" style="background: #fff8e1;">🎓</div>
+                    <div class="card-body p-4 text-center">
+                        <h6 class="text-warning small fw-bold mb-1">¡FELICITACIONES!</h6>
+                        <h5 class="fw-800 mb-3" style="font-size: 1.1rem; min-height: 3.2rem; display: flex; align-items: center; justify-content: center; line-height: 1.2; color: #b8860b;">
+                            Certificado de Finalización
+                        </h5>
+                        <p class="small text-muted mb-3">Tu diploma está listo</p>
+                        <button class="btn btn-warning btn-sm w-100 rounded-pill fw-bold text-white shadow-sm" style="background: #d4af37; border: none;">
+                            <i class="bi bi-award-fill"></i> VER DIPLOMA
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+    }
+}
         function listenQueries(uid) {
             // ✅ QUERY SOLO PARA CONSULTAS RESPONDIDAS (Requiere índice compuesto)
             const qResueltas = query(
@@ -774,6 +834,16 @@
             document.body.appendChild(container);
             return container;
         }
+
+        window.downloadDiploma = () => {
+    const diploma = document.getElementById("diplomaToDownload");
+    html2canvas(diploma).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "Mi_Certificado_EducaPrenatal.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
+};
 
     </script>
 </body>
