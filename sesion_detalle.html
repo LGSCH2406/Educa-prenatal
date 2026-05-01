@@ -573,37 +573,38 @@
 
   btnFinish.addEventListener('click', async () => {
     btnFinish.disabled = true;
-    btnFinish.innerHTML = "⏳ Guardando...";
+    btnFinish.innerHTML = "⏳ Guardando progreso..."; // Texto de carga descriptivo
     
     try {
         let siguienteSesion = sesionId + 1;
         
-        // Actualizamos el nivel en la base de datos si es necesario
+        // 1. Guardamos el progreso en la base de datos de Firebase
         if (siguienteSesion > nivelDesbloqueado) {
             await updateDoc(doc(db, "users", currentUserDocId), { 
                 nivelDesbloqueado: siguienteSesion 
             });
         }
 
+        // 2. Lógica exclusiva para cuando se termina la Sesión 8
         if (sesionId === 8) {
-            // Mensaje de éxito total para la Sesión 8[cite: 1]
             Swal.fire({
                 title: '¡FELICITACIONES!',
-                text: 'Has completado satisfactoriamente todo el curso. Ya puedes descargar tu certificado.',
+                text: 'Has completado satisfactoriamente todo el curso. Ya puedes visualizar y descargar tu certificado oficial.',
                 icon: 'success',
-                confirmButtonText: 'Ir por mi Diploma 🎓',
+                confirmButtonText: 'Ver mi Diploma 🎓',
                 confirmButtonColor: '#ff4d7d',
                 allowOutsideClick: false
             }).then(() => {
-                // Redirigimos al menú con la instrucción de abrir el diploma[cite: 1]
+                // Redirigimos a la ventana de bienvenida con el parámetro para abrir el diploma[cite: 1]
                 window.location.href = "bienvenido.html?showDiploma=true";
             });
         } else {
-            // Flujo normal para otras sesiones
+            // 3. Flujo normal para las sesiones de la 1 a la 7[cite: 1]
             window.location.href = "bienvenido.html?refresh=" + new Date().getTime();
         }
+        
     } catch (error) {
-        console.error("Error al finalizar:", error);
+        console.error("Error al finalizar la sesión:", error);
         btnFinish.disabled = false;
         btnFinish.innerHTML = "✨ ¡Completar Sesión!";
     }
