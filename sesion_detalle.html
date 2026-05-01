@@ -571,36 +571,50 @@
         });
     }
 
-    btnFinish.addEventListener('click', async () => {
-        btnFinish.disabled = true;
-        btnFinish.innerHTML = "⏳ Guardando...";
-        
-        let siguienteSesion = sesionId + 1;
-        
-        // Guardar progreso en Firebase si es necesario
+   btnFinish.addEventListener('click', async () => {
+    btnFinish.disabled = true;
+    btnFinish.innerHTML = "⏳ Guardando progreso...";
+    
+    let siguienteSesion = sesionId + 1;
+    
+    try {
+        // Guardar progreso en Firebase
         if (siguienteSesion > nivelDesbloqueado) {
-            await updateDoc(doc(db, "users", currentUserDocId), { nivelDesbloqueado: siguienteSesion });
+            await updateDoc(doc(db, "users", currentUserDocId), { 
+                nivelDesbloqueado: siguienteSesion 
+            });
         }
 
-        // LÓGICA ESPECIAL PARA LA ÚLTIMA SESIÓN (SESIÓN 8)
+        // Lógica para la Sesión Final (Sesión 8)
         if (sesionId === 8) {
             Swal.fire({
-                title: '¡FELICITACIONES!',
-                text: 'Has completado satisfactoriamente todo el curso. Tu certificado oficial ya está disponible en el panel principal.',
+                title: '¡FELICITACIONES MAMA!',
+                text: 'Has completado satisfactoriamente todo el programa. ¡Tu diploma oficial está listo!',
                 icon: 'success',
+                showCancelButton: true,
                 confirmButtonText: 'Ver mi Diploma 🎓',
+                cancelButtonText: 'Ir al Inicio',
                 confirmButtonColor: '#ff4d7d',
+                cancelButtonColor: '#6c757d',
                 allowOutsideClick: false
-            }).then(() => {
-                window.location.href = "bienvenido.html?refresh=" + new Date().getTime();
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirige y abre el diploma automáticamente
+                    window.location.href = "bienvenido.html?showDiploma=true";
+                } else {
+                    window.location.href = "bienvenido.html";
+                }
             });
         } else {
-            // Flujo normal para sesiones 1 a 7
-            setTimeout(() => {
-                window.location.href = "bienvenido.html?refresh=" + new Date().getTime();
-            }, 500);
+            // Flujo normal para otras sesiones
+            window.location.href = "bienvenido.html?refresh=" + new Date().getTime();
         }
-    });
+    } catch (error) {
+        console.error("Error al finalizar:", error);
+        btnFinish.disabled = false;
+        btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+    }
+});
 </script>
 </body>
 </html>
