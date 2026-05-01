@@ -429,14 +429,13 @@
                             <h1 style="font-family: serif; font-size: 50px; color: #e6396a; margin-bottom: 20px;">
                                 Certificado de Culminación</h1>
                             <p style="font-size: 1.2rem; margin: 0;">Otorgado con orgullo a:</p>
-                            <div id="diplomaUserName"
-                                style="font-size: 35px; font-weight: 800; border-bottom: 2px solid #333; display: inline-block; padding: 0 30px; margin: 20px 0; text-transform: uppercase;">
-                                NOMBRE DE LA MADRE</div>
-                            <p style="font-size: 1.1rem; max-width: 600px; margin: 20px auto;">
-                                Por haber completado satisfactoriamente el programa de <b>Educación Prenatal
-                                    Digital</b>, demostrando compromiso y preparación integral para la llegada de su
-                                bebé.
-                            </p>
+                            <!-- Dentro del modal del diploma -->
+                            <div id="certificado-contenido" style="text-align: center;">
+                                <h1>CERTIFICADO DE COMPLETITUD</h1>
+                                <p>Otorgado a:</p>
+                                <h2 id="diplomaUserName">NOMBRE DE LA MADRE</h2> <!-- Este ID es clave[cite: 1] -->
+                                <p>Por haber concluido exitosamente el programa Educa-Prenatal.</p>
+                            </div>
                             <div style="margin-top: 30px; font-size: 0.9rem; color: #777;">
                                 <p>Educa-Prenatal © 2024 | Preparación Informada</p>
                             </div>
@@ -491,39 +490,51 @@
 
         async function loadProfile(user) {
             try {
-                // 1. Buscamos al usuario en la colección 'users'
+                // 1. Buscamos al usuario en la colección 'users' para obtener sus datos personalizados
                 const q = query(collection(db, "users"), where("uid", "==", user.uid));
                 const snap = await getDocs(q);
 
                 let nivel = 1; // Nivel por defecto
-                let nombreUsuario = user.displayName || "Mamá";
+                let nombreUsuario = "Mamá"; // Valor por defecto si no hay datos
 
                 if (!snap.empty) {
                     const data = snap.docs[0].data();
                     nivel = data.nivelDesbloqueado || 1;
-                    // Priorizamos el nombre guardado en la base de datos
-                    nombreUsuario = data.nombre || data.displayName || nombreUsuario;
+
+                    // PRIORIDAD: Extraemos el nombre completo que el usuario ingresó al registrarse
+                    // Generalmente guardado en el campo 'nombre' o 'name' de tu base de datos
+                    nombreUsuario = data.nombre || data.name || data.displayName || user.displayName || "Mamá";
                 }
 
-                // 2. Actualizamos la interfaz principal
+                // 2. Actualizamos el mensaje de bienvenida en la interfaz
                 const userMsgElement = document.getElementById("userMsg");
                 if (userMsgElement) {
                     userMsgElement.innerText = `¡BIENVENIDA, ${nombreUsuario.toUpperCase()}!`;
                 }
 
-                document.getElementById("statProgreso").innerText = `${Math.min(Math.round((nivel / 8) * 100), 100)}%`;
-                document.getElementById("statActual").innerText = nivel > 8 ? "¡Curso Completado!" : `Sesión ${nivel}`;
+                // 3. Actualizamos las estadísticas de progreso
+                const statProgreso = document.getElementById("statProgreso");
+                if (statProgreso) {
+                    statProgreso.innerText = `${Math.min(Math.round((nivel / 8) * 100), 100)}%`;
+                }
 
-                // --- DETALLE 1: Asignar nombre al Diploma ---
+                const statActual = document.getElementById("statActual");
+                if (statActual) {
+                    statActual.innerText = nivel > 8 ? "¡Curso Completado!" : `Sesión ${nivel}`;
+                }
+
+                // --- DETALLE 1: Asignar el nombre del registro al Diploma ---
+                // Este comando inyecta el nombre real en tu div del diploma[cite: 1]
                 const diplomaNameElement = document.getElementById("diplomaUserName");
                 if (diplomaNameElement) {
                     diplomaNameElement.innerText = nombreUsuario.toUpperCase();
                 }
 
-                // 3. Renderizamos las sesiones
+                // 4. Renderizamos la cuadrícula de sesiones según el nivel actual[cite: 1]
                 renderGrid(nivel);
 
-                // --- DETALLE 2: Auto-apertura del diploma si viene de finalizar sesión 8 ---
+                // --- DETALLE 2: Auto-apertura del diploma tras finalizar la Sesión 8 ---
+                // Detecta el parámetro enviado desde el aviso de felicitaciones[cite: 1]
                 const params = new URLSearchParams(window.location.search);
                 if (params.get('showDiploma') === 'true') {
                     const modalElement = document.getElementById('modalDiploma');
@@ -531,14 +542,16 @@
                         const modalDiploma = new bootstrap.Modal(modalElement);
                         modalDiploma.show();
 
-                        // Limpiamos la URL para que no se abra solo al recargar después
+                        // Limpiamos la URL (estética y funcional) para evitar que salte de nuevo al recargar[cite: 1]
                         window.history.replaceState({}, document.title, window.location.pathname);
                     }
                 }
 
             } catch (error) {
                 console.error("Error cargando perfil:", error);
-                document.getElementById("userMsg").innerText = "¡BIENVENIDA!";
+                // Plan de respaldo en caso de error de conexión[cite: 1]
+                const userMsgFallback = document.getElementById("userMsg");
+                if (userMsgFallback) userMsgFallback.innerText = "¡BIENVENIDA!";
                 renderGrid(1);
             }
         }
