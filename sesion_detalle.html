@@ -323,6 +323,23 @@
             padding: 0 20px;
             color: var(--fucsia-light);
         }
+
+        /* Asegura que el contenedor ocupe todo el espacio en pantalla completa */
+        .video-player-box:fullscreen {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            background: black;
+        }
+        
+        .video-player-box:-webkit-full-screen {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            background: black;
+        }
     </style>
 </head>
 
@@ -442,7 +459,9 @@
             videoContainer.innerHTML += `
             <div class="video-wrapper">
                 <div class="video-player-box" id="player-box-${index}">
-                    <video id="video-${index}" src="${data.videoUrl}" playsinline webkit-playsinline style="width: 100%; height: 100%; cursor: pointer; object-fit: cover;"></video>
+                   <video id="video-${index}" src="${data.videoUrl}" playsinline webkit-playsinline 
+       style="width: 100%; height: 100%; cursor: pointer; object-fit: contain; background: #000;">
+</video>
                     <div id="controls-group-${index}" class="video-player-controls">
                         <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind" title="Retroceder 10 segundos">↺ 10s</button>
                         <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶</button>
@@ -553,13 +572,27 @@
                 muteBtn.innerHTML = video.muted ? "🔇" : "🔊";
             });
             fullBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (!document.fullscreenElement) {
-                    if (playerBox.requestFullscreen) playerBox.requestFullscreen();
-                } else {
-                    if (document.exitFullscreen) document.exitFullscreen();
-                }
-            });
+    e.stopPropagation();
+    
+    // Función para manejar la compatibilidad de pantalla completa
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (playerBox.requestFullscreen) {
+            playerBox.requestFullscreen();
+        } else if (playerBox.webkitRequestFullscreen) {
+            // Especial para Safari en iPhone/iPad
+            playerBox.webkitRequestFullscreen();
+        } else if (video.webkitEnterFullscreen) {
+            // Último recurso para iPhones antiguos
+            video.webkitEnterFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+});
 
             video.addEventListener('ended', async () => {
                 if (index === videosCompletadosNube) {
