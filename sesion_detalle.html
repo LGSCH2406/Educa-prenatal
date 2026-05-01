@@ -2,6 +2,8 @@
 <html lang="es">
 
 <head>
+    <!-- Agrega esto en el head para tener iconos bonitos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -155,9 +157,17 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         /* --- CONTROLES CENTRALES --- */
@@ -196,6 +206,29 @@
             transition: transform 0.2s ease, background-color 0.3s ease;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
             padding: 0;
+        }
+
+        /* Botones más profesionales y translúcidos */
+        .btn-custom-ctrl {
+            background: rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 20px !important;
+        }
+
+        /* El grupo de controles se oculta con una transición suave */
+        .video-player-controls {
+            transition: opacity 0.5s ease, visibility 0.5s ease !important;
+        }
+
+        /* Clase para ocultar controles en móviles */
+        .controls-hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
         }
 
         .btn-custom-ctrl:hover {
@@ -332,7 +365,7 @@
             align-items: center;
             background: black;
         }
-        
+
         .video-player-box:-webkit-full-screen {
             width: 100vw;
             height: 100vh;
@@ -369,102 +402,103 @@
     </div>
 
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
-        authDomain: "educa-prenatal.firebaseapp.com",
-        projectId: "educa-prenatal",
-        storageBucket: "educa-prenatal.firebasestorage.app",
-        messagingSenderId: "474992751698",
-        appId: "1:474992751698:web:f313f8fdef5ff266a45b8b"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
+            authDomain: "educa-prenatal.firebaseapp.com",
+            projectId: "educa-prenatal",
+            storageBucket: "educa-prenatal.firebasestorage.app",
+            messagingSenderId: "474992751698",
+            appId: "1:474992751698:web:f313f8fdef5ff266a45b8b"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-    const params = new URLSearchParams(window.location.search);
-    const sesionId = parseInt(params.get('id')) || 1;
+        const params = new URLSearchParams(window.location.search);
+        const sesionId = parseInt(params.get('id')) || 1;
 
-    // --- ACTUALIZACIÓN DE TÍTULOS ---
-    const nombresSesiones = [
-        "Conociendo mi Embarazo",
-        "Cambios Físicos y Apariencia",
-        "Salud del Bebé y CPN",
-        "Preparación para el Parto",
-        "Manejo del Dolor y Relajación",
-        "Puerperio y Recuperación",
-        "Lactancia y Cuidado del Bebé",
-        "Preparación Emocional Maternidad"
-    ];
+        // --- ACTUALIZACIÓN DE TÍTULOS ---
+        const nombresSesiones = [
+            "Conociendo mi Embarazo",
+            "Cambios Físicos y Apariencia",
+            "Salud del Bebé y CPN",
+            "Preparación para el Parto",
+            "Manejo del Dolor y Relajación",
+            "Puerperio y Recuperación",
+            "Lactancia y Cuidado del Bebé",
+            "Preparación Emocional Maternidad"
+        ];
 
-    const nombreActual = nombresSesiones[sesionId - 1] || "Módulo Educativo";
-    document.getElementById("txtSesion").innerText = `SESIÓN ${sesionId}: ${nombreActual}`;
+        const nombreActual = nombresSesiones[sesionId - 1] || "Módulo Educativo";
+        document.getElementById("txtSesion").innerText = `SESIÓN ${sesionId}: ${nombreActual}`;
 
-    const videoContainer = document.getElementById("videoContainer");
-    const btnFinish = document.getElementById("btnFinish");
+        const videoContainer = document.getElementById("videoContainer");
+        const btnFinish = document.getElementById("btnFinish");
 
-    let currentUserDocId = null;
-    let currentUserData = null;
-    let nivelDesbloqueado = 1;
-    let videosCompletadosNube = 0;
+        let currentUserDocId = null;
+        let currentUserData = null;
+        let nivelDesbloqueado = 1;
+        let videosCompletadosNube = 0;
 
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const q = query(collection(db, "users"), where("uid", "==", user.uid));
-            const snap = await getDocs(q);
-            if (!snap.empty) {
-                currentUserDocId = snap.docs[0].id;
-                currentUserData = snap.docs[0].data();
-                nivelDesbloqueado = currentUserData.nivelDesbloqueado || 1;
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const q = query(collection(db, "users"), where("uid", "==", user.uid));
+                const snap = await getDocs(q);
+                if (!snap.empty) {
+                    currentUserDocId = snap.docs[0].id;
+                    currentUserData = snap.docs[0].data();
+                    nivelDesbloqueado = currentUserData.nivelDesbloqueado || 1;
 
-                if (currentUserData.progress && currentUserData.progress[sesionId]) {
-                    videosCompletadosNube = currentUserData.progress[sesionId];
+                    if (currentUserData.progress && currentUserData.progress[sesionId]) {
+                        videosCompletadosNube = currentUserData.progress[sesionId];
+                    }
+
+                    if (sesionId > nivelDesbloqueado) {
+                        window.location.href = "bienvenido.html";
+                        return;
+                    }
+                    loadData();
                 }
-
-                if (sesionId > nivelDesbloqueado) {
-                    window.location.href = "bienvenido.html";
-                    return;
-                }
-                loadData();
+            } else {
+                window.location.href = "index.html";
             }
-        } else {
-            window.location.href = "index.html";
-        }
-    });
+        });
 
-    async function loadData() {
-        const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
-        const snap = await getDocs(q);
+        async function loadData() {
+            const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
+            const snap = await getDocs(q);
 
-        if (snap.empty) {
-            videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
+            if (snap.empty) {
+                videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
                 <h3 style="color:var(--fucsia)">Contenido en preparación</h3>
                 <p>Aún no hay videos disponibles para la sesión ${sesionId}. Por favor, vuelve más tarde.</p>
             </div>`;
-            btnFinish.disabled = true;
-            btnFinish.classList.remove("btn-active");
-            btnFinish.innerHTML = "🔒 Esperando material de estudio";
-            return;
-        }
+                btnFinish.disabled = true;
+                btnFinish.classList.remove("btn-active");
+                btnFinish.innerHTML = "🔒 Esperando material de estudio";
+                return;
+            }
 
-        videoContainer.innerHTML = "";
-        let index = 0;
+            videoContainer.innerHTML = "";
+            let index = 0;
 
-        snap.forEach(doc => {
-            const data = doc.data();
-            videoContainer.innerHTML += `
+            snap.forEach(doc => {
+                const data = doc.data();
+                videoContainer.innerHTML += `
             <div class="video-wrapper">
                 <div class="video-player-box" id="player-box-${index}">
                    <video id="video-${index}" src="${data.videoUrl}" playsinline webkit-playsinline 
        style="width: 100%; height: 100%; cursor: pointer; object-fit: contain; background: #000;">
 </video>
                     <div id="controls-group-${index}" class="video-player-controls">
-                        <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind" title="Retroceder 10 segundos">↺ 10s</button>
-                        <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause">▶</button>
+                       // Busca donde generas el HTML de los controles y cambia el texto por estos <i>
+<button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind"><i class="fas fa-undo"></i></button>
+<button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause"><i class="fas fa-play"></i></button>
                     </div>
                     <div id="time-display-${index}" class="video-time-display">0:00 / 0:00</div>
                     <div class="video-bottom-controls">
@@ -484,174 +518,206 @@
                     <p>Disfruta de este video educativo para la SESIÓN ${sesionId}.</p>
                 </div>
             </div>`;
-            index++;
-        });
-        activarReproductorInvisible();
-    }
-
-    function formatTime(seconds) {
-        if (isNaN(seconds)) return "0:00";
-        const min = Math.floor(seconds / 60);
-        const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
-        return `${min}:${sec}`;
-    }
-
-    function activarReproductorInvisible() {
-        const videos = document.querySelectorAll('video');
-        const totalVideosEnSesion = videos.length;
-
-        if (videosCompletadosNube >= totalVideosEnSesion || sesionId < nivelDesbloqueado) {
-            btnFinish.disabled = false;
-            btnFinish.classList.add("btn-active");
-            btnFinish.innerHTML = "✨ ¡Completar Sesión!";
-            videosCompletadosNube = totalVideosEnSesion;
+                index++;
+            });
+            activarReproductorInvisible();
         }
 
-        videos.forEach((video, index) => {
-            const playerBox = document.getElementById(`player-box-${index}`);
-            const playBtn = document.getElementById(`btn-play-${index}`);
-            const backBtn = document.getElementById(`btn-back-${index}`);
-            const controlsGroup = document.getElementById(`controls-group-${index}`);
-            const muteBtn = document.getElementById(`btn-mute-${index}`);
-            const fullBtn = document.getElementById(`btn-full-${index}`);
-            const progressFill = document.getElementById(`progress-fill-${index}`);
-            const timeDisplay = document.getElementById(`time-display-${index}`);
-            const lockOverlay = document.getElementById(`locked-overlay-${index}`);
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${min}:${sec}`;
+        }
 
-            if (index > videosCompletadosNube) {
-                lockOverlay.style.display = "flex";
-            } else {
-                lockOverlay.style.display = "none";
+        function activarReproductorInvisible() {
+            const videos = document.querySelectorAll('video');
+            const totalVideosEnSesion = videos.length;
+
+            if (videosCompletadosNube >= totalVideosEnSesion || sesionId < nivelDesbloqueado) {
+                btnFinish.disabled = false;
+                btnFinish.classList.add("btn-active");
+                btnFinish.innerHTML = "✨ ¡Completar Sesión!";
+                videosCompletadosNube = totalVideosEnSesion;
             }
 
-            const togglePlay = () => {
-            if (video.paused) {
-                // En iOS y versiones modernas de Chrome, .play() devuelve una promesa
-                const playPromise = video.play();
-        
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        // La reproducción inició con éxito
-                        playBtn.innerHTML = "⏸";
-                        playBtn.classList.add('is-pausing');
-                        controlsGroup.classList.add('playing');
-                    }).catch(error => {
-                        // El navegador bloqueó la reproducción (común en modo ahorro de datos)
-                        console.error("Error al iniciar reproducción:", error);
+            videos.forEach((video, index) => {
+                const playerBox = document.getElementById(`player-box-${index}`);
+                const playBtn = document.getElementById(`btn-play-${index}`);
+                const backBtn = document.getElementById(`btn-back-${index}`);
+                const controlsGroup = document.getElementById(`controls-group-${index}`);
+                const muteBtn = document.getElementById(`btn-mute-${index}`);
+                const fullBtn = document.getElementById(`btn-full-${index}`);
+                const progressFill = document.getElementById(`progress-fill-${index}`);
+                const timeDisplay = document.getElementById(`time-display-${index}`);
+                const lockOverlay = document.getElementById(`locked-overlay-${index}`);
+                const bottomControls = playerBox.querySelector('.video-bottom-controls');
+
+                let controlsTimeout;
+
+                // Función para mostrar/ocultar controles automáticamente
+                const showControls = () => {
+                    controlsGroup.classList.remove('controls-hidden');
+                    timeDisplay.style.opacity = "1";
+                    bottomControls.style.opacity = "1";
+
+                    clearTimeout(controlsTimeout);
+
+                    if (!video.paused) {
+                        controlsTimeout = setTimeout(() => {
+                            controlsGroup.classList.add('controls-hidden');
+                            timeDisplay.style.opacity = "0";
+                            bottomControls.style.opacity = "0";
+                        }, 3000);
+                    }
+                };
+
+                if (index > videosCompletadosNube) {
+                    lockOverlay.style.display = "flex";
+                } else {
+                    lockOverlay.style.display = "none";
+                }
+
+                const togglePlay = () => {
+                    if (video.paused) {
+                        const playPromise = video.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                                playBtn.classList.add('is-pausing');
+                                controlsGroup.classList.add('playing');
+                                showControls(); //
+                            }).catch(error => console.error("Error:", error));
+                        }
+                    } else {
+                        video.pause();
+                        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                        playBtn.classList.remove('is-pausing');
+                        controlsGroup.classList.remove('playing');
+                        showControls(); //
+                    }
+                };
+
+                // Eventos táctiles y de ratón para mostrar controles[cite: 2]
+                video.addEventListener('mousemove', showControls);
+                video.addEventListener('touchstart', showControls);
+
+                video.addEventListener('loadedmetadata', () => {
+                    timeDisplay.innerText = `0:00 / ${formatTime(video.duration)}`;
+                });
+
+                video.addEventListener('timeupdate', () => {
+                    if (video.duration) {
+                        const percentage = (video.currentTime / video.duration) * 100;
+                        progressFill.style.width = `${percentage}%`;
+                        timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+                    }
+                });
+
+                video.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    togglePlay();
+                });
+
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    togglePlay();
+                });
+
+                backBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    video.currentTime = Math.max(0, video.currentTime - 10);
+                    showControls();
+                });
+
+                muteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    video.muted = !video.muted;
+                    muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+                    showControls();
+                });
+
+                fullBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                        if (playerBox.requestFullscreen) {
+                            playerBox.requestFullscreen();
+                        } else if (playerBox.webkitRequestFullscreen) {
+                            playerBox.webkitRequestFullscreen();
+                        } else if (video.webkitEnterFullscreen) {
+                            video.webkitEnterFullscreen();
+                        }
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.webkitExitFullscreen) {
+                            document.webkitExitFullscreen();
+                        }
+                    }
+                });
+
+                video.addEventListener('ended', async () => {
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    showControls();
+
+                    if (index === videosCompletadosNube) {
+                        videosCompletadosNube++;
+                        const nextOverlay = document.getElementById(`locked-overlay-${videosCompletadosNube}`);
+                        if (nextOverlay) nextOverlay.style.display = "none";
+
+                        let userProgress = currentUserData.progress || {};
+                        userProgress[sesionId] = videosCompletadosNube;
+                        await updateDoc(doc(db, "users", currentUserDocId), { progress: userProgress });
+                    }
+
+                    if (videosCompletadosNube >= totalVideosEnSesion) {
+                        btnFinish.disabled = false;
+                        btnFinish.classList.add("btn-active");
+                        btnFinish.innerHTML = "¡Completar Sesión! ✨";
+                    }
+                });
+            });
+        }
+
+        btnFinish.addEventListener('click', async () => {
+            btnFinish.disabled = true;
+            btnFinish.innerHTML = "⏳ Guardando progreso..."; // Texto de carga descriptivo
+
+            try {
+                let siguienteSesion = sesionId + 1;
+
+                // 1. Guardamos el progreso en la base de datos de Firebase
+                if (siguienteSesion > nivelDesbloqueado) {
+                    await updateDoc(doc(db, "users", currentUserDocId), {
+                        nivelDesbloqueado: siguienteSesion
                     });
                 }
-            } else {
-                video.pause();
-                playBtn.innerHTML = "▶";
-                playBtn.classList.remove('is-pausing');
-                controlsGroup.classList.remove('playing');
+
+                // 2. Lógica exclusiva para cuando se termina la Sesión 8
+                if (sesionId === 8) {
+                    Swal.fire({
+                        title: '¡FELICITACIONES!',
+                        text: 'Has completado satisfactoriamente todo el curso. Ya puedes visualizar y descargar tu certificado oficial.',
+                        icon: 'success',
+                        confirmButtonText: 'Ver mi Diploma 🎓',
+                        confirmButtonColor: '#ff4d7d',
+                        allowOutsideClick: false
+                    }).then(() => {
+                        // Redirigimos a la ventana de bienvenida con el parámetro para abrir el diploma[cite: 1]
+                        window.location.href = "bienvenido.html?showDiploma=true";
+                    });
+                } else {
+                    // 3. Flujo normal para las sesiones de la 1 a la 7[cite: 1]
+                    window.location.href = "bienvenido.html?refresh=" + new Date().getTime();
+                }
+
+            } catch (error) {
+                console.error("Error al finalizar la sesión:", error);
+                btnFinish.disabled = false;
+                btnFinish.innerHTML = "✨ ¡Completar Sesión!";
             }
-        };
-
-            video.addEventListener('loadedmetadata', () => {
-                timeDisplay.innerText = `0:00 / ${formatTime(video.duration)}`;
-            });
-
-            video.addEventListener('timeupdate', () => {
-                if (video.duration) {
-                    const percentage = (video.currentTime / video.duration) * 100;
-                    progressFill.style.width = `${percentage}%`;
-                    timeDisplay.innerText = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
-                }
-            });
-
-            video.addEventListener('click', togglePlay);
-            playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
-            backBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                video.currentTime = Math.max(0, video.currentTime - 10);
-            });
-            muteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                video.muted = !video.muted;
-                muteBtn.innerHTML = video.muted ? "🔇" : "🔊";
-            });
-            fullBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    
-    // Función para manejar la compatibilidad de pantalla completa
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        if (playerBox.requestFullscreen) {
-            playerBox.requestFullscreen();
-        } else if (playerBox.webkitRequestFullscreen) {
-            // Especial para Safari en iPhone/iPad
-            playerBox.webkitRequestFullscreen();
-        } else if (video.webkitEnterFullscreen) {
-            // Último recurso para iPhones antiguos
-            video.webkitEnterFullscreen();
-        }
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        }
-    }
-});
-
-            video.addEventListener('ended', async () => {
-                if (index === videosCompletadosNube) {
-                    videosCompletadosNube++;
-                    const nextOverlay = document.getElementById(`locked-overlay-${videosCompletadosNube}`);
-                    if (nextOverlay) nextOverlay.style.display = "none";
-
-                    let userProgress = currentUserData.progress || {};
-                    userProgress[sesionId] = videosCompletadosNube;
-                    await updateDoc(doc(db, "users", currentUserDocId), { progress: userProgress });
-                }
-
-                if (videosCompletadosNube >= totalVideosEnSesion) {
-                    btnFinish.disabled = false;
-                    btnFinish.classList.add("btn-active");
-                    btnFinish.innerHTML = "✨ ¡Completar Sesión!";
-                }
-            });
         });
-    }
-
-  btnFinish.addEventListener('click', async () => {
-    btnFinish.disabled = true;
-    btnFinish.innerHTML = "⏳ Guardando progreso..."; // Texto de carga descriptivo
-    
-    try {
-        let siguienteSesion = sesionId + 1;
-        
-        // 1. Guardamos el progreso en la base de datos de Firebase
-        if (siguienteSesion > nivelDesbloqueado) {
-            await updateDoc(doc(db, "users", currentUserDocId), { 
-                nivelDesbloqueado: siguienteSesion 
-            });
-        }
-
-        // 2. Lógica exclusiva para cuando se termina la Sesión 8
-        if (sesionId === 8) {
-            Swal.fire({
-                title: '¡FELICITACIONES!',
-                text: 'Has completado satisfactoriamente todo el curso. Ya puedes visualizar y descargar tu certificado oficial.',
-                icon: 'success',
-                confirmButtonText: 'Ver mi Diploma 🎓',
-                confirmButtonColor: '#ff4d7d',
-                allowOutsideClick: false
-            }).then(() => {
-                // Redirigimos a la ventana de bienvenida con el parámetro para abrir el diploma[cite: 1]
-                window.location.href = "bienvenido.html?showDiploma=true";
-            });
-        } else {
-            // 3. Flujo normal para las sesiones de la 1 a la 7[cite: 1]
-            window.location.href = "bienvenido.html?refresh=" + new Date().getTime();
-        }
-        
-    } catch (error) {
-        console.error("Error al finalizar la sesión:", error);
-        btnFinish.disabled = false;
-        btnFinish.innerHTML = "✨ ¡Completar Sesión!";
-    }
-});
-</script>
+    </script>
 </body>
+
 </html>
