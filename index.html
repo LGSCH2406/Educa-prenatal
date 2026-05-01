@@ -227,8 +227,16 @@
                 const emailLogueado = user.email.toLowerCase();
 
                 // Lógica de Administradores[cite: 2]
+               // ... dentro de iniciarSesion en index.html ...
+
+// Lógica de Administradores
                 const admins = ["gus24060102@gmail.com", "maryjesmith@gmail.com"];
                 if (admins.includes(emailLogueado)) {
+                    // GUARDAR INFO DEL ADMIN ANTES DE REDIRIGIR
+                    let adminName = emailLogueado === "gus24060102@gmail.com" ? "Gustavo Saldaña" : "Maryllini Ayala";
+                    localStorage.setItem("adminName", adminName);
+                    localStorage.setItem("adminEmail", emailLogueado);
+                    
                     window.location.href = "admin.html";
                     return;
                 }
