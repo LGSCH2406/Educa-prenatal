@@ -211,77 +211,83 @@
         const togglePassword = document.getElementById('togglePassword');
         const btn = document.getElementById("btn");
 
-        const iniciarSesion = async () => {
-            const inputUsuario = usuarioInput.value.trim();
-            const pass = passwordInput.value;
-            const errorDiv = document.getElementById("error");
+       const iniciarSesion = async () => {
+    const inputUsuario = usuarioInput.value.trim();
+    const pass = passwordInput.value;
+    const errorDiv = document.getElementById("error");
 
-            if (!inputUsuario || !pass) return;
+    if (!inputUsuario || !pass) return;
 
-            btn.disabled = true;
-            btn.innerText = "Validando...";
-            errorDiv.innerText = "";
+    btn.disabled = true;
+    btn.innerText = "Validando...";
+    errorDiv.innerText = "";
 
-            try {
-                let emailParaAuth = "";
-                let userData = null;
+    try {
+        let emailFinal = "";
 
-                // 1. Lógica para Administradores (Acceso directo por correo)
-                const admins = ["gus24060102@gmail.com", "maryjesmith@gmail.com"];
-                if (inputUsuario.includes('@') && admins.includes(inputUsuario.toLowerCase())) {
-                    emailParaAuth = inputUsuario.toLowerCase();
-                } else {
-                    // 2. Búsqueda dinámica en Firestore por CÓDIGO[cite: 2]
-                    // Esto permite que si cambiaste el código de GS001 a GS002, el sistema sepa a qué cuenta entrar
-                    const q = query(collection(db, "users"), where("code", "==", inputUsuario.toUpperCase()));
-                    const querySnapshot = await getDocs(q);
+        // 1. ¿Es un Administrador entrando con su correo?
+        const admins = ["gus24060102@gmail.com", "maryjesmith@gmail.com"];
+        if (inputUsuario.includes('@')) {
+            emailFinal = inputUsuario.toLowerCase();
+        } else {
+            // 2. BUSCAR EL CORREO ASOCIADO AL CÓDIGO EN FIRESTORE
+            // Buscamos el documento donde el campo 'code' sea igual al que escribió el usuario
+            const q = query(collection(db, "users"), where("code", "==", inputUsuario.toUpperCase()));
+            const querySnapshot = await getDocs(q);
 
-                    if (querySnapshot.empty) {
-                        // Si no existe el código, lanzamos error para ir al catch
-                        throw new Error("Usuario no encontrado");
-                    }
-
-                    userData = querySnapshot.docs[0].data();
-
-                    // Verificamos si la cuenta está inhabilitada antes de intentar el login[cite: 2]
-                    if (userData.active === false) {
-                        btn.disabled = false;
-                        btn.innerText = "Ingresar";
-                        return Swal.fire({
-                            icon: 'error',
-                            title: 'Cuenta Inhabilitada',
-                            text: 'Tu acceso ha sido restringido por el administrador.',
-                            confirmButtonColor: '#6d0f1f'
-                        });
-                    }
-
-                    // Usamos el email que está guardado en el documento de Firestore[cite: 2]
-                    emailParaAuth = userData.email;
-                }
-
-                // 3. Autenticación en Firebase Auth con el email recuperado[cite: 2]
-                const userCredential = await signInWithEmailAndPassword(auth, emailParaAuth, pass);
-                const user = userCredential.user;
-                const emailLogueado = user.email.toLowerCase();
-
-                // 4. Redirección final
-                if (admins.includes(emailLogueado)) {
-                    let adminName = emailLogueado === "gus24060102@gmail.com" ? "Gustavo Saldaña" : "Maryllini Ayala";
-                    localStorage.setItem("adminName", adminName);
-                    localStorage.setItem("adminEmail", emailLogueado);
-                    window.location.href = "admin.html";
-                } else {
-                    window.location.href = "bienvenido.html";
-                }
-
-            } catch (error) {
-                console.error("Error:", error);
-                // Mensaje genérico por seguridad
-                errorDiv.innerText = "Código o contraseña incorrectos.";
+            if (querySnapshot.empty) {
+                // Si el código no existe en Firestore, no podemos seguir
                 btn.disabled = false;
                 btn.innerText = "Ingresar";
+                errorDiv.innerText = "Código de usuario no encontrado.";
+                return;
             }
-        };
+
+            const userData = querySnapshot.docs[0].data();
+
+            // 3. Verificar si está inhabilitada antes de intentar el login
+            if (userData.active === false) {
+                btn.disabled = false;
+                btn.innerText = "Ingresar";
+                return Swal.fire({
+                    icon: 'error',
+                    title: 'Cuenta Inhabilitada',
+                    text: 'Tu acceso ha sido restringido.',
+                    confirmButtonColor: '#6d0f1f'
+                });
+            }
+
+            // IMPORTANTE: Usamos el email que devolvió Firestore (el que tiene el UID)
+            emailFinal = userData.email;
+        }
+
+        // 4. Intentar el ingreso con el correo recuperado y la contraseña
+        const userCredential = await signInWithEmailAndPassword(auth, emailFinal, pass);
+        const user = userCredential.user;
+
+        // 5. Redirección según el correo logueado
+        if (admins.includes(user.email.toLowerCase())) {
+            let adminName = user.email.toLowerCase() === "gus24060102@gmail.com" ? "Gustavo Saldaña" : "Maryllini Ayala";
+            localStorage.setItem("adminName", adminName);
+            localStorage.setItem("adminEmail", user.email.toLowerCase());
+            window.location.href = "admin.html";
+        } else {
+            window.location.href = "bienvenido.html";
+        }
+
+    } catch (error) {
+        console.error("Error completo:", error);
+        btn.disabled = false;
+        btn.innerText = "Ingresar";
+        
+        // Si el error es de Firebase Auth, es que la contraseña está mal
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            errorDiv.innerText = "La contraseña es incorrecta.";
+        } else {
+            errorDiv.innerText = "Error de acceso. Verifique sus datos.";
+        }
+    }
+};
 
         btn.addEventListener("click", iniciarSesion);
 
