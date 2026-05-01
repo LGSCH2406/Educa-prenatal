@@ -459,28 +459,54 @@
             }
         }
 
-        function renderGrid(nivel) {
-            const grid = document.getElementById("sessionsGrid");
-            grid.innerHTML = "";
-            const iconList = ['👶', '🍎', '🧘', '🏥', '🛌', '🛀', '👪', '✅'];
-            for (let i = 1; i <= 8; i++) {
-                const locked = i > nivel;
-                grid.innerHTML += `
-                    <div class="col-xl-3 col-lg-4 col-md-6">
-                        <div class="session-card ${locked ? 'locked' : ''}" ${!locked ? `onclick="window.location.href='sesion_detalle.html?id=${i}'"` : ''}>
-                            <div class="card-img-top-wrapper">${iconList[i - 1]}</div>
-                            <div class="card-body p-4 text-center">
-                                <h5 class="fw-800 mb-1">Sesión ${i}</h5>
-                                <p class="small text-muted mb-3">${locked ? 'Bloqueado por progreso' : 'Contenido disponible'}</p>
-                                <button class="btn ${locked ? 'btn-secondary' : 'btn-outline-pink'} btn-sm w-100 rounded-pill">
-                                    ${locked ? '<i class="bi bi-lock-fill"></i> Bloqueado' : 'Comenzar ahora'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>`;
-            }
-        }
+       function renderGrid(nivel) {
+    const grid = document.getElementById("sessionsGrid");
+    grid.innerHTML = "";
+    
+    // 1. Iconos temáticos seleccionados para cada sesión
+    const iconList = [
+        '🤰', // Sesión 1: Conociendo mi Embarazo
+        '👗', // Sesión 2: Cambios Físicos y Apariencia
+        '🩺', // Sesión 3: Salud del Bebé y CPN (Control Prenatal)
+        '🏥', // Sesión 4: Preparación para el Parto
+        '🧘', // Sesión 5: Manejo del Dolor y Relajación
+        '🛌', // Sesión 6: Puerperio y Recuperación
+        '🍼', // Sesión 7: Lactancia y Cuidado del Bebé
+        '🧠'  // Sesión 8: Preparación Emocional Maternidad
+    ];
+    
+    // 2. Nombres exactos de las sesiones
+    const nombresSesiones = [
+        "Conociendo mi Embarazo",
+        "Cambios Físicos y Apariencia",
+        "Salud del Bebé y CPN",
+        "Preparación para el Parto",
+        "Manejo del Dolor y Relajación",
+        "Puerperio y Recuperación",
+        "Lactancia y Cuidado del Bebé",
+        "Preparación Emocional Maternidad"
+    ];
 
+    for (let i = 1; i <= 8; i++) {
+        const locked = i > nivel;
+        grid.innerHTML += `
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="session-card ${locked ? 'locked' : ''}" ${!locked ? `onclick="window.location.href='sesion_detalle.html?id=${i}'"` : ''}>
+                    <div class="card-img-top-wrapper" style="font-size: 3.5rem;">${iconList[i - 1]}</div>
+                    <div class="card-body p-4 text-center">
+                        <h6 class="text-pink small fw-bold mb-1" style="color: var(--admin-pink);">SESIÓN ${i}</h6>
+                        <h5 class="fw-800 mb-3" style="font-size: 1.1rem; min-height: 3.2rem; display: flex; align-items: center; justify-content: center; line-height: 1.2;">
+                            ${nombresSesiones[i - 1]}
+                        </h5>
+                        <p class="small text-muted mb-3">${locked ? 'Bloqueado por progreso' : 'Contenido disponible'}</p>
+                        <button class="btn ${locked ? 'btn-secondary' : 'btn-outline-pink'} btn-sm w-100 rounded-pill">
+                            ${locked ? '<i class="bi bi-lock-fill"></i> Bloqueado' : 'Comenzar ahora'}
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+    }
+}
         function listenQueries(uid) {
             // ✅ QUERY SOLO PARA CONSULTAS RESPONDIDAS (Requiere índice compuesto)
             const qResueltas = query(
