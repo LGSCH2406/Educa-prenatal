@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -226,6 +227,109 @@
             width: 90% !important;
             margin: 10% auto !important;
             padding: 10px !important;
+        }
+
+        /* Contenedor para centrar y dar margen */
+        .diploma-container-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        /* El diploma mantiene sus 800x600 internos para la descarga, pero se escala visualmente */
+        .diploma-responsive {
+            width: 800px;
+            height: 600px;
+            padding: 50px;
+            background: white;
+            border: 20px solid #ff4d7d;
+            position: relative;
+            text-align: center;
+            color: #333;
+            flex-shrink: 0;
+            /* Evita que se deforme */
+            transform-origin: center top;
+        }
+
+        .diploma-inner-border {
+            border: 5px solid #d4af37;
+            height: 100%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .diploma-logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        .diploma-title {
+            font-family: serif;
+            font-size: 45px;
+            color: #e6396a;
+            margin-bottom: 20px;
+        }
+
+        .diploma-text {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        #diplomaUserName {
+            font-size: 40px;
+            color: #333;
+            margin: 15px 0;
+        }
+
+        .diploma-footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        /* --- RESPONSIVE: EL TRUCO DEL ESCALADO --- */
+        @media (max-width: 820px) {
+            .diploma-responsive {
+                /* Ajusta este valor (0.4) si quieres que se vea más grande o pequeño en móvil */
+                transform: scale(0.45);
+                margin-bottom: -320px;
+                /* Compensa el espacio vacío que deja el escalado */
+            }
+        }
+
+        @media (max-width: 450px) {
+            .diploma-responsive {
+                transform: scale(0.38);
+                margin-bottom: -360px;
+            }
+        }
+
+        #modalDiploma {
+            overflow-x: hidden;
+            /* Evita desplazamientos laterales raros en iPhone */
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #diplomaUserName {
+            font-size: 40px;
+            color: #333;
+            margin: 15px 0;
+            width: 100%;
+            word-wrap: break-word;
+            /* Rompe la línea si el nombre es muy largo */
+            line-height: 1.1;
         }
     </style>
 </head>
@@ -460,35 +564,36 @@
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 bg-transparent">
                 <div class="modal-body p-0">
-                    <!-- Este es el contenedor que se convertirá en imagen -->
-                    <div id="diplomaToDownload"
-                        style="width: 800px; height: 600px; padding: 50px; background: white; border: 20px solid #ff4d7d; position: relative; text-align: center; margin: 0 auto; color: #333;">
-                        <div
-                            style="border: 5px solid #d4af37; height: 100%; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                            <img src="logo.png" style="width: 120px; margin-bottom: 20px;">
-                            <h1 style="font-family: serif; font-size: 50px; color: #e6396a; margin-bottom: 20px;">
-                                Certificado de Culminación</h1>
-                            <p style="font-size: 1.2rem; margin: 0;">Otorgado con orgullo a:</p>
-                            <!-- Dentro del modal del diploma -->
-                            <div id="certificado-contenido" style="text-align: center;">
-                                <h1 id="diplomaUserName">NOMBRE DE LA MADRE</h2> <!-- Este ID es clave[cite: 1] -->
+                    <!-- Contenedor con nueva clase para control de tamaño -->
+                    <div class="diploma-container-wrapper">
+                        <div id="diplomaToDownload" class="diploma-responsive">
+                            <div class="diploma-inner-border">
+                                <img src="logo.png" class="diploma-logo">
+                                <h1 class="diploma-title">Certificado de Culminación</h1>
+                                <p class="diploma-text">Otorgado con orgullo a:</p>
+
+                                <div id="certificado-contenido">
+                                    <h1 id="diplomaUserName">NOMBRE DE LA MADRE</h1>
                                     <p>Por haber concluido exitosamente el programa Educa-Prenatal.</p>
-                            </div>
-                            <div style="margin-top: 30px; font-size: 0.9rem; color: #777;">
-                                <p>Educa-Prenatal © 2026 | Preparación Informada</p>
+                                </div>
+
+                                <div class="diploma-footer">
+                                    <p>Educa-Prenatal © 2026 | Preparación Informada</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="text-center mt-4">
+
+                    <div class="text-center mt-3 mb-3">
                         <button class="btn btn-light btn-lg px-5 shadow" onclick="downloadDiploma()">
                             <i class="bi bi-download me-2"></i>Descargar como Imagen (PNG)
                         </button>
+                        <button type="button" class="btn btn-danger btn-lg ms-2" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Librería para convertir HTML a Imagen -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <!-- Firebase y JS -->
@@ -907,10 +1012,19 @@
 
         window.downloadDiploma = () => {
             const diploma = document.getElementById("diplomaToDownload");
-            html2canvas(diploma).then(canvas => {
+
+            // Configuramos html2canvas para ignorar el escalado visual y mejorar la resolución
+            html2canvas(diploma, {
+                scale: 2,           // Duplica los píxeles para que se vea nítido al imprimir o hacer zoom
+                useCORS: true,      // Importante si usas un logo.png externo o desde una URL
+                logging: false,     // Limpia la consola de mensajes técnicos
+                width: 800,         // Forzamos el ancho original del diseño
+                height: 600,        // Forzamos el alto original del diseño[cite: 1]
+                backgroundColor: "#ffffff" // Asegura que el fondo no salga transparente
+            }).then(canvas => {
                 const link = document.createElement("a");
                 link.download = "Mi_Certificado_EducaPrenatal.png";
-                link.href = canvas.toDataURL("image/png");
+                link.href = canvas.toDataURL("image/png", 1.0); // Calidad máxima
                 link.click();
             });
         };
