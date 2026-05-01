@@ -939,7 +939,7 @@
 
         async function loadUsers(searchTerm = '') {
             const tableBody = document.getElementById("usersTableBody");
-            // Mantenemos tu spinner rojo
+            // Mantenemos tu spinner rojo mientras carga
             tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-danger"></div></td></tr>`;
 
             try {
@@ -950,11 +950,11 @@
                 usersSnap.forEach(userDoc => {
                     const data = userDoc.data();
                     const name = data.name || 'N/A';
-                    const code = data.code || 'S/N'; // Extraemos el código
+                    const code = data.code || 'S/N';
 
                     const isActive = data.active !== undefined ? data.active : true;
 
-                    // Ajustamos el filtro: Ahora busca en el Nombre O en el Código
+                    // Filtro por Nombre o Código
                     const cumpleFiltro = !searchTerm ||
                         name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         code.toLowerCase().includes(searchTerm.toLowerCase());
@@ -965,7 +965,7 @@
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
                 <td><strong>${name}</strong></td>
-                <td><span class="badge bg-light text-dark border">${code}</span></td> <!-- Reemplazamos Email por Código -->
+                <td><span class="badge bg-light text-dark border">${code}</span></td>
                 <td>${data.week} sem</td>
                 <td>
                     <span class="badge ${isActive ? 'bg-success' : 'bg-secondary'}">
@@ -974,11 +974,23 @@
                 </td>
                 <td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
                 <td class="text-center">
+                    <!-- BOTÓN EDITAR (NUEVO) -->
+                    <button class="btn btn-sm btn-outline-primary me-1" 
+                            onclick="openEditModal('${userDoc.id}', '${name}', '${code}')">
+                        ✏️ Editar
+                    </button>
+
+                    <!-- BOTÓN ESTADO -->
                     <button class="btn btn-sm ${isActive ? 'btn-outline-warning' : 'btn-outline-success'}" 
                             onclick="toggleUserStatus('${userDoc.id}', ${isActive})">
                         ${isActive ? 'Inhabilitar' : 'Habilitar'}
                     </button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${userDoc.id}')">Eliminar</button>
+
+                    <!-- BOTÓN ELIMINAR -->
+                    <button class="btn btn-sm btn-outline-danger" 
+                            onclick="deleteUser('${userDoc.id}')">
+                        Eliminar
+                    </button>
                 </td>`;
                     tableBody.appendChild(tr);
                 });
@@ -1392,7 +1404,83 @@
             localStorage.removeItem("adminEmail");
             await originalLogout();
         };
+
+        // ... aquí termina tu función loadQueries o displayAdminInfo ...
+
+        // PEGA AQUÍ LAS NUEVAS FUNCIONES DE EDICIÓN:
+        window.openEditModal = (id, name, code) => {
+            document.getElementById("editUserId").value = id;
+            document.getElementById("editUserName").value = name;
+            document.getElementById("editUserCode").value = code;
+            document.getElementById("editUserPassword").value = ""; 
+            
+            const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            modal.show();
+        };
+
+        window.updateUser = async () => {
+            const id = document.getElementById("editUserId").value;
+            const newName = document.getElementById("editUserName").value.trim();
+            const newCode = document.getElementById("editUserCode").value.trim();
+
+            if (!newName || !newCode) return Swal.fire('Error', 'Completa los campos obligatorios', 'error');
+
+            try {
+                await updateDoc(doc(db, "users", id), {
+                    name: newName,
+                    code: newCode.toUpperCase(),
+                    email: newCode.toLowerCase() + "@gmail.com"
+                });
+
+                Swal.fire('¡Éxito!', 'Usuario actualizado', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+                loadUsers(); 
+            } catch (error) {
+                Swal.fire('Error', 'No se pudo actualizar', 'error');
+            }
+        };
+    </script> <!-- Este es el cierre que ya tenías -->
+</body>
+</html>
     </script>
+
+    <!-- ... código anterior ... -->
+
+    <!-- PEGAR AQUÍ EL MODAL DE EDICIÓN -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Editar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" id="editUserName" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Código de Usuario</label>
+                        <input type="text" id="editUserCode" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nueva Contraseña (Opcional)</label>
+                        <input type="password" id="editUserPassword" class="form-control"
+                            placeholder="Mínimo 6 caracteres">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-main" onclick="updateUser()">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
 </body>
 
 </html>
