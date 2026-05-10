@@ -1054,7 +1054,6 @@
             }
         };
 
-        // Función para cargar videos filtrados por sesión
         async function loadFilteredVideos() {
             const tableBody = document.getElementById("videoTableBody");
             const val = filterSelect.value;
@@ -1069,36 +1068,58 @@
         </tr>`;
 
             try {
-                const snap = await getDocs(collection(db, "videos"));
+                // --- CONSULTA OPTIMIZADA POR FECHA ---
+                const videosRef = collection(db, "videos");
+                const q = query(
+                    videosRef,
+                    where("sesion", "==", parseInt(val)),
+                    orderBy("fecha", "asc") // Ordena del más antiguo al más reciente
+                );
+
+                const snap = await getDocs(q);
+                // -------------------------------------
+
                 tableBody.innerHTML = "";
                 let encontrados = 0;
 
                 snap.forEach(videoDoc => {
                     const data = videoDoc.data();
-                    // Comparamos el campo 'sesion' de Firestore con el valor del select
-                    if (data.sesion == val) {
-                        encontrados++;
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                    <td><span class="fw-bold text-dark">${data.titulo}</span></td>
-                    <td><a href="${data.videoUrl}" target="_blank" style="color: var(--fucsia); text-decoration: none;">Ver Video Subido ↗</a></td>
-                    <td class="text-center">
-                        <button class="btn-delete" onclick="deleteVideo('${videoDoc.id}')">Eliminar</button>
-                    </td>
-                `;
-                        tableBody.appendChild(tr);
-                    }
+                    encontrados++;
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                <td><span class="fw-bold text-dark">${data.titulo}</span></td>
+                <td>
+                    <a href="${data.videoUrl}" target="_blank" style="color: var(--fucsia); text-decoration: none;">
+                        Ver Video Subido ↗
+                    </a>
+                </td>
+                <td class="text-center">
+                    <button class="btn-delete" onclick="deleteVideo('${videoDoc.id}')">
+                        Eliminar
+                    </button>
+                </td>
+            `;
+                    tableBody.appendChild(tr);
                 });
 
                 if (encontrados === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted">No hay videos en la sesión ${val}.</td></tr>`;
+                    tableBody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="text-center py-5 text-muted">
+                        No hay videos en la sesión ${val}.
+                    </td>
+                </tr>`;
                 }
             } catch (e) {
-                console.error(e);
-                tableBody.innerHTML = "<tr><td colspan='3' class='text-center text-danger'>Error de conexión con Firebase.</td></tr>";
+                console.error("Error al cargar videos:", e);
+                tableBody.innerHTML = `
+            <tr>
+                <td colspan="3" class="text-center text-danger py-5">
+                    Error de conexión con Firebase o índice no propagado.
+                </td>
+            </tr>`;
             }
         }
-
         // Función para eliminar un video de Firestore
         window.deleteVideo = async (id) => {
             const res = await Swal.fire({
@@ -1179,66 +1200,66 @@
         };
 
         // 🌟 LÓGICA DE MONITOREO ACTUALIZADA CON ORDENAMIENTO 🌟
-async function loadStats() {
-    try {
-        const videoCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
-        const videosSnap = await getDocs(collection(db, "videos"));
+        async function loadStats() {
+            try {
+                const videoCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+                const videosSnap = await getDocs(collection(db, "videos"));
 
-        videosSnap.forEach(doc => {
-            let s = parseInt(doc.data().sesion);
-            if (s >= 1 && s <= 8) videoCounts[s]++;
-        });
+                videosSnap.forEach(doc => {
+                    let s = parseInt(doc.data().sesion);
+                    if (s >= 1 && s <= 8) videoCounts[s]++;
+                });
 
-        document.getElementById('stat-total-videos').innerText = videosSnap.size;
+                document.getElementById('stat-total-videos').innerText = videosSnap.size;
 
-        // --- CAMBIO AQUÍ: Definimos una consulta ordenada por el campo 'code' ---
-        const usersRef = collection(db, "users");
-        const qUsers = query(usersRef, orderBy("code", "asc")); 
-        const usersSnap = await getDocs(qUsers);
-        // -----------------------------------------------------------------------
+                // --- CAMBIO AQUÍ: Definimos una consulta ordenada por el campo 'code' ---
+                const usersRef = collection(db, "users");
+                const qUsers = query(usersRef, orderBy("code", "asc"));
+                const usersSnap = await getDocs(qUsers);
+                // -----------------------------------------------------------------------
 
-        let totalUsers = 0;
-        let activeUsers = 0;
-        let htmlContent = "";
+                let totalUsers = 0;
+                let activeUsers = 0;
+                let htmlContent = "";
 
-        usersSnap.forEach(userDoc => {
-            const u = userDoc.data();
-            totalUsers++;
+                usersSnap.forEach(userDoc => {
+                    const u = userDoc.data();
+                    totalUsers++;
 
-            if (u.active !== false) activeUsers++;
+                    if (u.active !== false) activeUsers++;
 
-            let userProgress = u.progress || {};
-            let rowsHtml = "";
+                    let userProgress = u.progress || {};
+                    let rowsHtml = "";
 
-            for (let i = 1; i <= 8; i++) {
-                let totalVids = videoCounts[i];
-                let watchedVids = userProgress[i.toString()] || userProgress[i] || 0;
+                    for (let i = 1; i <= 8; i++) {
+                        let totalVids = videoCounts[i];
+                        let watchedVids = userProgress[i.toString()] || userProgress[i] || 0;
 
-                let dotsHtml = "";
-                if (totalVids === 0) {
-                    dotsHtml = `<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">Sin videos aún</span>`;
-                } else {
-                    for (let v = 1; v <= totalVids; v++) {
-                        if (v <= watchedVids) {
-                            dotsHtml += `<div class="dot watched" title="Video Visto"></div>`;
+                        let dotsHtml = "";
+                        if (totalVids === 0) {
+                            dotsHtml = `<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">Sin videos aún</span>`;
                         } else {
-                            dotsHtml += `<div class="dot" title="Video Pendiente"></div>`;
+                            for (let v = 1; v <= totalVids; v++) {
+                                if (v <= watchedVids) {
+                                    dotsHtml += `<div class="dot watched" title="Video Visto"></div>`;
+                                } else {
+                                    dotsHtml += `<div class="dot" title="Video Pendiente"></div>`;
+                                }
+                            }
                         }
-                    }
-                }
 
-                let pct = totalVids > 0 ? Math.round((watchedVids / totalVids) * 100) : 0;
+                        let pct = totalVids > 0 ? Math.round((watchedVids / totalVids) * 100) : 0;
 
-                rowsHtml += `
+                        rowsHtml += `
                     <div class="session-row">
                         <div class="session-name">Sesión ${i}</div>
                         <div class="session-dots">${dotsHtml}</div>
                         <div class="session-progress-text">${pct}%</div>
                     </div>
                 `;
-            }
+                    }
 
-            htmlContent += `
+                    htmlContent += `
                 <div class="monitor-user-card">
                     <div class="monitor-user-header" onclick="document.getElementById('user-body-${userDoc.id}').classList.toggle('active')">
                         <span>👩‍🦰 <strong>${u.name || 'Sin nombre'}</strong> <span class="text-muted fw-normal ms-2">(${u.code || u.email})</span></span>
@@ -1252,22 +1273,22 @@ async function loadStats() {
                     </div>
                 </div>
             `;
-        });
+                });
 
-        document.getElementById('stat-total-users').innerText = totalUsers;
-        document.getElementById('stat-active-users').innerText = activeUsers;
+                document.getElementById('stat-total-users').innerText = totalUsers;
+                document.getElementById('stat-active-users').innerText = activeUsers;
 
-        if (totalUsers === 0) {
-            htmlContent = `<div class="text-center py-4 text-muted">No hay usuarios registrados en la base de datos.</div>`;
+                if (totalUsers === 0) {
+                    htmlContent = `<div class="text-center py-4 text-muted">No hay usuarios registrados en la base de datos.</div>`;
+                }
+
+                document.getElementById('monitor-users-container').innerHTML = htmlContent;
+
+            } catch (error) {
+                console.error("Error cargando monitoreo:", error);
+                Swal.fire('Error', 'No se pudieron cargar las estadísticas.', 'error');
+            }
         }
-
-        document.getElementById('monitor-users-container').innerHTML = htmlContent;
-
-    } catch (error) {
-        console.error("Error cargando monitoreo:", error);
-        Swal.fire('Error', 'No se pudieron cargar las estadísticas.', 'error');
-    }
-}
 
         window.loadQueries = () => {
             const container = document.getElementById("queries-container");
