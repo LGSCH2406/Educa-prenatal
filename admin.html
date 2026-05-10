@@ -1178,92 +1178,96 @@
             }
         };
 
-        // 🌟 LÓGICA DE MONITOREO (AGREGADA AQUI SIN BORRAR NADA) 🌟
-        async function loadStats() {
-            try {
-                const videoCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
-                const videosSnap = await getDocs(collection(db, "videos"));
+        // 🌟 LÓGICA DE MONITOREO ACTUALIZADA CON ORDENAMIENTO 🌟
+async function loadStats() {
+    try {
+        const videoCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+        const videosSnap = await getDocs(collection(db, "videos"));
 
-                videosSnap.forEach(doc => {
-                    let s = parseInt(doc.data().sesion);
-                    if (s >= 1 && s <= 8) videoCounts[s]++;
-                });
+        videosSnap.forEach(doc => {
+            let s = parseInt(doc.data().sesion);
+            if (s >= 1 && s <= 8) videoCounts[s]++;
+        });
 
-                document.getElementById('stat-total-videos').innerText = videosSnap.size;
+        document.getElementById('stat-total-videos').innerText = videosSnap.size;
 
-                const usersSnap = await getDocs(collection(db, "users"));
-                let totalUsers = 0;
-                let activeUsers = 0;
-                let htmlContent = "";
+        // --- CAMBIO AQUÍ: Definimos una consulta ordenada por el campo 'code' ---
+        const usersRef = collection(db, "users");
+        const qUsers = query(usersRef, orderBy("code", "asc")); 
+        const usersSnap = await getDocs(qUsers);
+        // -----------------------------------------------------------------------
 
-                usersSnap.forEach(userDoc => {
-                    const u = userDoc.data();
-                    totalUsers++;
+        let totalUsers = 0;
+        let activeUsers = 0;
+        let htmlContent = "";
 
-                    // Aseguramos que si no existe u.active se cuenta como true
-                    if (u.active !== false) activeUsers++;
+        usersSnap.forEach(userDoc => {
+            const u = userDoc.data();
+            totalUsers++;
 
-                    let userProgress = u.progress || {};
-                    let rowsHtml = "";
+            if (u.active !== false) activeUsers++;
 
-                    for (let i = 1; i <= 8; i++) {
-                        let totalVids = videoCounts[i];
-                        let watchedVids = userProgress[i.toString()] || userProgress[i] || 0;
+            let userProgress = u.progress || {};
+            let rowsHtml = "";
 
-                        let dotsHtml = "";
-                        if (totalVids === 0) {
-                            dotsHtml = `<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">Sin videos aún</span>`;
+            for (let i = 1; i <= 8; i++) {
+                let totalVids = videoCounts[i];
+                let watchedVids = userProgress[i.toString()] || userProgress[i] || 0;
+
+                let dotsHtml = "";
+                if (totalVids === 0) {
+                    dotsHtml = `<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">Sin videos aún</span>`;
+                } else {
+                    for (let v = 1; v <= totalVids; v++) {
+                        if (v <= watchedVids) {
+                            dotsHtml += `<div class="dot watched" title="Video Visto"></div>`;
                         } else {
-                            for (let v = 1; v <= totalVids; v++) {
-                                if (v <= watchedVids) {
-                                    dotsHtml += `<div class="dot watched" title="Video Visto"></div>`;
-                                } else {
-                                    dotsHtml += `<div class="dot" title="Video Pendiente"></div>`;
-                                }
-                            }
+                            dotsHtml += `<div class="dot" title="Video Pendiente"></div>`;
                         }
-
-                        let pct = totalVids > 0 ? Math.round((watchedVids / totalVids) * 100) : 0;
-
-                        rowsHtml += `
-                            <div class="session-row">
-                                <div class="session-name">Sesión ${i}</div>
-                                <div class="session-dots">${dotsHtml}</div>
-                                <div class="session-progress-text">${pct}%</div>
-                            </div>
-                        `;
                     }
-
-                    htmlContent += `
-                        <div class="monitor-user-card">
-                            <div class="monitor-user-header" onclick="document.getElementById('user-body-${userDoc.id}').classList.toggle('active')">
-                                <span>👩‍🦰 <strong>${u.name || 'Sin nombre'}</strong> <span class="text-muted fw-normal ms-2">(${u.email})</span></span>
-                                <span style="color: #ccc; font-size: 0.8rem;">▼ VER DETALLE</span>
-                            </div>
-                            <div class="monitor-user-body" id="user-body-${userDoc.id}">
-                                <p class="mb-3" style="font-size: 0.85rem; color: #888;">
-                                    Semana de gestación registrada: <strong class="text-dark">${u.week || '?'} semanas</strong>
-                                </p>
-                                ${rowsHtml}
-                            </div>
-                        </div>
-                    `;
-                });
-
-                document.getElementById('stat-total-users').innerText = totalUsers;
-                document.getElementById('stat-active-users').innerText = activeUsers;
-
-                if (totalUsers === 0) {
-                    htmlContent = `<div class="text-center py-4 text-muted">No hay usuarios registrados en la base de datos.</div>`;
                 }
 
-                document.getElementById('monitor-users-container').innerHTML = htmlContent;
+                let pct = totalVids > 0 ? Math.round((watchedVids / totalVids) * 100) : 0;
 
-            } catch (error) {
-                console.error("Error cargando monitoreo:", error);
-                Swal.fire('Error', 'No se pudieron cargar las estadísticas.', 'error');
+                rowsHtml += `
+                    <div class="session-row">
+                        <div class="session-name">Sesión ${i}</div>
+                        <div class="session-dots">${dotsHtml}</div>
+                        <div class="session-progress-text">${pct}%</div>
+                    </div>
+                `;
             }
+
+            htmlContent += `
+                <div class="monitor-user-card">
+                    <div class="monitor-user-header" onclick="document.getElementById('user-body-${userDoc.id}').classList.toggle('active')">
+                        <span>👩‍🦰 <strong>${u.name || 'Sin nombre'}</strong> <span class="text-muted fw-normal ms-2">(${u.code || u.email})</span></span>
+                        <span style="color: #ccc; font-size: 0.8rem;">▼ VER DETALLE</span>
+                    </div>
+                    <div class="monitor-user-body" id="user-body-${userDoc.id}">
+                        <p class="mb-3" style="font-size: 0.85rem; color: #888;">
+                            Semana de gestación registrada: <strong class="text-dark">${u.week || '?'} semanas</strong>
+                        </p>
+                        ${rowsHtml}
+                    </div>
+                </div>
+            `;
+        });
+
+        document.getElementById('stat-total-users').innerText = totalUsers;
+        document.getElementById('stat-active-users').innerText = activeUsers;
+
+        if (totalUsers === 0) {
+            htmlContent = `<div class="text-center py-4 text-muted">No hay usuarios registrados en la base de datos.</div>`;
         }
+
+        document.getElementById('monitor-users-container').innerHTML = htmlContent;
+
+    } catch (error) {
+        console.error("Error cargando monitoreo:", error);
+        Swal.fire('Error', 'No se pudieron cargar las estadísticas.', 'error');
+    }
+}
 
         window.loadQueries = () => {
             const container = document.getElementById("queries-container");
