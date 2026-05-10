@@ -1054,12 +1054,12 @@
             }
         };
 
-        async function loadFilteredVideos() {
-            const tableBody = document.getElementById("videoTableBody");
-            const val = filterSelect.value;
+       async function loadFilteredVideos() {
+    const tableBody = document.getElementById("videoTableBody");
+    const val = filterSelect.value;
 
-            // Feedback visual de carga
-            tableBody.innerHTML = `
+    // Feedback visual de carga
+    tableBody.innerHTML = `
         <tr>
             <td colspan="3" class="text-center py-5">
                 <div class="spinner-border text-danger" role="status"></div>
@@ -1067,26 +1067,26 @@
             </td>
         </tr>`;
 
-            try {
-                // --- CONSULTA OPTIMIZADA POR FECHA ---
-                const videosRef = collection(db, "videos");
-                const q = query(
-                    videosRef,
-                    where("sesion", "==", parseInt(val)),
-                    orderBy("fecha", "asc") // Ordena del más antiguo al más reciente
-                );
+    try {
+        // --- CONSULTA ORDENADA POR TÍTULO (1., 2., 3...) ---
+        const videosRef = collection(db, "videos");
+        const q = query(
+            videosRef, 
+            where("sesion", "==", parseInt(val)), 
+            orderBy("titulo", "asc") // Orden alfabético/numérico
+        );
 
-                const snap = await getDocs(q);
-                // -------------------------------------
+        const snap = await getDocs(q);
+        // --------------------------------------------------
 
-                tableBody.innerHTML = "";
-                let encontrados = 0;
+        tableBody.innerHTML = "";
+        let encontrados = 0;
 
-                snap.forEach(videoDoc => {
-                    const data = videoDoc.data();
-                    encontrados++;
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
+        snap.forEach(videoDoc => {
+            const data = videoDoc.data();
+            encontrados++;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
                 <td><span class="fw-bold text-dark">${data.titulo}</span></td>
                 <td>
                     <a href="${data.videoUrl}" target="_blank" style="color: var(--fucsia); text-decoration: none;">
@@ -1099,27 +1099,35 @@
                     </button>
                 </td>
             `;
-                    tableBody.appendChild(tr);
-                });
+            tableBody.appendChild(tr);
+        });
 
-                if (encontrados === 0) {
-                    tableBody.innerHTML = `
+        if (encontrados === 0) {
+            tableBody.innerHTML = `
                 <tr>
                     <td colspan="3" class="text-center py-5 text-muted">
                         No hay videos en la sesión ${val}.
                     </td>
                 </tr>`;
-                }
-            } catch (e) {
-                console.error("Error al cargar videos:", e);
-                tableBody.innerHTML = `
-            <tr>
-                <td colspan="3" class="text-center text-danger py-5">
-                    Error de conexión con Firebase o índice no propagado.
-                </td>
-            </tr>`;
-            }
         }
+    } catch (e) {
+        console.error("Error al cargar videos:", e);
+        
+        // Si sale el error de índice, mostramos un aviso amigable
+        if (e.code === 'failed-precondition') {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="text-center py-4">
+                        <div class="alert alert-warning">
+                            <strong>Falta un índice:</strong> Revisa la consola (F12) y haz clic en el enlace de Firebase para habilitar el orden por título.
+                        </div>
+                    </td>
+                </tr>`;
+        } else {
+            tableBody.innerHTML = "<tr><td colspan='3' class='text-center text-danger'>Error de conexión con Firebase.</td></tr>";
+        }
+    }
+}
         // Función para eliminar un video de Firestore
         window.deleteVideo = async (id) => {
             const res = await Swal.fire({
