@@ -403,7 +403,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc, orderBy} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -469,35 +469,49 @@
             }
         });
 
-        async function loadData() {
-            const q = query(collection(db, "videos"), where("sesion", "==", sesionId));
-            const snap = await getDocs(q);
+      async function loadData() {
+    try {
+        // La consulta ahora incluye orderBy correctamente
+        const q = query(
+            collection(db, "videos"), 
+            where("sesion", "==", sesionId),
+            orderBy("fecha", "asc")
+        );
+        
+        const snap = await getDocs(q);
 
-            if (snap.empty) {
-                videoContainer.innerHTML = `<div class="video-wrapper" style="padding:60px; text-align:center;">
-                <h3 style="color:var(--fucsia)">Contenido en preparación</h3>
-                <p>Aún no hay videos disponibles para la sesión ${sesionId}. Por favor, vuelve más tarde.</p>
-            </div>`;
-                btnFinish.disabled = true;
-                btnFinish.classList.remove("btn-active");
-                btnFinish.innerHTML = "🔒 Esperando material de estudio";
-                return;
-            }
+        if (snap.empty) {
+            videoContainer.innerHTML = `
+                <div class="video-wrapper" style="padding:60px; text-align:center;">
+                    <h3 style="color:var(--fucsia)">Contenido en preparación</h3>
+                    <p>Aún no hay videos disponibles para la sesión ${sesionId}. Por favor, vuelve más tarde.</p>
+                </div>`;
+            btnFinish.disabled = true;
+            btnFinish.classList.remove("btn-active");
+            btnFinish.innerHTML = "🔒 Esperando material de estudio";
+            return;
+        }
 
-            videoContainer.innerHTML = "";
-            let index = 0;
+        videoContainer.innerHTML = "";
+        let index = 0;
 
-            snap.forEach(doc => {
-                const data = doc.data();
-                videoContainer.innerHTML += `
+        snap.forEach(doc => {
+            const data = doc.data();
+            
+            // AGREGAMOS EL TÍTULO DEL VIDEO (${data.titulo})
+            videoContainer.innerHTML += `
             <div class="video-wrapper">
+                <h3 style="color: var(--fucsia); margin-bottom: 15px; font-weight: 600; font-size: 1.3rem; padding-left: 10px; border-left: 4px solid var(--fucsia);">
+                    ${data.titulo || 'Lección de video'}
+                </h3>
+
                 <div class="video-player-box" id="player-box-${index}">
-                   <video id="video-${index}" src="${data.videoUrl}" playsinline webkit-playsinline 
-       style="width: 100%; height: 100%; cursor: pointer; object-fit: contain; background: #000;">
-</video>
+                    <video id="video-${index}" src="${data.videoUrl}" playsinline webkit-playsinline 
+                        style="width: 100%; height: 100%; cursor: pointer; object-fit: contain; background: #000;">
+                    </video>
                     <div id="controls-group-${index}" class="video-player-controls">
-                    <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind"><i class="fas fa-undo"></i></button>
-                    <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause"><i class="fas fa-play"></i></button>
+                        <button id="btn-back-${index}" class="btn-custom-ctrl btn-rewind"><i class="fas fa-undo"></i></button>
+                        <button id="btn-play-${index}" class="btn-custom-ctrl btn-play-pause"><i class="fas fa-play"></i></button>
                     </div>
                     <div id="time-display-${index}" class="video-time-display">0:00 / 0:00</div>
                     <div class="video-bottom-controls">
@@ -516,10 +530,16 @@
                     <p>Disfruta de este video educativo para la SESIÓN ${sesionId}.</p>
                 </div>
             </div>`;
-                index++;
-            });
-            activarReproductorInvisible();
-        }
+            index++;
+        });
+        
+        activarReproductorInvisible();
+
+    } catch (error) {
+        console.error("Error en loadData:", error);
+        // Si sale error de "Index", recuerda hacer clic en el link que aparece en consola
+    }
+}
 
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
