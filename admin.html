@@ -969,11 +969,16 @@
 
         async function loadUsers(searchTerm = '') {
             const tableBody = document.getElementById("usersTableBody");
-            // Mantenemos tu spinner rojo mientras carga
             tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-danger"></div></td></tr>`;
 
             try {
-                const usersSnap = await getDocs(collection(db, "users"));
+                // --- MODIFICACIÓN AQUÍ: Creamos una consulta ordenada por el campo 'code' ---
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, orderBy("code", "asc")); // "asc" para A-Z (menor a mayor)
+
+                const usersSnap = await getDocs(q);
+                // --------------------------------------------------------------------------
+
                 tableBody.innerHTML = "";
                 let encontrados = 0;
 
@@ -981,10 +986,8 @@
                     const data = userDoc.data();
                     const name = data.name || 'N/A';
                     const code = data.code || 'S/N';
-
                     const isActive = data.active !== undefined ? data.active : true;
 
-                    // Filtro por Nombre o Código
                     const cumpleFiltro = !searchTerm ||
                         name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         code.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1004,13 +1007,10 @@
                 </td>
                 <td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
                 <td class="text-center">
-                    <!-- BOTÓN ESTADO -->
-                    <button class="btn btn-sm ${isActive ? 'btn-outline-warning' : 'btn-outline-success'}" 
+                    <button class="btn btn-sm ${isActive ? 'btn-outline-warning' : 'btn-outline-success'} me-1" 
                             onclick="toggleUserStatus('${userDoc.id}', ${isActive})">
                         ${isActive ? 'Inhabilitar' : 'Habilitar'}
                     </button>
-
-                    <!-- BOTÓN ELIMINAR -->
                     <button class="btn btn-sm btn-outline-danger" 
                             onclick="deleteUser('${userDoc.id}')">
                         Eliminar
@@ -1023,7 +1023,7 @@
                     tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5">No hay resultados para "${searchTerm}".</td></tr>`;
                 }
             } catch (e) {
-                console.error(e);
+                console.error("Error en loadUsers:", e);
                 tableBody.innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Error de conexión al cargar usuarias.</td></tr>";
             }
         }
@@ -1535,4 +1535,5 @@
 
 </html>
 </body>
+
 </html>
