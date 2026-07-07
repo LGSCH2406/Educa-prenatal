@@ -26,7 +26,6 @@
             overflow-x: hidden;
         }
 
-        /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--white);
@@ -150,7 +149,6 @@
             box-shadow: 0 4px 12px rgba(216, 27, 96, 0.3);
         }
 
-        /* --- CONTENIDO PRINCIPAL --- */
         .main-content {
             margin-left: var(--sidebar-width);
             padding: 3rem;
@@ -171,7 +169,6 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -203,13 +200,6 @@
             border-radius: 10px;
             border: 2px solid #eee;
             transition: 0.3s;
-        }
-
-        .select-filter-large {
-            border: 2px solid var(--fucsia);
-            color: var(--fucsia-dark);
-            font-weight: 600;
-            min-width: 250px;
         }
 
         .form-control:focus,
@@ -277,36 +267,23 @@
             color: white;
         }
 
-        .status-active {
-            color: #4caf50;
+        .select-filter-large {
+            border: 2px solid var(--fucsia);
+            color: var(--fucsia-dark);
             font-weight: 600;
-        }
-
-        .status-inactive {
-            color: #f44336;
-            font-weight: 600;
-        }
-
-        .search-input {
-            width: 100%;
-            /* Ocupa el espacio disponible */
-            max-width: 500px;
+            min-width: 250px;
         }
 
         @media (max-width: 992px) {
             .sidebar {
                 left: -100%;
-                /* Oculto a la izquierda */
                 transition: all 0.3s ease;
                 width: 280px !important;
-                /* Recupera su ancho original en móvil */
                 display: flex !important;
-                /* Asegura que se vea al activarse */
             }
 
             .sidebar.active {
                 left: 0;
-                /* Aparece al dar click */
             }
 
             .sidebar .nav-item span,
@@ -314,7 +291,6 @@
             .sidebar p,
             .user-section-bottom {
                 display: block !important;
-                /* Muestra los textos en móvil */
             }
 
             .main-content {
@@ -322,10 +298,8 @@
                 width: 100% !important;
                 padding: 1.5rem;
                 padding-top: 5rem;
-                /* Espacio para el botón de menú */
             }
 
-            /* Fondo oscuro al abrir el menú */
             .sidebar-overlay {
                 display: none;
                 position: fixed;
@@ -342,7 +316,6 @@
             }
         }
 
-        /* --- ESTILOS PARA MONITOREO (AGREGADO AQUI SIN BORRAR NADA) --- */
         .stat-card {
             background: linear-gradient(135deg, var(--fucsia) 0%, var(--fucsia-dark) 100%);
             color: white;
@@ -389,6 +362,7 @@
             box-shadow: 0 10px 20px rgba(33, 150, 243, 0.2);
         }
 
+        /* ESTILOS PARA MONITOREO - CORREGIDO CON BOTONES A LA IZQUIERDA */
         .monitor-user-card {
             background: white;
             border: 1px solid rgba(216, 27, 96, 0.1);
@@ -404,13 +378,69 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
+            cursor: default;
             font-weight: 600;
             color: var(--fucsia-dark);
+            transition: background 0.3s ease;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .monitor-user-header:hover {
             background: var(--fucsia-light);
+        }
+
+        .user-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .user-header-left .user-name {
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .user-header-left .user-code {
+            font-size: 0.85rem;
+            color: #888;
+            font-weight: 400;
+        }
+
+        .btn-toggle-detail {
+            background: var(--fucsia);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .btn-toggle-detail:hover {
+            background: var(--fucsia-dark);
+            transform: scale(1.02);
+        }
+
+        .btn-toggle-detail:active {
+            transform: scale(0.98);
+        }
+
+        .btn-toggle-detail i {
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+
+        .monitor-user-header.active .btn-toggle-detail i {
+            transform: rotate(180deg);
         }
 
         .monitor-user-body {
@@ -441,6 +471,8 @@
             width: 100px;
             font-weight: 600;
             color: #555;
+            font-size: 0.9rem;
+            flex-shrink: 0;
         }
 
         .session-dots {
@@ -449,19 +481,28 @@
             gap: 8px;
             padding: 0 15px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .dot {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background-color: #e0e0e0;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
         .dot.watched {
             background-color: var(--fucsia);
             box-shadow: 0 0 8px rgba(216, 27, 96, 0.4);
+            transform: scale(1.1);
+        }
+
+        .dot.watched:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 12px rgba(216, 27, 96, 0.6);
         }
 
         .session-progress-text {
@@ -470,6 +511,24 @@
             font-size: 0.9rem;
             font-weight: 600;
             color: var(--fucsia);
+            flex-shrink: 0;
+        }
+
+        .monitor-user-info {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .monitor-user-info strong {
+            color: #333;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 500px;
         }
 
         .query-card {
@@ -481,35 +540,47 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
         }
 
-        .query-user-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #f8f9fa;
-            padding-bottom: 10px;
-        }
-
-        .user-tag {
-            background: var(--fucsia-light);
-            color: var(--fucsia-dark);
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .query-text {
-            background: #fdfdfd;
-            padding: 15px;
-            border-left: 4px solid var(--fucsia);
-            font-style: italic;
-            margin-bottom: 15px;
-        }
-
-        .response-area {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
+        /* Responsive para móviles */
+        @media (max-width: 768px) {
+            .monitor-user-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .btn-toggle-detail {
+                width: 100%;
+                justify-content: center;
+                padding: 8px;
+                font-size: 0.8rem;
+            }
+            
+            .user-header-left {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .session-row {
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: center;
+            }
+            
+            .session-name {
+                width: 100%;
+                text-align: center;
+                font-size: 0.8rem;
+            }
+            
+            .session-dots {
+                justify-content: center;
+                padding: 5px 0;
+            }
+            
+            .session-progress-text {
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -542,7 +613,6 @@
         <div class="user-section-bottom">
             <div class="user-card">
                 <div class="user-info-row">
-                    <!-- La inicial se pondrá sola con JS -->
                     <div class="user-avatar-bottom" id="adminAvatar">A</div>
                     <div class="user-info-bottom">
                         <p class="user-name-bottom" id="adminDisplayName">Cargando...</p>
@@ -557,7 +627,6 @@
     </aside>
 
     <main class="main-content">
-        <!-- Botón de Menú para Móvil -->
         <button class="btn d-lg-none" id="mobileMenuBtn"
             style="position: fixed; top: 15px; left: 15px; z-index: 1100; background: var(--fucsia); color: white;">
             <i class="bi bi-list"></i>
@@ -658,7 +727,6 @@
             </header>
 
             <div class="glass-card mx-auto">
-                <!-- Reducimos mb-5 a mb-4 para que el cuadro no sea tan alto -->
                 <div class="row mb-4">
                     <div class="col-12">
                         <h5 class="fw-bold mb-3">➕ Agregar Nuevo Usuario</h5>
@@ -694,20 +762,15 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Botón organizado en su propia fila para controlar mejor el espacio -->
                     <div class="col-12 mt-3">
-                        <button class="btn btn-main w-100" onclick="createUser()">
-                            👤 Crear Usuario
-                        </button>
+                        <button class="btn btn-main w-100" onclick="createUser()">👤 Crear Usuario</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Div divisor para separar la tarjeta blanca de la sección de búsqueda -->
             <div class="py-4"></div>
-            <div class="row mb-4 align-items-center"> <!-- Añadido align-items-center -->
-                <div class="col-md-6"> <!-- Cambiado de col-12 a col-md-6 -->
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-6">
                     <h5 class="mb-0 fw-bold">📋 Lista de Usuarios</h5>
                 </div>
                 <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
@@ -717,14 +780,13 @@
                     </div>
                 </div>
             </div>
-            </div>
 
             <div class="table-responsive">
                 <table class="table align-middle">
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Código</th> <!-- Cambiado de Email a Código -->
+                            <th>Código</th>
                             <th>Semana</th>
                             <th>Estado</th>
                             <th>Fecha Registro</th>
@@ -733,13 +795,10 @@
                     </thead>
                     <tbody id="usersTableBody">
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted italic">
-                                Cargando usuarias...
-                            </td>
+                            <td colspan="6" class="text-center py-5 text-muted italic">Cargando usuarias...</td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
             </div>
         </section>
 
@@ -775,22 +834,20 @@
 
             <div class="glass-card mx-auto">
                 <h5 class="fw-bold mb-4">📊 Progreso por Usuario</h5>
-                <p class="text-muted small mb-4">Haz clic en un usuario para desplegar sus 8 sesiones. Cada bolita
-                    representa un video subido.</p>
-
+                <p class="text-muted small mb-4">Haz clic en "VER DETALLE" para ver el progreso de cada usuario en las 8 sesiones.</p>
                 <div id="monitor-users-container">
+                    <!-- Se renderiza con JS -->
                 </div>
             </div>
         </section>
+
         <section id="section-queries" class="section-panel">
             <header class="mb-4">
                 <h1 class="display-6 fw-bold">Centro de Consultas</h1>
                 <p class="text-muted">Responde a las dudas de tus usuarios en tiempo real.</p>
             </header>
-
             <div class="glass-card mx-auto">
                 <div id="queries-container">
-                    <!-- Aquí se cargarán las consultas dinámicamente -->
                     <div class="text-center py-5 text-muted">Cargando consultas...</div>
                 </div>
             </div>
@@ -802,36 +859,50 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // --- TUS DATOS DE CLOUDINARY (YA CONFIGURADOS) ---
-        const CLOUD_NAME = 'dqcju1tki';
-        const UPLOAD_PRESET = 'educa_videos_preset';
+        // --- CONFIGURACIÓN DE CLOUDINARY CON TODAS TUS CUENTAS ---
+        const CLOUDINARY_CONFIG = {
+            1: { cloudName: 'jrxkhvv1', uploadPreset: 'educa_videos_01_preset' },
+            2: { cloudName: 'o7sgizgg', uploadPreset: 'educa_videos_02_preset' },
+            3: { cloudName: 'thnnv9d8', uploadPreset: 'educa_videos_03_preset' },
+            4: { cloudName: 'vvx3m0fn', uploadPreset: 'educa_videos_04_preset' },
+            5: { cloudName: 'imxvsmqy', uploadPreset: 'educa_videos_05_preset' },
+            6: { cloudName: 'qvnhby3s', uploadPreset: 'educa_videos_06_preset' },
+            7: { cloudName: 'eban4qly', uploadPreset: 'educa_videos_07_preset' },
+            8: { cloudName: 'pqt9izoy', uploadPreset: 'educa_videos_08_preset' }
+        };
 
-        // Configuración corregida según tu consola de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCQXNj667woEMLUphhlHCAFeoAhEY0IuNM",
             authDomain: "educa-prenatal.firebaseapp.com",
             projectId: "educa-prenatal",
             storageBucket: "educa-prenatal.firebasestorage.app",
             messagingSenderId: "474992751698",
-            appId: "1:474992751698:web:f313f8def5ff266a45b8b8", // CORREGIDO: Se agregó el 8 final
+            appId: "1:474992751698:web:f313f8def5ff266a45b8b8",
             measurementId: "G-CLSR2LDM41"
         };
 
-        // Inicialización de Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // App secundaria para crear usuarios sin cerrar la sesión del administrador
         const secondaryApp = initializeApp(firebaseConfig, "Secondary");
         const secondaryAuth = getAuth(secondaryApp);
 
+        // --- NAVEGACIÓN ---
+        window.showSection = (id) => {
+            document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`section-${id}`).classList.add('active');
+            document.getElementById(`nav-${id}`).classList.add('active');
+            if (id === 'users') loadUsers();
+            if (id === 'monitor') loadStats();
+            if (id === 'queries') loadQueries();
+            if (id === 'manage') loadFilteredVideos();
+        };
 
-
-        // --- FUNCIONES DE NAVEGACIÓN Y SESIÓN ---
         window.logout = async () => {
             const res = await Swal.fire({
                 title: '¿Cerrar sesión?',
@@ -842,34 +913,165 @@
                 confirmButtonText: 'Sí, salir',
                 cancelButtonText: 'Cancelar'
             });
+            if (res.isConfirmed) {
+                try { await signOut(auth); } catch (e) {}
+                window.location.href = "index.html";
+            }
+        };
+
+        // --- SUBIR VIDEO A CLOUDINARY Y GUARDAR EN FIRESTORE ---
+        document.getElementById("btnPublish").onclick = async () => {
+            const btn = document.getElementById("btnPublish");
+            const title = document.getElementById("vTitle").value.trim();
+            const session = parseInt(document.getElementById("vSession").value);
+            const fileInput = document.getElementById("videoInput");
+            const archivo = fileInput.files[0];
+
+            if (!title || !session || !archivo) {
+                return Swal.fire('Atención', 'Completa todos los campos y selecciona un video.', 'info');
+            }
+
+            const config = CLOUDINARY_CONFIG[session];
+            if (!config) {
+                return Swal.fire('Error', 'No hay configuración de Cloudinary para esta sesión.', 'error');
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Subiendo video...`;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', archivo);
+                formData.append('upload_preset', config.uploadPreset);
+
+                const resCloudinary = await fetch(`https://api.cloudinary.com/v1_1/${config.cloudName}/video/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const datosVideo = await resCloudinary.json();
+
+                if (!datosVideo.secure_url) {
+                    throw new Error("No se pudo obtener el enlace de Cloudinary.");
+                }
+
+                await addDoc(collection(db, "videos"), {
+                    titulo: title,
+                    sesion: session,
+                    videoUrl: datosVideo.secure_url,
+                    cloudName: config.cloudName,
+                    uploadPreset: config.uploadPreset,
+                    fecha: serverTimestamp()
+                });
+
+                Swal.fire('¡Éxito!', 'Video subido y guardado en Firestore correctamente.', 'success');
+
+                document.getElementById("vTitle").value = "";
+                document.getElementById("vSession").value = "";
+                fileInput.value = "";
+                
+                const statVideos = document.getElementById('stat-total-videos');
+                if (statVideos) {
+                    const current = parseInt(statVideos.innerText) || 0;
+                    statVideos.innerText = current + 1;
+                }
+
+            } catch (e) {
+                console.error(e);
+                Swal.fire('Error', e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "🚀 Subir Video y Publicar Ahora";
+            }
+        };
+
+        // --- CARGAR VIDEOS FILTRADOS POR SESIÓN ---
+        const filterSelect = document.getElementById("filterSession");
+        filterSelect.onchange = () => {
+            if (filterSelect.value !== "") {
+                loadFilteredVideos();
+            } else {
+                document.getElementById("videoTableBody").innerHTML = 
+                    `<tr><td colspan="3" class="text-center py-5 text-muted italic">Selecciona una sesión para ver los videos.</td></tr>`;
+            }
+        };
+
+        async function loadFilteredVideos() {
+            const tableBody = document.getElementById("videoTableBody");
+            const val = filterSelect.value;
+
+            if (!val) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted italic">Selecciona una sesión para ver los videos.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-5"><div class="spinner-border text-danger"></div></td></tr>`;
+
+            try {
+                const q = query(collection(db, "videos"), where("sesion", "==", parseInt(val)));
+                const snap = await getDocs(q);
+
+                tableBody.innerHTML = "";
+
+                if (snap.empty) {
+                    tableBody.innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted">No hay videos en la sesión ${val}.</td></tr>`;
+                    return;
+                }
+
+                snap.forEach(videoDoc => {
+                    const data = videoDoc.data();
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><span class="fw-bold text-dark">${data.titulo || 'Sin título'}</span></td>
+                        <td>
+                            <a href="${data.videoUrl}" target="_blank" style="color: var(--fucsia); text-decoration: none;">
+                                Ver Video ↗
+                            </a>
+                            <br>
+                            <small class="text-muted">Cloud: ${data.cloudName || 'N/A'}</small>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn-delete" onclick="deleteVideo('${videoDoc.id}')">Eliminar</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+            } catch (e) {
+                console.error("Error al cargar videos:", e);
+                tableBody.innerHTML = "<tr><td colspan='3' class='text-center text-danger'>Error de conexión.</td></tr>";
+            }
+        }
+
+        window.deleteVideo = async (id) => {
+            const res = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción eliminará el registro del video permanentemente.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d81b60',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            });
 
             if (res.isConfirmed) {
                 try {
-                    await signOut(auth);
-                    window.location.href = "index.html";
+                    await deleteDoc(doc(db, "videos", id));
+                    Swal.fire('¡Eliminado!', 'El video ha sido quitado de la sesión.', 'success');
+                    loadFilteredVideos();
+                    
+                    const statVideos = document.getElementById('stat-total-videos');
+                    if (statVideos) {
+                        const current = parseInt(statVideos.innerText) || 0;
+                        statVideos.innerText = Math.max(0, current - 1);
+                    }
                 } catch (error) {
-                    window.location.href = "index.html";
+                    Swal.fire('Error', 'No se pudo eliminar el video.', 'error');
                 }
             }
         };
 
-        window.showSection = (id) => {
-            document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            document.getElementById(`section-${id}`).classList.add('active');
-            document.getElementById(`nav-${id}`).classList.add('active');
-
-            if (id === 'manage') {
-                document.getElementById("filterSession").value = "";
-                document.getElementById("videoTableBody").innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted italic">Selecciona una sesión para ver los videos.</td></tr>`;
-            }
-            if (id === 'users') { loadUsers(); }
-            if (id === 'monitor') { loadStats(); }
-
-            // ESTA ES LA LÍNEA QUE FALTA:
-            if (id === 'queries') { loadQueries(); }
-        };
+        // --- FUNCIONES DE USUARIOS ---
         window.createUser = async () => {
             const name = document.getElementById("newUserName").value.trim();
             const code = document.getElementById("userCode").value.trim();
@@ -878,15 +1080,10 @@
             const week = parseInt(document.getElementById("newUserWeek").value);
 
             if (!name || !code || !password || !week) {
-                return Swal.fire('Atención', 'Completa todos los campos (Nombre, Código, Pass y Semana)', 'info');
+                return Swal.fire('Atención', 'Completa todos los campos.', 'info');
             }
 
-            Swal.fire({
-                title: 'Creando usuario...',
-                text: 'Por favor espera',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); }
-            });
+            Swal.fire({ title: 'Creando usuario...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
             try {
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
@@ -903,25 +1100,14 @@
                 });
 
                 await signOut(secondaryAuth);
-
                 Swal.fire('¡Éxito!', `Usuaria ${name} registrada correctamente`, 'success');
 
-                // --- LIMPIEZA DE CAMPOS Y RESET DE ICONO ---
                 document.getElementById("newUserName").value = "";
                 document.getElementById("userCode").value = "";
                 document.getElementById("newUserEmail").value = "";
                 document.getElementById("newUserWeek").value = "";
-
-                const passInput = document.getElementById("newUserPassword");
-                const eyeIcon = document.getElementById("eyeIcon");
-
-                passInput.value = "";
-                passInput.type = "password"; // Volver a ocultar clave
-
-                // Reset del icono al estilo de tu login (ojo tachado)
-                eyeIcon.classList.remove("bi-eye");
-                eyeIcon.classList.add("bi-eye-slash");
-
+                document.getElementById("newUserPassword").value = "";
+                
                 loadUsers();
 
             } catch (error) {
@@ -929,40 +1115,48 @@
                 let mensaje = "No se pudo crear la usuaria.";
                 if (error.code === 'auth/email-already-in-use') mensaje = "Este código/correo ya está registrado.";
                 if (error.code === 'auth/weak-password') mensaje = "Contraseña débil (mínimo 6 caracteres).";
-                if (error.code === 'auth/api-key-not-valid') mensaje = "Error de configuración de API Key.";
-
                 Swal.fire('Error', mensaje, 'error');
             }
         };
-        window.toggleUserStatus = async (userId, currentStatus) => {
-            // Si currentStatus es undefined o null por algún error de datos, forzamos a boolean
-            const statusBool = Boolean(currentStatus);
-            const newStatus = !statusBool;
-            const statusText = newStatus ? 'activar' : 'inhabilitar';
 
+        window.toggleUserStatus = async (userId, currentStatus) => {
+            const newStatus = !currentStatus;
             const res = await Swal.fire({
-                title: `¿${statusText.charAt(0).toUpperCase() + statusText.slice(1)} usuaria?`,
-                text: `La usuaria quedará ${newStatus ? 'activa' : 'inactiva'}.`,
+                title: `¿${newStatus ? 'Activar' : 'Inhabilitar'} usuaria?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: newStatus ? '#198754' : '#d81b60',
-                confirmButtonText: `Sí, ${statusText}`,
-                cancelButtonText: 'Cancelar'
+                confirmButtonText: `Sí, ${newStatus ? 'activar' : 'inhabilitar'}`
             });
 
             if (res.isConfirmed) {
                 try {
-                    // USAR updateDoc asegura que NO se borre el documento, solo se modifica el campo
-                    await updateDoc(doc(db, "users", userId), {
-                        active: newStatus
-                    });
-
-                    await Swal.fire('¡Actualizado!', `Usuaria ${newStatus ? 'activada' : 'inhabilitada'} correctamente`, 'success');
-                    loadUsers(); // Recarga la tabla para ver el cambio de color
+                    await updateDoc(doc(db, "users", userId), { active: newStatus });
+                    Swal.fire('¡Actualizado!', `Usuaria ${newStatus ? 'activada' : 'inhabilitada'}`, 'success');
+                    loadUsers();
+                } catch (error) {
+                    Swal.fire('Error', 'No se pudo actualizar.', 'error');
                 }
-                catch (error) {
-                    console.error(error);
-                    Swal.fire('Error', 'No se pudo actualizar el estado en la base de datos.', 'error');
+            }
+        };
+
+        window.deleteUser = async (userDocId) => {
+            const res = await Swal.fire({
+                title: '¿Eliminar usuaria?',
+                text: "Esta acción quitará el registro de forma permanente.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d81b60',
+                confirmButtonText: 'Sí, eliminar'
+            });
+
+            if (res.isConfirmed) {
+                try {
+                    await deleteDoc(doc(db, "users", userDocId));
+                    Swal.fire('Eliminado', 'La usuaria ha sido quitada del sistema.', 'success');
+                    loadUsers();
+                } catch (error) {
+                    Swal.fire('Error', 'No se pudo eliminar.', 'error');
                 }
             }
         };
@@ -972,15 +1166,10 @@
             tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-danger"></div></td></tr>`;
 
             try {
-                // --- MODIFICACIÓN AQUÍ: Creamos una consulta ordenada por el campo 'code' ---
                 const usersRef = collection(db, "users");
-                const q = query(usersRef, orderBy("code", "asc")); // "asc" para A-Z (menor a mayor)
-
+                const q = query(usersRef, orderBy("code", "asc"));
                 const usersSnap = await getDocs(q);
-                // --------------------------------------------------------------------------
-
                 tableBody.innerHTML = "";
-                let encontrados = 0;
 
                 usersSnap.forEach(userDoc => {
                     const data = userDoc.data();
@@ -988,243 +1177,77 @@
                     const code = data.code || 'S/N';
                     const isActive = data.active !== undefined ? data.active : true;
 
-                    const cumpleFiltro = !searchTerm ||
-                        name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        code.toLowerCase().includes(searchTerm.toLowerCase());
+                    if (searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase()) && 
+                        !code.toLowerCase().includes(searchTerm.toLowerCase())) return;
 
-                    if (!cumpleFiltro) return;
-
-                    encontrados++;
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
-                <td><strong>${name}</strong></td>
-                <td><span class="badge bg-light text-dark border">${code}</span></td>
-                <td>${data.week} sem</td>
-                <td>
-                    <span class="badge ${isActive ? 'bg-success' : 'bg-secondary'}">
-                        ${isActive ? 'Activa' : 'Inactiva'}
-                    </span>
-                </td>
-                <td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm ${isActive ? 'btn-outline-warning' : 'btn-outline-success'} me-1" 
-                            onclick="toggleUserStatus('${userDoc.id}', ${isActive})">
-                        ${isActive ? 'Inhabilitar' : 'Habilitar'}
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger" 
-                            onclick="deleteUser('${userDoc.id}')">
-                        Eliminar
-                    </button>
-                </td>`;
+                        <td><strong>${name}</strong></td>
+                        <td><span class="badge bg-light text-dark border">${code}</span></td>
+                        <td>${data.week} sem</td>
+                        <td><span class="badge ${isActive ? 'bg-success' : 'bg-secondary'}">${isActive ? 'Activa' : 'Inactiva'}</span></td>
+                        <td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm ${isActive ? 'btn-outline-warning' : 'btn-outline-success'} me-1" 
+                                    onclick="toggleUserStatus('${userDoc.id}', ${isActive})">
+                                ${isActive ? 'Inhabilitar' : 'Habilitar'}
+                            </button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteUser('${userDoc.id}')">Eliminar</button>
+                        </td>
+                    `;
                     tableBody.appendChild(tr);
                 });
 
-                if (encontrados === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5">No hay resultados para "${searchTerm}".</td></tr>`;
+                if (tableBody.children.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-5">No hay resultados.</td></tr>`;
                 }
+
             } catch (e) {
                 console.error("Error en loadUsers:", e);
-                tableBody.innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Error de conexión al cargar usuarias.</td></tr>";
+                tableBody.innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Error de conexión.</td></tr>";
             }
         }
-        window.deleteUser = async (userDocId) => {
-            const res = await Swal.fire({ title: '¿Eliminar?', text: "Se borrará de la base de datos.", icon: 'warning', showCancelButton: true });
-            if (res.isConfirmed) {
-                try {
-                    await deleteDoc(doc(db, "users", userDocId));
-                    Swal.fire('Eliminado', 'Registro quitado.', 'success');
-                    loadUsers();
-                } catch (error) { Swal.fire('Error', 'No se pudo eliminar.', 'error'); }
-            }
-        };
-
-        // --- GESTIÓN DE VIDEOS (Cloudinary) ---
-        // (Aquí sigue tu lógica de Cloudinary que ya tenías configurada)
 
         document.getElementById("userSearch").addEventListener('input', (e) => { loadUsers(e.target.value); });
-
-        // --- LÓGICA DE GESTIÓN DE VIDEOS ---
-
-        const filterSelect = document.getElementById("filterSession");
-
-        // Escuchar cambios en el selector de sesión
-        filterSelect.onchange = () => {
-            if (filterSelect.value !== "") {
-                loadFilteredVideos();
-            }
-        };
-
-       async function loadFilteredVideos() {
-    const tableBody = document.getElementById("videoTableBody");
-    const val = filterSelect.value;
-
-    // Feedback visual de carga
-    tableBody.innerHTML = `
-        <tr>
-            <td colspan="3" class="text-center py-5">
-                <div class="spinner-border text-danger" role="status"></div>
-                <div class="mt-2 text-muted small">Cargando datos de la Sesión ${val}...</div>
-            </td>
-        </tr>`;
-
-    try {
-        // --- CONSULTA ORDENADA POR TÍTULO (1., 2., 3...) ---
-        const videosRef = collection(db, "videos");
-        const q = query(
-            videosRef, 
-            where("sesion", "==", parseInt(val)), 
-            orderBy("titulo", "asc") // Orden alfabético/numérico
-        );
-
-        const snap = await getDocs(q);
-        // --------------------------------------------------
-
-        tableBody.innerHTML = "";
-        let encontrados = 0;
-
-        snap.forEach(videoDoc => {
-            const data = videoDoc.data();
-            encontrados++;
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td><span class="fw-bold text-dark">${data.titulo}</span></td>
-                <td>
-                    <a href="${data.videoUrl}" target="_blank" style="color: var(--fucsia); text-decoration: none;">
-                        Ver Video Subido ↗
-                    </a>
-                </td>
-                <td class="text-center">
-                    <button class="btn-delete" onclick="deleteVideo('${videoDoc.id}')">
-                        Eliminar
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(tr);
+        document.getElementById("userCode").addEventListener("input", (e) => {
+            const codigo = e.target.value.trim();
+            document.getElementById("newUserEmail").value = codigo ? codigo.toLowerCase() + "@gmail.com" : "";
         });
 
-        if (encontrados === 0) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="3" class="text-center py-5 text-muted">
-                        No hay videos en la sesión ${val}.
-                    </td>
-                </tr>`;
-        }
-    } catch (e) {
-        console.error("Error al cargar videos:", e);
-        
-        // Si sale el error de índice, mostramos un aviso amigable
-        if (e.code === 'failed-precondition') {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="3" class="text-center py-4">
-                        <div class="alert alert-warning">
-                            <strong>Falta un índice:</strong> Revisa la consola (F12) y haz clic en el enlace de Firebase para habilitar el orden por título.
-                        </div>
-                    </td>
-                </tr>`;
-        } else {
-            tableBody.innerHTML = "<tr><td colspan='3' class='text-center text-danger'>Error de conexión con Firebase.</td></tr>";
-        }
-    }
-}
-        // Función para eliminar un video de Firestore
-        window.deleteVideo = async (id) => {
-            const res = await Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción eliminará el registro del video permanentemente.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d81b60',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            });
-
-            if (res.isConfirmed) {
-                try {
-                    await deleteDoc(doc(db, "videos", id));
-                    Swal.fire('¡Eliminado!', 'El video ha sido quitado de la sesión.', 'success');
-                    loadFilteredVideos(); // Recargar la tabla
-                }
-                catch (error) {
-                    Swal.fire('Error', 'No se pudo eliminar el video.', 'error');
-                }
+        document.getElementById("togglePassword").addEventListener("click", function() {
+            const passwordField = document.getElementById("newUserPassword");
+            const eyeIcon = document.getElementById("eyeIcon");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                eyeIcon.classList.remove("bi-eye-slash");
+                eyeIcon.classList.add("bi-eye");
+            } else {
+                passwordField.type = "password";
+                eyeIcon.classList.remove("bi-eye");
+                eyeIcon.classList.add("bi-eye-slash");
             }
-        };
-        // --- SUBIDA DE VIDEO A CLOUDINARY Y FIRESTORE ---
-        document.getElementById("btnPublish").onclick = async () => {
-            const btn = document.getElementById("btnPublish");
-            const title = document.getElementById("vTitle").value.trim();
-            const session = document.getElementById("vSession").value;
-            const fileInput = document.getElementById("videoInput");
-            const archivo = fileInput.files[0];
+        });
 
-            if (!title || !session || !archivo) {
-                return Swal.fire('Atención', 'Por favor completa todos los campos y selecciona un archivo de video (.mp4).', 'info');
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Subiendo video... (No cierres la página)`;
-
-            try {
-                // 1. Enviar el archivo a Cloudinary
-                const formData = new FormData();
-                formData.append('file', archivo);
-                formData.append('upload_preset', UPLOAD_PRESET);
-
-                const resCloudinary = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const datosVideo = await resCloudinary.json();
-
-                if (!datosVideo.secure_url) {
-                    throw new Error("No se pudo obtener el enlace de Cloudinary. Verifica tu conexión.");
-                }
-
-                // 2. Guardar la URL resultante en tu Firestore Database
-                await addDoc(collection(db, "videos"), {
-                    titulo: title,
-                    sesion: parseInt(session),
-                    videoUrl: datosVideo.secure_url, // Guarda el enlace directo .mp4
-                    fecha: serverTimestamp()
-                });
-
-                Swal.fire('¡Éxito!', 'El video fue subido y asignado a la sesión correctamente.', 'success');
-
-                // Limpiar todo para la siguiente subida
-                document.getElementById("vTitle").value = "";
-                document.getElementById("vSession").value = "";
-                fileInput.value = "";
-
-            } catch (e) {
-                console.error(e);
-                Swal.fire('Error', e.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = "🚀 Subir Video y Publicar Ahora";
-            }
-        };
-
-        // 🌟 LÓGICA DE MONITOREO ACTUALIZADA CON ORDENAMIENTO 🌟
+        // --- MONITOREO CORREGIDO CON BOTONES A LA IZQUIERDA ---
         async function loadStats() {
             try {
-                const videoCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+                // Contar videos totales
                 const videosSnap = await getDocs(collection(db, "videos"));
-
-                videosSnap.forEach(doc => {
-                    let s = parseInt(doc.data().sesion);
-                    if (s >= 1 && s <= 8) videoCounts[s]++;
-                });
-
                 document.getElementById('stat-total-videos').innerText = videosSnap.size;
 
-                // --- CAMBIO AQUÍ: Definimos una consulta ordenada por el campo 'code' ---
+                // Contar videos por sesión
+                const videoCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+                videosSnap.forEach(doc => {
+                    const sesion = parseInt(doc.data().sesion);
+                    if (sesion >= 1 && sesion <= 8) {
+                        videoCounts[sesion]++;
+                    }
+                });
+
+                // Obtener usuarios
                 const usersRef = collection(db, "users");
                 const qUsers = query(usersRef, orderBy("code", "asc"));
                 const usersSnap = await getDocs(qUsers);
-                // -----------------------------------------------------------------------
 
                 let totalUsers = 0;
                 let activeUsers = 0;
@@ -1233,54 +1256,60 @@
                 usersSnap.forEach(userDoc => {
                     const u = userDoc.data();
                     totalUsers++;
-
                     if (u.active !== false) activeUsers++;
 
-                    let userProgress = u.progress || {};
+                    const userProgress = u.progress || {};
+                    
+                    // Construir filas para cada sesión
                     let rowsHtml = "";
-
                     for (let i = 1; i <= 8; i++) {
-                        let totalVids = videoCounts[i];
-                        let watchedVids = userProgress[i.toString()] || userProgress[i] || 0;
+                        const totalVids = videoCounts[i] || 0;
+                        const watchedVids = userProgress[i.toString()] || userProgress[i] || 0;
 
                         let dotsHtml = "";
                         if (totalVids === 0) {
-                            dotsHtml = `<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">Sin videos aún</span>`;
+                            dotsHtml = `<span class="text-muted" style="font-size: 0.75rem; font-style: italic;">Sin videos</span>`;
                         } else {
                             for (let v = 1; v <= totalVids; v++) {
-                                if (v <= watchedVids) {
-                                    dotsHtml += `<div class="dot watched" title="Video Visto"></div>`;
-                                } else {
-                                    dotsHtml += `<div class="dot" title="Video Pendiente"></div>`;
-                                }
+                                const isWatched = v <= watchedVids;
+                                dotsHtml += `<div class="dot ${isWatched ? 'watched' : ''}" title="${isWatched ? 'Visto' : 'Pendiente'}"></div>`;
                             }
                         }
 
-                        let pct = totalVids > 0 ? Math.round((watchedVids / totalVids) * 100) : 0;
+                        const pct = totalVids > 0 ? Math.round((watchedVids / totalVids) * 100) : 0;
 
                         rowsHtml += `
-                    <div class="session-row">
-                        <div class="session-name">Sesión ${i}</div>
-                        <div class="session-dots">${dotsHtml}</div>
-                        <div class="session-progress-text">${pct}%</div>
-                    </div>
-                `;
+                            <div class="session-row">
+                                <div class="session-name">Sesión ${i}</div>
+                                <div class="session-dots">${dotsHtml}</div>
+                                <div class="session-progress-text">${pct}%</div>
+                            </div>
+                        `;
                     }
 
+                    // Calcular total de videos vistos
+                    const totalWatched = Object.values(userProgress).reduce((a, b) => a + b, 0);
+
                     htmlContent += `
-                <div class="monitor-user-card">
-                    <div class="monitor-user-header" onclick="document.getElementById('user-body-${userDoc.id}').classList.toggle('active')">
-                        <span>👩‍🦰 <strong>${u.name || 'Sin nombre'}</strong> <span class="text-muted fw-normal ms-2">(${u.code || u.email})</span></span>
-                        <span style="color: #ccc; font-size: 0.8rem;">▼ VER DETALLE</span>
-                    </div>
-                    <div class="monitor-user-body" id="user-body-${userDoc.id}">
-                        <p class="mb-3" style="font-size: 0.85rem; color: #888;">
-                            Semana de gestación registrada: <strong class="text-dark">${u.week || '?'} semanas</strong>
-                        </p>
-                        ${rowsHtml}
-                    </div>
-                </div>
-            `;
+                        <div class="monitor-user-card">
+                            <div class="monitor-user-header" onclick="toggleUserBody('user-body-${userDoc.id}')">
+                                <div class="user-header-left">
+                                    <span class="user-name">👩‍🦰 <strong>${u.name || 'Sin nombre'}</strong></span>
+                                    <span class="user-code text-muted">(${u.code || u.email})</span>
+                                </div>
+                                <button class="btn-toggle-detail" onclick="event.stopPropagation(); toggleUserBody('user-body-${userDoc.id}')">
+                                    <i class="bi bi-chevron-down"></i> VER DETALLE
+                                </button>
+                            </div>
+                            <div class="monitor-user-body" id="user-body-${userDoc.id}">
+                                <div class="monitor-user-info">
+                                    <strong>Semana de gestación:</strong> ${u.week || '?'} semanas &nbsp;|&nbsp;
+                                    <strong>Videos vistos:</strong> ${totalWatched}
+                                </div>
+                                ${rowsHtml}
+                            </div>
+                        </div>
+                    `;
                 });
 
                 document.getElementById('stat-total-users').innerText = totalUsers;
@@ -1298,15 +1327,36 @@
             }
         }
 
+        // Función global para toggle de usuario
+        window.toggleUserBody = (id) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.classList.toggle('active');
+                // Cambiar icono de la flecha
+                const card = element.closest('.monitor-user-card');
+                if (card) {
+                    const header = card.querySelector('.monitor-user-header');
+                    if (header) {
+                        header.classList.toggle('active');
+                        const icon = header.querySelector('.bi-chevron-down');
+                        if (icon) {
+                            icon.classList.toggle('bi-chevron-down');
+                            icon.classList.toggle('bi-chevron-up');
+                        }
+                    }
+                }
+            }
+        };
+
+        // --- CONSULTAS ---
         window.loadQueries = () => {
             const container = document.getElementById("queries-container");
-            container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-danger"></div><p>Cargando consultas de usuarios...</p></div>`;
+            container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-danger"></div></div>`;
 
             onSnapshot(collection(db, "queries"), (snapshot) => {
                 container.innerHTML = "";
-
                 if (snapshot.empty) {
-                    container.innerHTML = `<div class="text-center py-5 text-muted italic">No hay consultas en la colección "queries".</div>`;
+                    container.innerHTML = `<div class="text-center py-5 text-muted italic">No hay consultas.</div>`;
                     return;
                 }
 
@@ -1317,46 +1367,37 @@
                     const card = document.createElement("div");
                     card.className = "query-card mb-4 p-3 border rounded shadow-sm bg-white";
                     card.innerHTML = `
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge ${respondido ? 'bg-success' : 'bg-warning text-dark'}">
-                        ${respondido ? '✅ Respondido' : '⏳ Pendiente'}
-                    </span>
-                    <div class="d-flex align-items-center gap-2">
-                        <!-- Mostramos Nombre y Correo juntos -->
-                        <small class="text-muted">
-                            <strong class="text-dark">${q.userName || 'Usuaria'}</strong> | ${q.userEmail || 'Sin correo'}
-                        </small>
-                        <button class="btn btn-outline-danger btn-sm border-0" onclick="deleteQueryManual('${queryDoc.id}')" title="Eliminar Consulta">
-                            🗑️
-                        </button>
-                    </div>
-                </div>
-                <h6 class="fw-bold text-dark">Asunto: <span class="text-primary">${q.subject || 'Sin Asunto'}</span></h6>
-                <div class="p-2 mb-3 bg-light rounded border-start border-4 border-danger">
-                    "${q.message}" 
-                </div>
-                <div>
-                    <textarea id="resp-${queryDoc.id}" class="form-control mb-2" rows="2" placeholder="Escribe la respuesta...">${q.reply || ''}</textarea>
-                    <button class="btn btn-danger btn-sm w-100" onclick="sendResponse('${queryDoc.id}')">
-                        ${respondido ? 'Actualizar Respuesta' : 'Enviar Respuesta'}
-                    </button>
-                </div>
-            `;
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge ${respondido ? 'bg-success' : 'bg-warning text-dark'}">
+                                ${respondido ? '✅ Respondido' : '⏳ Pendiente'}
+                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <small class="text-muted"><strong class="text-dark">${q.userName || 'Usuaria'}</strong> | ${q.userEmail || 'Sin correo'}</small>
+                                <button class="btn btn-outline-danger btn-sm border-0" onclick="deleteQuery('${queryDoc.id}')">🗑️</button>
+                            </div>
+                        </div>
+                        <h6 class="fw-bold text-dark">Asunto: <span class="text-primary">${q.subject || 'Sin Asunto'}</span></h6>
+                        <div class="p-2 mb-3 bg-light rounded border-start border-4 border-danger">"${q.message}"</div>
+                        <div>
+                            <textarea id="resp-${queryDoc.id}" class="form-control mb-2" rows="2" placeholder="Escribe la respuesta...">${q.reply || ''}</textarea>
+                            <button class="btn btn-danger btn-sm w-100" onclick="sendResponse('${queryDoc.id}')">
+                                ${respondido ? 'Actualizar Respuesta' : 'Enviar Respuesta'}
+                            </button>
+                        </div>
+                    `;
                     container.appendChild(card);
                 });
             });
         };
 
-        window.deleteQueryManual = async (docId) => {
+        window.deleteQuery = async (docId) => {
             const confirmacion = await Swal.fire({
                 title: '¿Eliminar consulta?',
-                text: "Se borrará del panel y del historial del usuario.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 confirmButtonText: 'Sí, eliminar'
             });
-
             if (confirmacion.isConfirmed) {
                 try {
                     await deleteDoc(doc(db, "queries", docId));
@@ -1366,14 +1407,14 @@
                 }
             }
         };
-        // También actualizamos sendResponse para que guarde el campo "reply"
+
         window.sendResponse = async (docId) => {
             const text = document.getElementById(`resp-${docId}`).value.trim();
             if (!text) return Swal.fire('Atención', 'Escribe una respuesta', 'info');
 
             try {
                 await updateDoc(doc(db, "queries", docId), {
-                    reply: text, // Cambiado de "respuesta" a "reply"
+                    reply: text,
                     status: "Respondido",
                     fechaRespuesta: serverTimestamp()
                 });
@@ -1382,126 +1423,20 @@
                 Swal.fire('Error', 'No se pudo guardar la respuesta', 'error');
             }
         };
-        // --- FUNCIÓN DE ELIMINACIÓN ACTUALIZADA ---
-        window.deleteUser = async (userDocId) => {
-            const res = await Swal.fire({
-                title: '¿Eliminar usuaria?',
-                text: "Esta acción quitará el registro de forma permanente.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d81b60',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            });
 
-            if (res.isConfirmed) {
-                try {
-                    // Eliminación directa del documento del usuario
-                    await deleteDoc(doc(db, "users", userDocId));
-
-                    Swal.fire('Eliminado', 'La usuaria ha sido quitada del sistema.', 'success');
-                    loadUsers(); // Recarga la tabla automáticamente
-                } catch (error) {
-                    console.error("Error al eliminar:", error);
-                    Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
-                }
-            }
-        };
-
-        // Generador automático de correo basado en el código
-        document.getElementById("userCode").addEventListener("input", (e) => {
-            const codigo = e.target.value.trim();
-            const emailField = document.getElementById("newUserEmail");
-            if (codigo) {
-                // Convierte a minúsculas y añade el dominio automáticamente
-                emailField.value = codigo.toLowerCase() + "@gmail.com";
-            } else {
-                emailField.value = "";
-            }
-        });
-
-        document.getElementById("togglePassword").addEventListener("click", function () {
-            const passwordField = document.getElementById("newUserPassword");
-            const eyeIcon = document.getElementById("eyeIcon");
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                // Cambia a ojo abierto
-                eyeIcon.classList.remove("bi-eye-slash");
-                eyeIcon.classList.add("bi-eye");
-            } else {
-                passwordField.type = "password";
-                // Cambia a ojo tachado
-                eyeIcon.classList.remove("bi-eye");
-                eyeIcon.classList.add("bi-eye-slash");
-            }
-        });
-
-        // ... al principio de tu script module en admin.html ...
-
-        // Función para cargar datos del administrador logueado
+        // --- INFORMACIÓN DEL ADMINISTRADOR ---
         function displayAdminInfo() {
             const name = localStorage.getItem("adminName") || "Administrador";
             const email = localStorage.getItem("adminEmail") || "admin@correo.com";
-
             document.getElementById("adminDisplayName").innerText = name;
             document.getElementById("adminDisplayEmail").innerText = email;
-            // Pone la primera letra del nombre en el avatar
             document.getElementById("adminAvatar").innerText = name.charAt(0).toUpperCase();
         }
-
-        // Ejecutar al cargar la página
         displayAdminInfo();
 
-        // También limpia el localStorage al cerrar sesión
-        const originalLogout = window.logout;
-        window.logout = async () => {
-            localStorage.removeItem("adminName");
-            localStorage.removeItem("adminEmail");
-            await originalLogout();
-        };
-
-        // ... aquí termina tu función loadQueries o displayAdminInfo ...
-
-        // PEGA AQUÍ LAS NUEVAS FUNCIONES DE EDICIÓN:
-        window.openEditModal = (id, name, code) => {
-            document.getElementById("editUserId").value = id;
-            document.getElementById("editUserName").value = name;
-            document.getElementById("editUserCode").value = code;
-            document.getElementById("editUserPassword").value = "";
-
-            const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
-            modal.show();
-        };
-
-        window.updateUser = async () => {
-            const id = document.getElementById("editUserId").value;
-            const newName = document.getElementById("editUserName").value.trim();
-            const newCode = document.getElementById("editUserCode").value.trim();
-
-            if (!newName || !newCode) return Swal.fire('Error', 'Completa los campos obligatorios', 'error');
-
-            try {
-                await updateDoc(doc(db, "users", id), {
-                    name: newName,
-                    code: newCode.toUpperCase(),
-                    email: newCode.toLowerCase() + "@gmail.com"
-                });
-
-                Swal.fire('¡Éxito!', 'Usuario actualizado', 'success');
-                bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
-                loadUsers();
-            } catch (error) {
-                Swal.fire('Error', 'No se pudo actualizar', 'error');
-            }
-        };
-
-        // Control del Menú Móvil
+        // --- CONTROL DE MENÚ MÓVIL ---
         const sidebar = document.querySelector('.sidebar');
         const mobileBtn = document.getElementById('mobileMenuBtn');
-
-        // Crear el overlay (fondo oscuro) dinámicamente
         const overlay = document.createElement('div');
         overlay.className = 'sidebar-overlay';
         document.body.appendChild(overlay);
@@ -1516,57 +1451,7 @@
             overlay.classList.remove('active');
         });
 
-        // Cerrar menú al elegir una sección (opcional pero recomendado)
-        const originalShowSection = window.showSection;
-        window.showSection = (id) => {
-            originalShowSection(id);
-            if (window.innerWidth <= 992) {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            }
-        };
-    </script> <!-- Este es el cierre que ya tenías -->
-</body>
-
-</html>
-</script>
-
-<!-- ... código anterior ... -->
-
-<!-- PEGAR AQUÍ EL MODAL DE EDICIÓN -->
-<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Editar Usuario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="editUserId">
-                <div class="mb-3">
-                    <label class="form-label">Nombre Completo</label>
-                    <input type="text" id="editUserName" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Código de Usuario</label>
-                    <input type="text" id="editUserCode" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Nueva Contraseña (Opcional)</label>
-                    <input type="password" id="editUserPassword" class="form-control" placeholder="Mínimo 6 caracteres">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-main" onclick="updateUser()">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-</body>
-
-</html>
+    </script>
 </body>
 
 </html>
