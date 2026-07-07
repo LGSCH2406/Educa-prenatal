@@ -5,15 +5,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Educa-prenatal | Dashboard Profesional</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Educa-prenatal | Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
     <style>
         :root {
             --admin-pink: #ff4d7d;
@@ -23,39 +18,27 @@
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         body {
             background-color: var(--bg-canvas);
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: #2d3436;
             overflow-x: hidden;
         }
-
-        /* --- NAVBAR ESTILO PREMIUM --- */
         .navbar-admin {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             padding: 0.8rem 2rem;
         }
-
         .brand-logo {
             font-weight: 800;
             font-size: 1.4rem;
             background: linear-gradient(45deg, var(--admin-pink), #ff85a1);
-
-            /* 1. Versión estándar para que el editor no marque error */
             background-clip: text;
-
-            /* 2. Versiones Webkit para que funcione en Chrome/Edge/Safari */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-
-            /* 3. Asegurar que el color de fondo no tape el texto si algo falla */
             color: var(--admin-pink);
         }
-
-        /* --- CARDS DE ESTADÍSTICAS --- */
         .stat-card {
             background: white;
             border: none;
@@ -64,7 +47,6 @@
             box-shadow: var(--card-shadow);
             transition: var(--transition);
         }
-
         .stat-icon {
             width: 48px;
             height: 48px;
@@ -75,8 +57,6 @@
             font-size: 1.5rem;
             margin-bottom: 1rem;
         }
-
-        /* --- GRID DE SESIONES --- */
         .session-card {
             background: white;
             border: none;
@@ -86,21 +66,19 @@
             box-shadow: var(--card-shadow);
             border: 1px solid transparent;
             height: 100%;
+            cursor: pointer;
         }
-
         .session-card:not(.locked):hover {
             transform: translateY(-10px);
             border-color: var(--admin-pink);
             box-shadow: 0 20px 40px rgba(255, 77, 125, 0.15);
         }
-
         .session-card.locked {
             filter: grayscale(1);
             opacity: 0.6;
             cursor: not-allowed;
             background: #fafafa;
         }
-
         .card-img-top-wrapper {
             height: 120px;
             background: var(--admin-pink-light);
@@ -108,9 +86,13 @@
             align-items: center;
             justify-content: center;
             font-size: 3rem;
+            overflow: hidden;
         }
-
-        /* --- BOTONES --- */
+        .card-img-top-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         .btn-pink {
             background: var(--admin-pink);
             color: white;
@@ -121,13 +103,11 @@
             transition: var(--transition);
             box-shadow: 0 4px 15px rgba(255, 77, 125, 0.3);
         }
-
         .btn-pink:hover {
             background: var(--admin-pink-dark);
             transform: scale(1.05);
             color: white;
         }
-
         .btn-outline-pink {
             border: 2px solid var(--admin-pink);
             color: var(--admin-pink);
@@ -136,109 +116,35 @@
             font-weight: 600;
             transition: var(--transition);
         }
-
         .btn-outline-pink:hover {
             background: var(--admin-pink);
             color: white;
         }
-
-        /* --- MODALES --- */
         .modal-content {
             border: none;
             border-radius: 2rem;
             padding: 1rem;
         }
-
         @media (min-width: 768px) {
-            .navbar-brand img {
-                height: 65px !important;
-                /* Más grande en computadoras */
-            }
-
-            .brand-logo {
-                font-size: 1.5rem !important;
-            }
+            .navbar-brand img { height: 65px !important; }
+            .brand-logo { font-size: 1.5rem !important; }
         }
-
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        @media (max-width: 600px) {
-            .btn-download-diploma {
-                width: 100%;
-                font-size: 18px;
-                padding: 15px;
-            }
-        }
-
-        .animate-fade {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-
-        /* NOMBRE DE USUARIA MEJORADO */
+        .animate-fade { animation: fadeIn 0.6s ease-out forwards; }
         #userMsg {
             font-size: 0.85rem !important;
             color: var(--admin-pink) !important;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             letter-spacing: 0.5px;
         }
-
         .badge {
             background: linear-gradient(45deg, #28a745, #20c997) !important;
             font-weight: 700 !important;
             text-transform: uppercase;
         }
-
-        /* Contenedor del diploma */
-        #diplomaContainer {
-            width: 95%;
-            /* Ocupa casi todo el ancho en móviles */
-            max-width: 800px;
-            /* Tamaño máximo en PC */
-            margin: 20px auto;
-            overflow: hidden;
-            /* Evita que el contenido se salga */
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        /* La imagen del diploma propiamente */
-        #diplomaImage {
-            width: 100%;
-            /* Se ajusta al ancho del contenedor */
-            height: auto;
-            /* Mantiene la proporción original */
-            display: block;
-            object-fit: contain;
-            /* Asegura que no se corte */
-        }
-
-        /* Si usas un modal para mostrarlo, ajusta el modal también */
-        .modal-content-diploma {
-            width: 90% !important;
-            margin: 10% auto !important;
-            padding: 10px !important;
-        }
-
-        /* Contenedor para centrar y dar margen */
-        .diploma-container-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding: 10px;
-            overflow: hidden;
-        }
-
-        /* El diploma mantiene sus 800x600 internos para la descarga, pero se escala visualmente */
         .diploma-responsive {
             width: 800px;
             height: 600px;
@@ -249,10 +155,8 @@
             text-align: center;
             color: #333;
             flex-shrink: 0;
-            /* Evita que se deforme */
             transform-origin: center top;
         }
-
         .diploma-inner-border {
             border: 5px solid #d4af37;
             height: 100%;
@@ -263,73 +167,52 @@
             align-items: center;
             box-sizing: border-box;
         }
-
-        .diploma-logo {
-            width: 120px;
-            margin-bottom: 20px;
-        }
-
-        .diploma-title {
-            font-family: serif;
-            font-size: 45px;
-            color: #e6396a;
-            margin-bottom: 20px;
-        }
-
-        .diploma-text {
-            font-size: 1.2rem;
-            margin: 0;
-        }
-
-        #diplomaUserName {
-            font-size: 40px;
-            color: #333;
-            margin: 15px 0;
-        }
-
-        .diploma-footer {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            color: #777;
-        }
-
-        /* --- RESPONSIVE: EL TRUCO DEL ESCALADO --- */
-        @media (max-width: 820px) {
-            .diploma-responsive {
-                /* Ajusta este valor (0.4) si quieres que se vea más grande o pequeño en móvil */
-                transform: scale(0.45);
-                margin-bottom: -320px;
-                /* Compensa el espacio vacío que deja el escalado */
-            }
-        }
-
-        @media (max-width: 450px) {
-            .diploma-responsive {
-                transform: scale(0.38);
-                margin-bottom: -360px;
-            }
-        }
-
-        #modalDiploma {
-            overflow-x: hidden;
-            /* Evita desplazamientos laterales raros en iPhone */
-        }
-
-        .modal-body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #diplomaUserName {
-            font-size: 40px;
-            color: #333;
-            margin: 15px 0;
+        .diploma-logo { width: 120px; margin-bottom: 20px; }
+        .diploma-title { font-family: serif; font-size: 45px; color: #e6396a; margin-bottom: 20px; }
+        #diplomaUserName { font-size: 40px; color: #333; margin: 15px 0; width: 100%; word-wrap: break-word; line-height: 1.1; }
+        .diploma-footer { margin-top: 30px; font-size: 0.9rem; color: #777; }
+        .diploma-container-wrapper {
             width: 100%;
-            word-wrap: break-word;
-            /* Rompe la línea si el nombre es muy largo */
-            line-height: 1.1;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            overflow: hidden;
+        }
+        @media (max-width: 820px) {
+            .diploma-responsive { transform: scale(0.45); margin-bottom: -320px; }
+        }
+        @media (max-width: 450px) {
+            .diploma-responsive { transform: scale(0.38); margin-bottom: -360px; }
+        }
+        .toast-container { z-index: 9999; }
+
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            flex-direction: column;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--admin-pink);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .video-count-badge {
+            background: var(--admin-pink-light);
+            color: var(--admin-pink-dark);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -337,84 +220,51 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-admin sticky-top shadow-sm bg-white py-2">
         <div class="container-fluid d-flex align-items-center justify-content-between">
-
-            <!-- SECCIÓN IZQUIERDA: Logo y Nombre -->
             <a class="navbar-brand d-flex align-items-center m-0" href="#">
                 <img src="logo.png" alt="Logo" style="height: 50px; width: auto;" class="me-2">
-                <span class="brand-logo d-none d-sm-inline"
-                    style="font-size: 1.2rem; font-weight: 800; color: #ff4d7d;">
-                    EDUCA-PRENATAL
-                </span>
+                <span class="brand-logo d-none d-sm-inline">EDUCA-PRENATAL</span>
             </a>
-
-            <!-- SECCIÓN DERECHA: Solo los botones de siempre -->
             <div class="d-flex align-items-center gap-3">
-
-                <!-- Info del Usuario -->
                 <div class="text-end d-none d-md-block">
-                    <p id="userMsg" class="mb-0 small fw-bold text-muted text-uppercase"
-                        style="line-height: 1; color: #ff4d7d !important;">
-                        Cargando perfil...
-                    </p>
+                    <p id="userMsg" class="mb-0 small fw-bold text-muted text-uppercase" style="line-height: 1; color: #ff4d7d !important;">Cargando perfil...</p>
                     <span class="badge bg-success" style="font-size: 0.6rem;">USUARIO ACTIVO</span>
                 </div>
-
-                <!-- BOTÓN CONSULTAS (El de siempre) -->
-                <button class="btn btn-pink btn-sm d-flex align-items-center px-3 py-2 rounded-pill shadow-sm"
-                    data-bs-toggle="modal" data-bs-target="#modalQueries"
-                    style="background-color: #ff4d7d; color: white; border: none;">
+                <button class="btn btn-pink btn-sm d-flex align-items-center px-3 py-2 rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#modalQueries" style="background-color: #ff4d7d; color: white; border: none;">
                     <i class="bi bi-chat-heart-fill me-2"></i>
                     <span class="fw-bold">Consultas</span>
                 </button>
-
-                <!-- BOTÓN SALIR (El de siempre) -->
                 <div class="dropdown">
-                    <button class="btn btn-danger btn-sm dropdown-toggle rounded-pill shadow-sm px-3 py-2" type="button"
-                        id="dropdownLogout" data-bs-toggle="dropdown" aria-expanded="false"
-                        style="background-color: #d63384; border: none;">
+                    <button class="btn btn-danger btn-sm dropdown-toggle rounded-pill shadow-sm px-3 py-2" type="button" id="dropdownLogout" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #d63384; border: none;">
                         <i class="bi bi-box-arrow-right me-1"></i>
                         <span class="d-none d-sm-inline fw-bold">Salir</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" aria-labelledby="dropdownLogout"
-                        style="border-radius: 16px;">
-                        <li>
-                            <a class="dropdown-item fw-bold text-danger py-2" href="index.html">
-                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
-                            </a>
-                        </li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" aria-labelledby="dropdownLogout" style="border-radius: 16px;">
+                        <li><a class="dropdown-item fw-bold text-danger py-2" href="index.html"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
                     </ul>
                 </div>
-
             </div>
         </div>
     </nav>
-    <div class="container py-5">
 
-        <!-- ESTADÍSTICAS -->
+    <div class="container py-5">
         <div class="row g-4 mb-5 animate-fade">
             <div class="col-md-4">
                 <div class="stat-card">
-                    <div class="stat-icon bg-info bg-opacity-10 text-info">
-                        <i class="bi bi-calendar-check"></i>
-                    </div>
+                    <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-calendar-check"></i></div>
                     <h6 class="text-muted small fw-bold">PROGRESO TOTAL</h6>
                     <h3 class="fw-800 mb-0" id="statProgreso">0%</h3>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-card">
-                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                        <i class="bi bi-star"></i>
-                    </div>
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-star"></i></div>
                     <h6 class="text-muted small fw-bold">SESIÓN ACTUAL</h6>
                     <h3 class="fw-800 mb-0" id="statActual">Módulo 1</h3>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-card">
-                    <div class="stat-icon bg-pink bg-opacity-10 text-pink" style="color: var(--admin-pink);">
-                        <i class="bi bi-chat-quote"></i>
-                    </div>
+                    <div class="stat-icon bg-pink bg-opacity-10 text-pink" style="color: var(--admin-pink);"><i class="bi bi-chat-quote"></i></div>
                     <h6 class="text-muted small fw-bold">DUDAS RESUELTAS</h6>
                     <h3 class="fw-800 mb-0" id="statDudas">0</h3>
                 </div>
@@ -426,13 +276,18 @@
             <p class="text-muted">Completa cada sesión para desbloquear la siguiente etapa de tu formación.</p>
         </div>
 
-        <!-- GRID DE SESIONES -->
+        <!-- Grid con spinner de carga -->
         <div class="row g-4 animate-fade" id="sessionsGrid" style="animation-delay: 0.4s;">
-            <!-- Renderizado por JS -->
+            <div class="col-12 text-center py-5">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p class="mt-3 text-muted">Cargando sesiones y videos...</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL DE CONSULTAS -->
+    <!-- MODALES -->
     <div class="modal fade" id="modalQueries" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content shadow-lg">
@@ -443,32 +298,25 @@
                 <div class="modal-body">
                     <ul class="nav nav-pills gap-2 mb-4" id="pills-tab">
                         <li class="nav-item">
-                            <button class="nav-link active rounded-pill btn-sm" id="btn-tab-hist" data-bs-toggle="pill"
-                                data-bs-target="#tab-history">Mi Historial</button>
+                            <button class="nav-link active rounded-pill btn-sm" data-bs-toggle="pill" data-bs-target="#tab-history">Mi Historial</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link rounded-pill btn-sm" data-bs-toggle="pill"
-                                data-bs-target="#tab-new">Nueva Pregunta</button>
+                            <button class="nav-link rounded-pill btn-sm" data-bs-toggle="pill" data-bs-target="#tab-new">Nueva Pregunta</button>
                         </li>
                     </ul>
-
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="tab-history">
-                            <div id="queriesList" class="pe-2" style="max-height: 400px; overflow-y: auto;">
-                                <!-- Consultas dinámicas -->
-                            </div>
+                            <div id="queriesList" class="pe-2" style="max-height: 400px; overflow-y: auto;"></div>
                         </div>
                         <div class="tab-pane fade" id="tab-new">
                             <div class="bg-light p-4 rounded-4">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">¿Cuál es tu duda?</label>
-                                    <input type="text" id="querySubject" class="form-control border-0 p-3 shadow-sm"
-                                        placeholder="Ej: Alimentación en el primer mes">
+                                    <input type="text" id="querySubject" class="form-control border-0 p-3 shadow-sm" placeholder="Ej: Alimentación en el primer mes">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Mensaje</label>
-                                    <textarea id="queryMessage" class="form-control border-0 p-3 shadow-sm" rows="4"
-                                        placeholder="Escribe aquí..."></textarea>
+                                    <textarea id="queryMessage" class="form-control border-0 p-3 shadow-sm" rows="4" placeholder="Escribe aquí..."></textarea>
                                 </div>
                                 <button class="btn btn-pink w-100 py-3" id="btnSendQuery">Enviar Mensaje Ahora</button>
                             </div>
@@ -479,111 +327,27 @@
         </div>
     </div>
 
-    <!-- MODAL EMERGENTE PARA EDITAR (Bootstrap) -->
-    <div class="modal fade" id="modalEditQuery" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="fw-800">Actualizar Consulta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="editQueryId">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Asunto</label>
-                        <input type="text" id="editSubject" class="form-control rounded-3">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Mensaje</label>
-                        <textarea id="editMessage" class="form-control rounded-3" rows="3"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4"
-                        data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-pink rounded-pill px-4" id="btnUpdateQuery">Guardar
-                        Cambios</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CONFIRMACIÓN PARA ELIMINAR -->
-    <div class="modal fade" id="modalConfirmDelete" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header border-0 pb-0 bg-danger bg-opacity-10">
-                    <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
-                    <h5 class="fw-800 ms-3 mb-0">Confirmar Eliminación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center py-4">
-                    <input type="hidden" id="deleteQueryId">
-                    <i class="bi bi-trash3-fill text-danger fs-3 mb-3"></i>
-                    <h6 class="fw-bold text-dark mb-3">¿Estás segura de eliminar esta consulta?</h6>
-                    <p class="text-muted mb-0">Esta acción no se puede deshacer.</p>
-                </div>
-                <div class="modal-footer border-0 justify-content-center">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                        data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger rounded-pill px-4" id="btnConfirmDelete">
-                        <i class="bi bi-trash me-2"></i>Eliminar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CONFIRMACIÓN PARA ENVIAR CONSULTA -->
-    <div class="modal fade" id="modalConfirmSend" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header border-0 pb-0 bg-success bg-opacity-10">
-                    <i class="bi bi-check-circle-fill text-success fs-1"></i>
-                    <h5 class="fw-800 ms-3 mb-0">Confirmar Envío</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center py-4">
-                    <h6 class="fw-bold text-dark mb-3">¿Deseas enviar esta consulta?</h6>
-                    <div id="previewQuery" class="bg-light p-4 rounded-4 mb-3 text-start"></div>
-                    <p class="text-muted small mb-0">Tu duda será revisada por un profesional.</p>
-                </div>
-                <div class="modal-footer border-0 justify-content-center">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                        data-bs-dismiss="modal">Modificar</button>
-                    <button type="button" class="btn btn-success rounded-pill px-4" id="btnConfirmSend">
-                        <i class="bi bi-send me-2"></i>Enviar Ahora
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Estructura del Diploma (Invisible hasta que se abra el modal) -->
+    <!-- MODAL DIPLOMA -->
     <div class="modal fade" id="modalDiploma" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 bg-transparent">
                 <div class="modal-body p-0">
-                    <!-- Contenedor con nueva clase para control de tamaño -->
                     <div class="diploma-container-wrapper">
                         <div id="diplomaToDownload" class="diploma-responsive">
                             <div class="diploma-inner-border">
                                 <img src="logo.png" class="diploma-logo">
                                 <h1 class="diploma-title">Certificado de Culminación</h1>
                                 <p class="diploma-text">Otorgado con orgullo a:</p>
-
                                 <div id="certificado-contenido">
                                     <h1 id="diplomaUserName">NOMBRE DE LA MADRE</h1>
                                     <p>Por haber concluido exitosamente el programa Educa-Prenatal.</p>
                                 </div>
-
                                 <div class="diploma-footer">
                                     <p>Educa-Prenatal © 2026 | Preparación Informada</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="text-center mt-3 mb-3">
                         <button class="btn btn-light btn-lg px-5 shadow" onclick="downloadDiploma()">
                             <i class="bi bi-download me-2"></i>Descargar como Imagen (PNG)
@@ -594,11 +358,11 @@
             </div>
         </div>
     </div>
-    <!-- Librería para convertir HTML a Imagen -->
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <!-- Firebase y JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
@@ -617,311 +381,256 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Instancias de modales Bootstrap
-        const editModal = new bootstrap.Modal(document.getElementById('modalEditQuery'));
-        const deleteModal = new bootstrap.Modal(document.getElementById('modalConfirmDelete'));
-        const sendModal = new bootstrap.Modal(document.getElementById('modalConfirmSend'));
+        const nombresSesiones = [
+            "Conociendo mi Embarazo",
+            "Cambios Físicos y Apariencia",
+            "Salud del Bebé y CPN",
+            "Preparación para el Parto",
+            "Manejo del Dolor y Relajación",
+            "Puerperio y Recuperación",
+            "Lactancia y Cuidado del Bebé",
+            "Preparación Emocional Maternidad"
+        ];
+        const iconList = ['🤰', '👗', '🩺', '🏥', '🧘', '🛌', '🍼', '🧠'];
 
-        onAuthStateChanged(auth, (user) => {
+        let videosCache = {};
+        let nivelUsuario = 1;
+        let userData = null;
+
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                loadProfile(user);
+                // 1. Primero cargamos el perfil
+                await loadProfile(user);
+                // 2. Luego cargamos los videos
+                await loadAllVideos();
+                // 3. Escuchamos las consultas
                 listenQueries(user.uid);
             } else {
                 window.location.href = "index.html";
             }
         });
 
+        async function loadAllVideos() {
+            try {
+                console.log("🔍 Cargando videos desde Firestore...");
+                const videosSnap = await getDocs(collection(db, "videos"));
+                videosCache = {};
+                
+                videosSnap.forEach(doc => {
+                    const data = doc.data();
+                    const sesion = data.sesion;
+                    if (!videosCache[sesion]) {
+                        videosCache[sesion] = [];
+                    }
+                    videosCache[sesion].push({
+                        id: doc.id,
+                        titulo: data.titulo || 'Video',
+                        videoUrl: data.videoUrl,
+                        cloudName: data.cloudName || 'N/A'
+                    });
+                });
+                
+                console.log("📹 Videos cargados:", videosCache);
+                console.log("📊 Total de videos:", Object.values(videosCache).reduce((acc, arr) => acc + arr.length, 0));
+                
+                // Renderizar el grid con los videos cargados
+                renderGrid(nivelUsuario);
+            } catch (error) {
+                console.error("❌ Error cargando videos:", error);
+                renderGrid(nivelUsuario);
+            }
+        }
+
         async function loadProfile(user) {
             try {
-                // 1. Buscamos al usuario en la colección 'users' para obtener sus datos personalizados
+                console.log("👤 Cargando perfil del usuario...");
                 const q = query(collection(db, "users"), where("uid", "==", user.uid));
                 const snap = await getDocs(q);
 
-                let nivel = 1; // Nivel por defecto
-                let nombreUsuario = "Mamá"; // Valor por defecto si no hay datos
-
                 if (!snap.empty) {
                     const data = snap.docs[0].data();
-                    nivel = data.nivelDesbloqueado || 1;
-
-                    // PRIORIDAD: Extraemos el nombre completo que el usuario ingresó al registrarse
-                    // Generalmente guardado en el campo 'nombre' o 'name' de tu base de datos
-                    nombreUsuario = data.nombre || data.name || data.displayName || user.displayName || "Mamá";
+                    nivelUsuario = data.nivelDesbloqueado || 1;
+                    userData = data;
+                    
+                    const nombreUsuario = data.nombre || data.name || data.displayName || user.displayName || "Mamá";
+                    document.getElementById("userMsg").innerText = `¡BIENVENIDA, ${nombreUsuario.toUpperCase()}!`;
+                    document.getElementById("statProgreso").innerText = `${Math.min(Math.round((nivelUsuario / 8) * 100), 100)}%`;
+                    document.getElementById("statActual").innerText = nivelUsuario > 8 ? "¡Curso Completado!" : `Sesión ${nivelUsuario}`;
+                    document.getElementById("diplomaUserName").innerText = nombreUsuario.toUpperCase();
+                    
+                    console.log("✅ Perfil cargado. Nivel:", nivelUsuario);
                 }
 
-                // 2. Actualizamos el mensaje de bienvenida en la interfaz
-                const userMsgElement = document.getElementById("userMsg");
-                if (userMsgElement) {
-                    userMsgElement.innerText = `¡BIENVENIDA, ${nombreUsuario.toUpperCase()}!`;
-                }
-
-                // 3. Actualizamos las estadísticas de progreso
-                const statProgreso = document.getElementById("statProgreso");
-                if (statProgreso) {
-                    statProgreso.innerText = `${Math.min(Math.round((nivel / 8) * 100), 100)}%`;
-                }
-
-                const statActual = document.getElementById("statActual");
-                if (statActual) {
-                    statActual.innerText = nivel > 8 ? "¡Curso Completado!" : `Sesión ${nivel}`;
-                }
-
-                // --- DETALLE 1: Asignar el nombre del registro al Diploma ---
-                // Este comando inyecta el nombre real en tu div del diploma[cite: 1]
-                const diplomaNameElement = document.getElementById("diplomaUserName");
-                if (diplomaNameElement) {
-                    diplomaNameElement.innerText = nombreUsuario.toUpperCase();
-                }
-
-                // 4. Renderizamos la cuadrícula de sesiones según el nivel actual[cite: 1]
-                renderGrid(nivel);
-
-                // --- DETALLE 2: Auto-apertura del diploma tras finalizar la Sesión 8 ---
-                // Detecta el parámetro enviado desde el aviso de felicitaciones[cite: 1]
                 const params = new URLSearchParams(window.location.search);
                 if (params.get('showDiploma') === 'true') {
                     const modalElement = document.getElementById('modalDiploma');
                     if (modalElement) {
                         const modalDiploma = new bootstrap.Modal(modalElement);
                         modalDiploma.show();
-
-                        // Limpiamos la URL (estética y funcional) para evitar que salte de nuevo al recargar[cite: 1]
                         window.history.replaceState({}, document.title, window.location.pathname);
                     }
                 }
 
             } catch (error) {
-                console.error("Error cargando perfil:", error);
-                // Plan de respaldo en caso de error de conexión[cite: 1]
-                const userMsgFallback = document.getElementById("userMsg");
-                if (userMsgFallback) userMsgFallback.innerText = "¡BIENVENIDA!";
-                renderGrid(1);
+                console.error("❌ Error cargando perfil:", error);
             }
         }
 
+        // Función GLOBAL para abrir sesión
+        window.openSession = function(sessionId) {
+            console.log("🔓 Abriendo sesión:", sessionId);
+            const videos = videosCache[sessionId] || [];
+            console.log("📹 Videos en esta sesión:", videos);
+            
+            const sessionData = {
+                id: sessionId,
+                name: nombresSesiones[sessionId - 1],
+                videos: videos
+            };
+            localStorage.setItem('currentSession', JSON.stringify(sessionData));
+            window.location.href = `sesion_detalle.html?id=${sessionId}`;
+        };
+
         function renderGrid(nivel) {
+            console.log("🎨 Renderizando grid con nivel:", nivel);
             const grid = document.getElementById("sessionsGrid");
             grid.innerHTML = "";
 
-            // Iconos relacionados a cada tema
-            const iconList = ['🤰', '👗', '🩺', '🏥', '🧘', '🛌', '🍼', '🧠'];
-
-            // Nombres exactos de las sesiones de la imagen
-            const nombresSesiones = [
-                "Conociendo mi Embarazo",
-                "Cambios Físicos y Apariencia",
-                "Salud del Bebé y CPN",
-                "Preparación para el Parto",
-                "Manejo del Dolor y Relajación",
-                "Puerperio y Recuperación",
-                "Lactancia y Cuidado del Bebé",
-                "Preparación Emocional Maternidad"
-            ];
-
-            // Renderizar las 8 sesiones normales
             for (let i = 1; i <= 8; i++) {
                 const locked = i > nivel;
+                const videos = videosCache[i] || [];
+                const hasVideos = videos.length > 0;
+                const videoUrl = hasVideos ? videos[0].videoUrl : null;
+
                 grid.innerHTML += `
-            <div class="col-xl-3 col-lg-4 col-md-6">
-                <div class="session-card ${locked ? 'locked' : ''}" ${!locked ? `onclick="window.location.href='sesion_detalle.html?id=${i}'"` : ''}>
-                    <div class="card-img-top-wrapper">${iconList[i - 1]}</div>
-                    <div class="card-body p-4 text-center">
-                        <h6 class="text-pink small fw-bold mb-1" style="color: var(--admin-pink);">SESIÓN ${i}</h6>
-                        <h5 class="fw-800 mb-3" style="font-size: 1.1rem; min-height: 3.2rem; display: flex; align-items: center; justify-content: center; line-height: 1.2;">
-                            ${nombresSesiones[i - 1]}
-                        </h5>
-                        <p class="small text-muted mb-3">${locked ? 'Bloqueado por progreso' : 'Contenido disponible'}</p>
-                        <button class="btn ${locked ? 'btn-secondary' : 'btn-outline-pink'} btn-sm w-100 rounded-pill">
-                            ${locked ? '<i class="bi bi-lock-fill"></i> Bloqueado' : 'Comenzar ahora'}
-                        </button>
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="session-card ${locked ? 'locked' : ''}" 
+                         ${!locked ? `onclick="openSession(${i})"` : ''}>
+                        <div class="card-img-top-wrapper">
+                            ${!locked && hasVideos ? `
+                                <video muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+                                    <source src="${videoUrl}" type="video/mp4">
+                                    ${iconList[i-1]}
+                                </video>
+                            ` : iconList[i-1]}
+                        </div>
+                        <div class="card-body p-4 text-center">
+                            <h6 class="text-pink small fw-bold mb-1" style="color: var(--admin-pink);">SESIÓN ${i}</h6>
+                            <h5 class="fw-800 mb-3" style="font-size: 1.1rem; min-height: 3.2rem; display: flex; align-items: center; justify-content: center; line-height: 1.2;">
+                                ${nombresSesiones[i-1]}
+                            </h5>
+                            <p class="small text-muted mb-3">
+                                ${locked ? '🔒 Bloqueado por progreso' : 
+                                  hasVideos ? `▶️ ${videos.length} video${videos.length > 1 ? 's' : ''}` : 
+                                  '📹 Sin videos'}
+                            </p>
+                            <button class="btn ${locked ? 'btn-secondary' : hasVideos ? 'btn-outline-pink' : 'btn-secondary'} btn-sm w-100 rounded-pill" 
+                                    ${!locked && !hasVideos ? 'disabled' : ''}>
+                                ${locked ? '<i class="bi bi-lock-fill"></i> Bloqueado' : 
+                                  hasVideos ? '🎬 Ver sesión' : '📹 Sin contenido'}
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </div>`;
+                </div>`;
             }
 
-            // NUEVO: Agregar tarjeta de Certificado si el nivel es mayor a 8
             if (nivel > 8) {
                 grid.innerHTML += `
-            <div class="col-xl-3 col-lg-4 col-md-6">
-                <div class="session-card" style="border: 2px dashed #d4af37; background: #fffdf0;" data-bs-toggle="modal" data-bs-target="#modalDiploma">
-                    <div class="card-img-top-wrapper" style="background: #fff8e1;">🎓</div>
-                    <div class="card-body p-4 text-center">
-                        <h6 class="text-warning small fw-bold mb-1">¡FELICITACIONES!</h6>
-                        <h5 class="fw-800 mb-3" style="font-size: 1.1rem; min-height: 3.2rem; display: flex; align-items: center; justify-content: center; line-height: 1.2; color: #b8860b;">
-                            Certificado de Finalización
-                        </h5>
-                        <p class="small text-muted mb-3">Tu diploma está listo</p>
-                        <button class="btn btn-warning btn-sm w-100 rounded-pill fw-bold text-white shadow-sm" style="background: #d4af37; border: none;">
-                            <i class="bi bi-award-fill"></i> VER DIPLOMA
-                        </button>
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="session-card" style="border: 2px dashed #d4af37; background: #fffdf0;" data-bs-toggle="modal" data-bs-target="#modalDiploma">
+                        <div class="card-img-top-wrapper" style="background: #fff8e1;">🎓</div>
+                        <div class="card-body p-4 text-center">
+                            <h6 class="text-warning small fw-bold mb-1">¡FELICITACIONES!</h6>
+                            <h5 class="fw-800 mb-3" style="font-size: 1.1rem; min-height: 3.2rem; display: flex; align-items: center; justify-content: center; line-height: 1.2; color: #b8860b;">
+                                Certificado de Finalización
+                            </h5>
+                            <p class="small text-muted mb-3">Tu diploma está listo</p>
+                            <button class="btn btn-warning btn-sm w-100 rounded-pill fw-bold text-white shadow-sm" style="background: #d4af37; border: none;">
+                                <i class="bi bi-award-fill"></i> VER DIPLOMA
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </div>`;
+                </div>`;
             }
         }
+
+        // --- FUNCIONES DE CONSULTAS ---
         function listenQueries(uid) {
-            // ✅ QUERY SOLO PARA CONSULTAS RESPONDIDAS (Requiere índice compuesto)
-            const qResueltas = query(
-                collection(db, "queries"),
-                where("uid", "==", uid),
-                where("reply", "!=", null)
-            );
-
-            // 📊 QUERY PARA TODAS LAS CONSULTAS DEL USUARIO
-            const qTotal = query(
-                collection(db, "queries"),
-                where("uid", "==", uid)
-            );
-
-            // 1. Escuchador para el contador de dudas RESUELTAS
+            const qResueltas = query(collection(db, "queries"), where("uid", "==", uid), where("reply", "!=", null));
             onSnapshot(qResueltas, (snapshot) => {
-                const statDudas = document.getElementById("statDudas");
-                if (statDudas) {
-                    statDudas.innerText = snapshot.size;
-                }
-            }, (error) => {
-                console.error("Error en statDudas (posible falta de índice):", error);
+                document.getElementById("statDudas").innerText = snapshot.size;
             });
 
-            // 2. Escuchador para la lista COMPLETA (Pendientes + Resueltas)
+            const qTotal = query(collection(db, "queries"), where("uid", "==", uid));
             onSnapshot(qTotal, (snapshot) => {
                 const list = document.getElementById("queriesList");
                 if (!list) return;
 
-                list.innerHTML = "";
-
-                // --- ENCABEZADO CON LOGO MÁS GRANDE ---
                 list.innerHTML = `
-        <div class="text-center mb-4 p-4 rounded-4 shadow-sm" 
-             style="background: white; border: 1px solid var(--admin-pink-light);">
-            <img src="logo.png" alt="Logo" 
-                 style="height: 85px; width: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));" 
-                 class="mb-3">
-            <h5 class="fw-800 mb-0" style="color: var(--admin-pink); letter-spacing: 1px;">SOPORTE EDUCA-PRENATAL</h5>
-            <p class="small text-muted">Estamos aquí para acompañarte en tu proceso</p>
-        </div>
-    `;
+                    <div class="text-center mb-4 p-4 rounded-4 shadow-sm" style="background: white; border: 1px solid var(--admin-pink-light);">
+                        <img src="logo.png" alt="Logo" style="height: 85px; width: auto;" class="mb-3">
+                        <h5 class="fw-800 mb-0" style="color: var(--admin-pink);">SOPORTE EDUCA-PRENATAL</h5>
+                        <p class="small text-muted">Estamos aquí para acompañarte en tu proceso</p>
+                    </div>
+                `;
 
                 if (snapshot.empty) {
                     list.innerHTML += `<div class="text-center p-4 text-muted small">No tienes consultas registradas.</div>`;
                     return;
                 }
+
                 snapshot.forEach(docSnap => {
                     const d = docSnap.data();
                     const id = docSnap.id;
                     const tieneRespuesta = d.reply !== null && d.reply !== undefined;
-                    const canEdit = !tieneRespuesta; // Solo editable si no hay respuesta
-
-                    // Escapamos comillas simples para evitar errores en los onclick de los botones
-                    const safeSubject = d.subject ? d.subject.replace(/'/g, "\\'") : "";
-                    const safeMessage = d.message ? d.message.replace(/'/g, "\\'") : "";
+                    const canEdit = !tieneRespuesta;
 
                     list.innerHTML += `
-                <div class="p-3 mb-3 rounded-4 shadow-sm bg-white border-start border-4 ${tieneRespuesta ? 'border-success' : 'border-warning'}">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-bold text-truncate me-2">${d.subject}</span>
-                        <div class="d-flex gap-1">
-                            <small class="badge ${tieneRespuesta ? 'bg-success' : 'bg-warning'} text-dark me-2">
-                                ${tieneRespuesta ? '✅ Respondido' : '⏳ Pendiente'}
-                            </small>
-                            ${canEdit ? `
-                                <button onclick="prepareEdit('${id}', '${safeSubject}', '${safeMessage}')" 
-                                        class="btn btn-sm btn-light p-1 border shadow-sm text-primary" 
-                                        title="Editar consulta">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                                <button onclick="prepareDelete('${id}')" 
-                                        class="btn btn-sm btn-light p-1 border shadow-sm text-danger" 
-                                        title="Eliminar consulta">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            ` : ''}
+                    <div class="p-3 mb-3 rounded-4 shadow-sm bg-white border-start border-4 ${tieneRespuesta ? 'border-success' : 'border-warning'}">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-truncate me-2">${d.subject}</span>
+                            <div class="d-flex gap-1">
+                                <small class="badge ${tieneRespuesta ? 'bg-success' : 'bg-warning'} text-dark me-2">
+                                    ${tieneRespuesta ? '✅ Respondido' : '⏳ Pendiente'}
+                                </small>
+                                ${canEdit ? `
+                                    <button onclick="prepareEdit('${id}', '${d.subject || ''}', '${d.message || ''}')" 
+                                            class="btn btn-sm btn-light p-1 border shadow-sm text-primary" 
+                                            title="Editar consulta">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button onclick="prepareDelete('${id}')" 
+                                            class="btn btn-sm btn-light p-1 border shadow-sm text-danger" 
+                                            title="Eliminar consulta">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
-                    </div>
-                    <p class="small text-muted mb-2"><strong>Pregunta:</strong> ${d.message}</p>
-                    ${tieneRespuesta ? `
-                        <div class="p-2 bg-success bg-opacity-10 border-start border-success border-3 rounded-3 small">
-                            <strong>✅ Respuesta:</strong> ${d.reply}
-                        </div>
-                    ` : ''}
-                </div>`;
+                        <p class="small text-muted mb-2"><strong>Pregunta:</strong> ${d.message}</p>
+                        ${tieneRespuesta ? `
+                            <div class="p-2 bg-success bg-opacity-10 border-start border-success border-3 rounded-3 small">
+                                <strong>✅ Respuesta:</strong> ${d.reply}
+                            </div>
+                        ` : ''}
+                    </div>`;
                 });
             });
         }
 
-        // --- FUNCIONES DE SOPORTE PARA LOS BOTONES ---
-
         window.prepareEdit = (id, subject, message) => {
-            const modalElement = document.getElementById('modalEditQuery');
-            if (modalElement) {
-                document.getElementById('editQueryId').value = id;
-                document.getElementById('editSubject').value = subject;
-                document.getElementById('editMessage').value = message;
-
-                const modalEdit = new bootstrap.Modal(modalElement);
-                modalEdit.show();
-            }
+            console.log("Editar:", id, subject, message);
+            showToast("Función de edición en desarrollo", "info");
         };
 
         window.prepareDelete = async (id) => {
-            // Puedes usar un modal de confirmación de Bootstrap o un confirm simple
-            if (confirm("¿Estás segura de eliminar esta consulta pendiente?")) {
+            if (confirm("¿Estás segura de eliminar esta consulta?")) {
                 try {
                     await deleteDoc(doc(db, "queries", id));
-                    console.log("Consulta eliminada");
-                } catch (error) {
-                    console.error("Error al eliminar:", error);
-                    alert("No se pudo eliminar la consulta.");
+                    showToast("Consulta eliminada", "success");
+                } catch (e) {
+                    showToast("Error al eliminar", "error");
                 }
-            }
-        };
-
-        window.prepareEdit = (id, subject, message) => {
-            document.getElementById('editQueryId').value = id;
-            document.getElementById('editSubject').value = subject;
-            document.getElementById('editMessage').value = message;
-            editModal.show();
-        };
-
-        window.prepareDelete = (id) => {
-            document.getElementById('deleteQueryId').value = id;
-            deleteModal.show();
-        };
-
-        document.getElementById("btnUpdateQuery").onclick = async () => {
-            const id = document.getElementById('editQueryId').value;
-            const subject = document.getElementById('editSubject').value.trim();
-            const message = document.getElementById('editMessage').value.trim();
-
-            if (!subject || !message) {
-                alert("Los campos no pueden estar vacíos.");
-                return;
-            }
-
-            try {
-                await updateDoc(doc(db, "queries", id), {
-                    subject: subject,
-                    message: message,
-                    updatedAt: serverTimestamp()
-                });
-                editModal.hide();
-                // Mostrar notificación de éxito
-                showToast("Consulta actualizada correctamente", "success");
-            } catch (e) {
-                console.error("Error al editar:", e);
-                showToast("Error al actualizar la consulta", "error");
-            }
-        };
-
-        document.getElementById("btnConfirmDelete").onclick = async () => {
-            const id = document.getElementById('deleteQueryId').value;
-            try {
-                await deleteDoc(doc(db, "queries", id));
-                deleteModal.hide();
-                showToast("Consulta eliminada correctamente", "success");
-            } catch (e) {
-                console.error("Error al eliminar:", e);
-                showToast("Error al eliminar la consulta", "error");
             }
         };
 
@@ -934,48 +643,20 @@
                 return;
             }
 
-            // Mostrar preview en modal de confirmación
-            document.getElementById("previewQuery").innerHTML = `
-                <div class="mb-3">
-                    <strong>Asunto:</strong> ${sub}
-                </div>
-                <div>
-                    <strong>Mensaje:</strong><br>${msg}
-                </div>
-            `;
-
-            sendModal.show();
-        };
-
-        document.getElementById("btnConfirmSend").onclick = async () => {
-            const sub = document.getElementById("querySubject").value.trim();
-            const msg = document.getElementById("queryMessage").value.trim();
-
             try {
-                // Obtenemos los datos actuales de la usuaria del elemento HTML que ya cargaste
-                // O directamente del objeto auth.currentUser
                 const user = auth.currentUser;
-
                 await addDoc(collection(db, "queries"), {
                     uid: user.uid,
-                    userName: user.displayName || "Usuaria", // Se guarda el nombre
-                    userEmail: user.email || "Sin correo",   // Se guarda el correo[cite: 1]
+                    userName: user.displayName || "Usuaria",
+                    userEmail: user.email || "Sin correo",
                     subject: sub,
                     message: msg,
                     reply: null,
                     createdAt: serverTimestamp()
                 });
 
-                // Limpiar formularios
                 document.getElementById("querySubject").value = "";
                 document.getElementById("queryMessage").value = "";
-                sendModal.hide();
-
-                setTimeout(() => {
-                    const queriesModal = bootstrap.Modal.getInstance(document.getElementById('modalQueries'));
-                    queriesModal.hide();
-                }, 1000);
-
                 showToast("¡Tu duda ha sido enviada con éxito!", "success");
             } catch (e) {
                 console.error("Error al enviar:", e);
@@ -983,16 +664,32 @@
             }
         };
 
-        // Función para mostrar notificaciones toast
+        window.downloadDiploma = () => {
+            const diploma = document.getElementById("diplomaToDownload");
+            html2canvas(diploma, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                width: 800,
+                height: 600,
+                backgroundColor: "#ffffff"
+            }).then(canvas => {
+                const link = document.createElement("a");
+                link.download = "Mi_Certificado_EducaPrenatal.png";
+                link.href = canvas.toDataURL("image/png", 1.0);
+                link.click();
+            });
+        };
+
         function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+            const toastContainer = document.getElementById('toastContainer');
             const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : type === 'warning' ? 'bg-warning' : 'bg-info';
 
             const toastHtml = `
-                <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast align-items-center text-white ${bgClass} border-0" role="alert">
                     <div class="d-flex">
                         <div class="toast-body">${message}</div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                     </div>
                 </div>
             `;
@@ -1001,34 +698,6 @@
             const newToast = new bootstrap.Toast(toastContainer.lastElementChild);
             newToast.show();
         }
-
-        function createToastContainer() {
-            const container = document.createElement('div');
-            container.id = 'toastContainer';
-            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-            document.body.appendChild(container);
-            return container;
-        }
-
-        window.downloadDiploma = () => {
-            const diploma = document.getElementById("diplomaToDownload");
-
-            // Configuramos html2canvas para ignorar el escalado visual y mejorar la resolución
-            html2canvas(diploma, {
-                scale: 2,           // Duplica los píxeles para que se vea nítido al imprimir o hacer zoom
-                useCORS: true,      // Importante si usas un logo.png externo o desde una URL
-                logging: false,     // Limpia la consola de mensajes técnicos
-                width: 800,         // Forzamos el ancho original del diseño
-                height: 600,        // Forzamos el alto original del diseño[cite: 1]
-                backgroundColor: "#ffffff" // Asegura que el fondo no salga transparente
-            }).then(canvas => {
-                const link = document.createElement("a");
-                link.download = "Mi_Certificado_EducaPrenatal.png";
-                link.href = canvas.toDataURL("image/png", 1.0); // Calidad máxima
-                link.click();
-            });
-        };
-
     </script>
 </body>
 
