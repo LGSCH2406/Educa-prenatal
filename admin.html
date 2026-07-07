@@ -1018,8 +1018,25 @@
                     return;
                 }
 
+                // 1. Convertimos los documentos a un array de objetos para poder ordenarlos
+                const videosList = [];
                 snap.forEach(videoDoc => {
-                    const data = videoDoc.data();
+                    videosList.push({
+                        id: videoDoc.id,
+                        ...videoDoc.data()
+                    });
+                });
+
+                // 2. Ordenamos alfabéticamente por el campo 'titulo'
+                // Usamos localeCompare con { numeric: true } para que entienda que "2" va antes que "10"
+                videosList.sort((a, b) => {
+                    const tituloA = a.titulo || '';
+                    const tituloB = b.titulo || '';
+                    return tituloA.localeCompare(tituloB, undefined, { numeric: true, sensitivity: 'base' });
+                });
+
+                // 3. Renderizamos la tabla con la lista ya ordenada
+                videosList.forEach(data => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
                         <td><span class="fw-bold text-dark">${data.titulo || 'Sin título'}</span></td>
@@ -1031,7 +1048,7 @@
                             <small class="text-muted">Cloud: ${data.cloudName || 'N/A'}</small>
                         </td>
                         <td class="text-center">
-                            <button class="btn-delete" onclick="deleteVideo('${videoDoc.id}')">Eliminar</button>
+                            <button class="btn-delete" onclick="deleteVideo('${data.id}')">Eliminar</button>
                         </td>
                     `;
                     tableBody.appendChild(tr);
